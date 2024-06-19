@@ -57,7 +57,7 @@ const Links = () => {
   ];
   return (
     <div className="container px-32">
-      <div className="flex gap-4 mb-5">
+      <div className="flex gap-4 mb-5 flex-wrap justify-center">
         {links.map((link) => (
           <Link
             key={link.name}
