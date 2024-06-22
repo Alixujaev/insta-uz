@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import Links from "@/components/Links";
 import { handleVerify } from "@/store/auth.store";
+import { useDispatch } from "react-redux";
+import { createUser } from "@/actions/userActions";
 
 const Verify = () => {
   const [code, setCode] = useState<string>("");
@@ -12,6 +14,7 @@ const Verify = () => {
   });
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,8 +35,13 @@ const Verify = () => {
     try {
       const res = await handleVerify({ code, email });
 
-      console.log(res);
+      localStorage.setItem("token", res.data.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.data.user));
+      setErrorMessage("");
       setIsLoading(false);
+      dispatch(createUser(res.data.data.user));
+      sessionStorage.clear();
+      navigate("/");
     } catch (error: any) {
       setErrorMessage(error.response.data.message);
       setIsLoading(false);

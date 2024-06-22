@@ -5,6 +5,8 @@ const UserSchema = new Schema({
   username: String,
   password: String,
   email: String,
+  followers: [String],
+  following: [String],
 });
 
 export default model("User", UserSchema)

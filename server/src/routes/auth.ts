@@ -3,9 +3,12 @@ import User from "../modules/User";
 import bcrypt from "bcrypt"
 import { generateNewToken } from "../utils";
 import { sendConfirmationCode, verifyConfirmationCode } from "../../services/confirmationService";
+import { UserInterface } from "../consts";
 
 const router = Router()
 const tempUserStorage = {}
+
+
 
 router.post("/api/registration", async (req, res) => {
     try {
@@ -39,7 +42,7 @@ router.post("/api/registration", async (req, res) => {
 
 
 // Endpoint to verify confirmation code
-router.post('/verify-code', async (req, res) => {
+router.post('/api/verify-code', async (req, res) => {
     const { email, code } = req.body;
 
     if (!email || !code) {
@@ -60,7 +63,7 @@ router.post('/verify-code', async (req, res) => {
             }
 
 
-            const newUser = await User.create(userData)
+            const newUser = await User.create({...userData, followers: [], following: []})
             const token = generateNewToken(newUser._id)
 
             delete tempUserStorage[email]
@@ -69,7 +72,14 @@ router.post('/verify-code', async (req, res) => {
                 success: true,
                 message: 'Код успешно подтвержден, пользователь создан',
                 data: {
-                    ...newUser,
+                    user: {
+                      id: newUser._id,
+                      full_name: newUser.full_name,
+                      username: newUser.username,
+                      email: newUser.email,
+                      followers: newUser.followers,
+                      following: newUser.following
+                    },
                     token
                 }
             })

@@ -1,8 +1,8 @@
-import { CreateUser } from "@/consts"
+import { USER_ACTIONS } from "@/consts"
 
 export const createUser = (item:any) => {
   return {
-    type: CreateUser.email,
+    type: USER_ACTIONS.SET_USER,
     payload: item
   }
 }
