@@ -51,6 +51,21 @@ router.post('/api/verify-code', async (req, res) => {
         const isValid = verifyConfirmationCode(email, code);
 
         if(isValid) {
+            const existUser = await User.findOne({ email });
+            
+            
+            if (existUser) {
+              const token = generateNewToken(existUser._id)
+              res.status(200).send({
+                success: true,
+                message: "Ваш адрес электронной почты успешно подтвержден",
+                data: {
+                  user: existUser,
+                  token
+                }
+              })
+            }
+
             const userData = tempUserStorage[email];
 
             if(!userData){
@@ -85,9 +100,12 @@ router.post('/api/verify-code', async (req, res) => {
             res.status(400).send({ success: false, message: 'Неверный код' });
         }
     } catch (error) {
+      console.log(error);
+      
         res.status(500).send({ success: false, message: 'Ошибка при проверке кода', error });
       }
 });
+
 
 router.post("/api/login", async (req, res) => {
     const { username, password } = req.body;
@@ -116,6 +134,22 @@ router.post("/api/login", async (req, res) => {
         token
       }
     })
+})
+
+
+router.post("/api/forgot-password", async (req, res) => {
+  const {email} = req.body
+
+  const existUser = await User.findOne({email})
+  if (!existUser) {
+    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+  }
+
+  const code = await sendConfirmationCode(email);
+  res.status(200).send({
+    success: true,
+    message: 'Код подтверждения отправлен на ваш email'
+  });
 })
 
 export default router

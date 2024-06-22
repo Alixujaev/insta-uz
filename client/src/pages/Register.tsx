@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GooglePLay from "@/assets/images/google_play.png";
 import Microsoft from "@/assets/images/microsoft.png";
 import logo from "@/assets/icons/instagram-text-logo.png";
@@ -41,6 +41,14 @@ const Register = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
   const form = useForm<FormData>({
     resolver: zodResolver(AuthSchema),
@@ -147,7 +155,7 @@ const Register = () => {
                 </p>
 
                 {isLoading ? (
-                  <Button className="w-full rounded-[8px] py-[7px] bg-[#0094f681] hover:bg-[#0094f681] cursor-default leading-none h-8">
+                  <Button className="w-full rounded-[8px] py-[7px] bg-[#0094f681] hover:bg-[#0094f681] cursor-default leading-none h-8 mb-8">
                     Регистрация
                   </Button>
                 ) : (

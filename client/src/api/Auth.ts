@@ -14,3 +14,7 @@ export const VERIFY_CODE = (body: VerifyCodeBody) => {
 export const LOGIN = (body: any) => {
   return axios.post(BASE_URL + "/api/login", body)
 }
+
+export const FORGOT_PASSWORD = (body: any) => {
+  return axios.post(BASE_URL + "/api/forgot-password", body)
+}

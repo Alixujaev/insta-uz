@@ -3,7 +3,7 @@ import Lock from "@/assets/images/lock.jpg";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import Links from "@/components/Links";
-import { handleVerify } from "@/store/auth.store";
+import { handleReset, handleVerify } from "@/store/auth.store";
 import { useDispatch } from "react-redux";
 import { createUser } from "@/actions/userActions";
 
@@ -42,6 +42,20 @@ const Verify = () => {
       dispatch(createUser(res.data.data.user));
       sessionStorage.clear();
       navigate("/");
+      setTimeout(() => {
+        window.location.reload();
+      });
+    } catch (error: any) {
+      setErrorMessage(error.response.data.message);
+      setIsLoading(false);
+    }
+  }
+
+  function onResend(email: string) {
+    setIsLoading(true);
+    try {
+      handleReset({ email });
+      setIsLoading(false);
     } catch (error: any) {
       setErrorMessage(error.response.data.message);
       setIsLoading(false);
@@ -93,7 +107,10 @@ const Verify = () => {
                 </Button>
               )}
 
-              <p className="text-[#0095f6] mt-4 text-sm cursor-pointer">
+              <p
+                onClick={() => onResend(email)}
+                className="text-[#0095f6] mt-4 text-sm cursor-pointer"
+              >
                 Отправить код ещё раз
               </p>
             </form>
