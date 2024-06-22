@@ -9,6 +9,7 @@ import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
+import { handleRegister } from "@/store/auth.store";
 
 const AuthSchema = z.object({
   email: z
@@ -37,18 +38,25 @@ type FormData = z.infer<typeof AuthSchema>;
 
 const Register = () => {
   const [isPassword, setIsPassword] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(AuthSchema),
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
-    console.log(data);
+    try {
+      const res = await handleRegister(data);
+
+      console.log(res);
+    } catch (error) {
+      setErrorMessage(error.response.data.message);
+    }
   };
 
   return (
     <div className="bg-white">
-      <div className="flex gap-8 w-[935px] mx-auto mt-10 justify-center mb-16">
+      <div className="flex gap-8 max-w-[935px] mx-auto mt-10 justify-center mb-16">
         <div>
           <div className="border mb-2">
             <img src={logo} alt="logo" className="w-[175px] mt-6 mx-[88px]" />
@@ -117,6 +125,12 @@ const Register = () => {
                 <p className="text-red-400 text-xs -mt-4 text-left mb-4">
                   {form.formState.errors.password?.message}
                 </p>
+
+                {errorMessage ? (
+                  <p className="text-red-400 text-xs -mt-4 text-left mb-4">
+                    {errorMessage}
+                  </p>
+                ) : null}
 
                 <p className="text-xs mb-4 text-[#8e8e8e]">
                   Люди, которые пользуются нашим сервисом, могли загрузить вашу

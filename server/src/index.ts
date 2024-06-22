@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import cors from "cors"
+import AuthRoutes from "./routes/auth"
+
 
 dotenv.config();
 
@@ -14,15 +16,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(AuthRoutes)
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 })
 
-app.post("/api/registration", (req, res) => {
-  console.log(req.body);
-  
-})
+
 
 const connectToDB = async () => {
   try {
