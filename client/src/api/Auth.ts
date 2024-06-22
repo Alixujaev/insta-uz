@@ -9,3 +9,8 @@ export const REGISTRATION = (body: RegisterBody) => {
 export const VERIFY_CODE = (body: VerifyCodeBody) => {
   return axios.post(BASE_URL + "/api/verify-code", body)
 }
+
+
+export const LOGIN = (body: any) => {
+  return axios.post(BASE_URL + "/api/login", body)
+}

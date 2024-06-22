@@ -3,7 +3,6 @@ import User from "../modules/User";
 import bcrypt from "bcrypt"
 import { generateNewToken } from "../utils";
 import { sendConfirmationCode, verifyConfirmationCode } from "../../services/confirmationService";
-import { UserInterface } from "../consts";
 
 const router = Router()
 const tempUserStorage = {}
@@ -41,7 +40,6 @@ router.post("/api/registration", async (req, res) => {
 })
 
 
-// Endpoint to verify confirmation code
 router.post('/api/verify-code', async (req, res) => {
     const { email, code } = req.body;
 
@@ -90,5 +88,34 @@ router.post('/api/verify-code', async (req, res) => {
         res.status(500).send({ success: false, message: 'Ошибка при проверке кода', error });
       }
 });
+
+router.post("/api/login", async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).send({ success: false, message: 'Неверный пароль' });
+    }
+
+    const token = generateNewToken(user._id)
+    res.status(200).send({
+      success: true,
+      message: 'Аутентификация прошла успешно',
+      data: {
+        user: {
+          id: user._id,
+          full_name: user.full_name,
+          username: user.username,
+          email: user.email,
+          followers: user.followers,
+          following: user.following
+        },
+        token
+      }
+    })
+})
 
 export default router

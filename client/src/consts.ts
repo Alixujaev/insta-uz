@@ -15,3 +15,8 @@ export type VerifyCodeBody = {
   code: string,
   email: string
 }
+
+export type LoginBody = {
+  username: string,
+  password: string
+}
