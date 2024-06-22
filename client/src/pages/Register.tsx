@@ -3,7 +3,7 @@ import GooglePLay from "@/assets/images/google_play.png";
 import Microsoft from "@/assets/images/microsoft.png";
 import logo from "@/assets/icons/instagram-text-logo.png";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Links from "@/components/Links";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -39,18 +39,27 @@ type FormData = z.infer<typeof AuthSchema>;
 const Register = () => {
   const [isPassword, setIsPassword] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const form = useForm<FormData>({
     resolver: zodResolver(AuthSchema),
   });
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
+    setIsLoading(true);
     try {
       const res = await handleRegister(data);
 
-      console.log(res);
-    } catch (error) {
+      if (res.status === 200) {
+        navigate("/accounts/verify");
+        sessionStorage.setItem("acceptVerify", "true");
+        sessionStorage.setItem("email", data.email);
+      }
+      setIsLoading(false);
+    } catch (error: any) {
       setErrorMessage(error.response.data.message);
+      setIsLoading(false);
     }
   };
 
@@ -137,9 +146,15 @@ const Register = () => {
                   контактную информацию в Instagram.
                 </p>
 
-                <Button className="w-full rounded-[8px] py-[7px] bg-[#0095f6] hover:bg-[#1877f2] leading-none h-8 mb-8">
-                  Регистрация
-                </Button>
+                {isLoading ? (
+                  <Button className="w-full rounded-[8px] py-[7px] bg-[#0094f681] hover:bg-[#0094f681] cursor-default leading-none h-8">
+                    Регистрация
+                  </Button>
+                ) : (
+                  <Button className="w-full rounded-[8px] py-[7px] bg-[#0095f6] hover:bg-[#1877f2] leading-none h-8 mb-8">
+                    Регистрация
+                  </Button>
+                )}
               </Form>
             </form>
           </div>

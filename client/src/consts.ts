@@ -16,3 +16,8 @@ export type RegisterBody = {
   username: string
   full_name: string
 }
+
+export type VerifyCodeBody = {
+  code: string,
+  email: string
+}
