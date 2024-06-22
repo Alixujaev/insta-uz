@@ -4,10 +4,13 @@ let confirmationCodes = {};
 
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // use your email service
+  service: 'Gmail', // use your email service
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
       user: 'islomali3110@gmail.com',
-      pass: 'islomali5466'
+      pass: 'lddiefjldcpfguud'
   }
 });
 
