@@ -1,3 +1,5 @@
+import icons from "./components/icon/icons";
+
 export const BASE_URL = `http://localhost:8000`;
 
 export enum USER_ACTIONS {
@@ -24,3 +26,48 @@ export type LoginBody = {
 export type ForgotPasswordBody = {
   email: string
 }
+
+
+
+export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
+  {
+    icon: "home",
+    label: "Главная",
+    href: "/",
+  },
+  {
+    icon: "search",
+    label: "Поисковый запрос",
+    href: "/search",
+  },
+  {
+    icon: "explore",
+    label: "Интересное",
+    href: "/explore",
+  },
+  {
+    icon: "reels",
+    label: "Reels",
+    href: "/reels",
+  },
+  {
+    icon: "messages",
+    label: "Сообщения",
+    href: "/messages",
+  },
+  {
+    icon: "notifications",
+    label: "Уведомления",
+    href: "notifications"
+  },  
+  {
+    icon: "add",
+    label: "Создать",
+    href: "add"
+  },
+  {
+    icon: "profile",
+    label: "Профиль",
+    href: "/profile",
+  }
+]

@@ -74,3 +74,11 @@
       @apply bg-background text-foreground;
     }
   }
+
+
+
+  .gradient-border {
+    position: relative;
+    background: linear-gradient(45deg, #d300c5, #ffc600, #fe016a);
+  }
+  
