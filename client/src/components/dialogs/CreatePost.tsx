@@ -3,13 +3,27 @@ import BaseIcon from "@/components/icon/BaseIcon";
 import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
 import { useState } from "react";
+import { handleImageUpload } from "@/store/post.store";
 
 const CreatePost = () => {
   const [file, setFile] = useState<any>(null);
+  const [title, setTiele] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const token = localStorage.getItem("token");
 
-  function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
+  async function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
+      console.log(token);
+
+      if (token) {
+        const formData = new FormData();
+        formData.append("file", event.target.files[0]);
+
+        const result = await handleImageUpload(formData, token);
+
+        console.log(result);
+      }
     }
   }
 
@@ -70,6 +84,8 @@ const CreatePost = () => {
                 type="text"
                 placeholder="Заголовок"
                 className="py-2 px-3 border rounded-md border-[#8e8e8e68] outline-none"
+                onChange={(e) => setTiele(e.target.value)}
+                value={title}
               />
             </div>
 
@@ -80,6 +96,8 @@ const CreatePost = () => {
               <textarea
                 placeholder="Напишите о чем вы думаете"
                 className="py-2 px-3 border rounded-md border-[#8e8e8e68] outline-none max-h-20"
+                onChange={(e) => setDescription(e.target.value)}
+                value={description}
               />
             </div>
 
