@@ -10,6 +10,6 @@ const UserSchema = new Schema({
   posts: [String],
   stories: [String],
   profile_img: String
-});
+}, {timestamps: true});
 
 export default model("User", UserSchema)

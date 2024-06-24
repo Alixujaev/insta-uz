@@ -28,6 +28,20 @@ export type ForgotPasswordBody = {
 }
 
 
+export type UserType = {
+  id: string,
+  email: string,
+  username: string,
+  full_name: string,
+  password: string,
+  followers: string[],
+  following: string[],
+  posts: string[],
+  stories: string[],
+  profile_img: string
+}
+
+
 
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
   {

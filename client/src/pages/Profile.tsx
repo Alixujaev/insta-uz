@@ -1,23 +1,37 @@
 import Avatar from "@/components/Avatar";
-import me from "@/assets/images/my.jpg";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import BaseIcon from "@/components/icon/BaseIcon";
 import my from "@/assets/images/me.jpg";
+import { useLocalStorage } from "usehooks-ts";
+import { UserType } from "@/consts";
 
 const Profile = () => {
+  const [user] = useLocalStorage<UserType>("user", {
+    id: "",
+    email: "",
+    username: "",
+    full_name: "",
+    password: "",
+    followers: [],
+    following: [],
+    posts: [],
+    stories: [],
+    profile_img: "",
+  });
+
   return (
     <div className="flex justify-center">
       <div className="w-[930px] mt-8 ml-14">
         <div className="flex gap-20 mb-16">
           <div className="mt-5 ml-2">
-            <Avatar size="xl" />
+            <Avatar size="xl" src={user.profile_img} />
           </div>
 
           <div>
             <div className="flex gap-5 items-center mb-6">
               <Link to="/profile" className="text-2xl">
-                isl0m.ali
+                {user.username}
               </Link>
 
               <div className="flex gap-3 items-center">
@@ -36,21 +50,25 @@ const Profile = () => {
             </div>
             <div className="flex gap-10 mb-6">
               <p>
-                <span className="font-medium">0</span> публикаций
+                <span className="font-medium">{user.posts.length} </span>
+                публикаций
               </p>
               <p>
-                <span className="font-medium">189</span> подписчиков
+                <span className="font-medium">{user.followers.length} </span>
+                подписчиков
               </p>
               <p>
-                <span className="font-medium">194</span> подписок
+                <span className="font-medium">{user.following.length} </span>
+                подписок
               </p>
             </div>
 
-            <p className="font-semibold">Islom Alixujaev</p>
+            <p className="font-semibold">{user.full_name}</p>
+            <p className="font-semibold">{user.email}</p>
           </div>
         </div>
 
-        <div className="flex gap-12 pb-12 border-b">
+        {/* <div className="flex gap-12 pb-12 border-b">
           <div className="flex flex-col items-center">
             <Avatar src={me} hasStory />
             <p className="mt-1">🤝</p>
@@ -66,7 +84,7 @@ const Profile = () => {
             </div>
             <p className="mt-1 text-xs">Добавить</p>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-center gap-14 ">
           <div className="flex gap-1 cursor-pointer items-center py-3 border-t-2 border-black">

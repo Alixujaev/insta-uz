@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import cors from "cors"
 import AuthRoutes from "./routes/auth"
 import UserRoutes from "./routes/user"
-
+import PostRoutes from "./routes/post"
 
 dotenv.config();
 
@@ -19,6 +19,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(AuthRoutes);
 app.use(UserRoutes);
+app.use(PostRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
