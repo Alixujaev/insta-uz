@@ -5,7 +5,7 @@ import Avatar from "./Avatar";
 const Story = () => {
   return (
     <Link to="/" className="w-[66px]">
-      <Avatar src={my} />
+      <Avatar src={my} hasStory />
       <p className="text-xs text-center text-[#262626]">
         {`alixujaev_islom`.length > 10
           ? `alixujaev_islom`.slice(0, 10) + "..."

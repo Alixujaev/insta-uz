@@ -1,4 +1,14 @@
-const Avatar = ({ src, size = "lg" }: { src: string; size?: string }) => {
+import user from "@/assets/images/user.jpg";
+
+const Avatar = ({
+  src,
+  size = "lg",
+  hasStory = false,
+}: {
+  src?: string;
+  size?: string;
+  hasStory?: boolean;
+}) => {
   function generateSizes(size: string) {
     switch (size) {
       case "sm":
@@ -8,25 +18,50 @@ const Avatar = ({ src, size = "lg" }: { src: string; size?: string }) => {
       case "lg":
         return "w-[66px] h-[66px]";
       case "xl":
-        return "w-[166px] h-[166px]";
+        return "w-[156px] h-[156px]";
       default:
         return "w-[66px] h-[66px]";
     }
   }
-  return (
+
+  return hasStory ? (
     <div
       className={`gradient-border flex items-center justify-center rounded-full ${generateSizes(
         size
       )}`}
     >
       <div className="!w-[93%] h-[93%] bg-white rounded-full flex justify-center items-center">
-        <img
-          src={src}
-          alt="Profile"
-          className="rounded-full w-[95%] h-[97%] object-cover object-center"
-        />
+        {src ? (
+          <img
+            src={src}
+            alt="Profile"
+            className="rounded-full w-[95%] h-[97%] object-cover object-center"
+          />
+        ) : (
+          <img
+            src={user}
+            alt="Profile"
+            className="rounded-full w-[95%] h-[97%] object-cover object-center"
+          />
+        )}
       </div>
     </div>
+  ) : src ? (
+    <img
+      src={src}
+      alt="Profile"
+      className={`rounded-full ${generateSizes(
+        size
+      )} object-cover object-center`}
+    />
+  ) : (
+    <img
+      src={user}
+      alt="Profile"
+      className={`rounded-full ${generateSizes(
+        size
+      )} object-cover object-center`}
+    />
   );
 };
 

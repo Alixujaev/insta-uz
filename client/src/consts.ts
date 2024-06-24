@@ -1,6 +1,6 @@
 import icons from "./components/icon/icons";
 
-export const BASE_URL = `http://localhost:8000`;
+export const BASE_URL = `http://localhost:5000`;
 
 export enum USER_ACTIONS {
   SET_USER = 'SET_USER',

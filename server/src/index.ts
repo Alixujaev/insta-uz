@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
 import cors from "cors"
 import AuthRoutes from "./routes/auth"
+import UserRoutes from "./routes/user"
 
 
 dotenv.config();
@@ -16,7 +17,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use(AuthRoutes)
+app.use(AuthRoutes);
+app.use(UserRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

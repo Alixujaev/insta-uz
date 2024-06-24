@@ -7,6 +7,9 @@ const UserSchema = new Schema({
   email: String,
   followers: [String],
   following: [String],
+  posts: [String],
+  stories: [String],
+  profile_img: String
 });
 
 export default model("User", UserSchema)
