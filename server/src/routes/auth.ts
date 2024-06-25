@@ -1,7 +1,7 @@
 import { Router } from "express";
 import User from "../modules/User";
 import bcrypt from "bcrypt"
-import { generateNewToken } from "../utils";
+import { generateNewToken } from "../utils/token";
 import { sendConfirmationCode, verifyConfirmationCode } from "../../services/confirmationService";
 
 const router = Router()
