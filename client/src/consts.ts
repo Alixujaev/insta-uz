@@ -42,7 +42,8 @@ export type UserType = {
   following: string[],
   posts: string[],
   stories: string[],
-  profile_img: string
+  profile_img: string,
+  about: string
 }
 
 export type PostType = {

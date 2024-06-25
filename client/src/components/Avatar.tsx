@@ -20,7 +20,7 @@ const Avatar = ({
       case "lg":
         return "max-w-[66px] w-full h-[66px]";
       case "xl":
-        return "max-w-[156px] w-full h-[156px]";
+        return "w-[156px] h-[156px]";
       default:
         return "max-w-[66px] w-full h-[66px]";
     }
@@ -48,7 +48,7 @@ const Avatar = ({
         )}
       </div>
     </div>
-  ) : src ? (
+  ) : src?.trim() ? (
     <img
       src={src}
       alt="Profile"

@@ -18,7 +18,9 @@ const Sidebar = () => {
     posts: [],
     stories: [],
     profile_img: "",
+    about: "",
   });
+
   return (
     <div className="w-64 h-screen fixed top-0 left-0 border-r border-[#8e8e8e68] flex flex-col justify-between">
       <div>
@@ -81,7 +83,7 @@ const Sidebar = () => {
               <img
                 src={user.profile_img}
                 alt="image"
-                className="w-6 h-6 rounded-full"
+                className="w-6 h-6 rounded-full object-cover "
               />
             ) : (
               <img src={userImg} alt="image" className="w-6 h-6 rounded-full" />

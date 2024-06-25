@@ -1,12 +1,12 @@
 import Avatar from "@/components/Avatar";
 import { Link, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { UserType } from "@/consts";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
 import { handleGetUser } from "@/store/user.store";
+import EditProfile from "@/components/dialogs/EditProfile";
 
 const Profile = () => {
   const params = useParams();
@@ -45,9 +45,7 @@ const Profile = () => {
 
                 <div className="flex gap-3 items-center">
                   <div className="flex gap-2">
-                    <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8">
-                      Редактировать профиль
-                    </Button>
+                    <EditProfile user={user} />
                   </div>
                   <button>
                     <BaseIcon name="settings" />
@@ -70,7 +68,8 @@ const Profile = () => {
               </div>
 
               <p className="font-semibold">{user.full_name}</p>
-              <p className="font-semibold">{user.email}</p>
+              <p className="text-[#8E8E8E] text-sm">{user.email}</p>
+              <p className="font-semibold text-sm">{user.about}</p>
             </div>
           </div>
 

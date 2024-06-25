@@ -5,7 +5,7 @@ import { Label } from "../ui/label";
 import { useState } from "react";
 import { handleCreate, handleImageUpload } from "@/store/post.store";
 
-const CreatePost = ({ profile = false }: { profile: boolean }) => {
+const CreatePost = ({ profile = false }: { profile?: boolean }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
@@ -15,7 +15,6 @@ const CreatePost = ({ profile = false }: { profile: boolean }) => {
   async function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
-      console.log(token);
     }
   }
 

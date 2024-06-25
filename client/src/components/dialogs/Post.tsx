@@ -8,12 +8,10 @@ import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
-  console.log(post);
-
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="group cursor-pointer w-[309px] !h-[309px] relative">
+        <div className="group cursor-pointer w-full !h-[309px] relative">
           <img
             src={post.image}
             alt="image"

@@ -12,3 +12,11 @@ export const ABOUT_ME = (token: string) => {
 export const GET_USER_INFO = (username: string) => {
   return axios.get(BASE_URL + `/api/${username}`)
 }
+
+export const UPDATE_USER = (body: any, token: string) => {
+  return axios.put(BASE_URL + "/api/update-user", body, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
