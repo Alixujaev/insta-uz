@@ -71,16 +71,11 @@ const Sidebar = () => {
             <span className="">Уведомления</span>
           </div>
 
-          {/* <div className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer">
-            <BaseIcon name="add" />
-            <span className="">Создать</span>
-          </div> */}
-
           <CreatePost />
 
           <Link
             className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md"
-            to="/profile"
+            to={`/${user.username}`}
           >
             {user.profile_img ? (
               <img

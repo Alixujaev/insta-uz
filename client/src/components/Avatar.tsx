@@ -11,16 +11,18 @@ const Avatar = ({
 }) => {
   function generateSizes(size: string) {
     switch (size) {
+      case "xs":
+        return "max-w-[32px] w-full h-[32px]";
       case "sm":
-        return "w-[38px] h-[38px]";
+        return "max-w-[38px] w-full h-[38px]";
       case "md":
-        return "w-[44px] h-[44px]";
+        return "max-w-[44px] w-full h-[44px]";
       case "lg":
-        return "w-[66px] h-[66px]";
+        return "max-w-[66px] w-full h-[66px]";
       case "xl":
-        return "w-[156px] h-[156px]";
+        return "max-w-[156px] w-full h-[156px]";
       default:
-        return "w-[66px] h-[66px]";
+        return "max-w-[66px] w-full h-[66px]";
     }
   }
 

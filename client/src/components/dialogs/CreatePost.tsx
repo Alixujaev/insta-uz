@@ -5,10 +5,9 @@ import { Label } from "../ui/label";
 import { useState } from "react";
 import { handleCreate, handleImageUpload } from "@/store/post.store";
 
-const CreatePost = () => {
+const CreatePost = ({ profile = false }: { profile: boolean }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
-  const [title, setTiele] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = localStorage.getItem("token");
@@ -33,7 +32,6 @@ const CreatePost = () => {
           try {
             const res = await handleCreate(
               {
-                title,
                 description,
                 image: result.data.data.url,
               },
@@ -42,7 +40,6 @@ const CreatePost = () => {
 
             setOpen(false);
             setFile(null);
-            setTiele("");
             setDescription("");
             setIsLoading(false);
           } catch (error) {
@@ -60,10 +57,16 @@ const CreatePost = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer">
-          <BaseIcon name="add" />
-          <span className="">Создать</span>
-        </div>
+        {profile ? (
+          <button className="text-sm text-blue-500 font-semibold mb-32">
+            Поделиться свойм первым фото
+          </button>
+        ) : (
+          <div className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer">
+            <BaseIcon name="add" />
+            <span className="">Создать</span>
+          </div>
+        )}
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-[482px]">
         <h4 className="text-center font-medium pb-2 border-b-2">
@@ -108,19 +111,6 @@ const CreatePost = () => {
 
             <div className="flex flex-col mb-3">
               <Label htmlFor="caption" className="mb-1">
-                Заголовок
-              </Label>
-              <input
-                type="text"
-                placeholder="Заголовок"
-                className="py-2 px-3 border rounded-md border-[#8e8e8e68] outline-none"
-                onChange={(e) => setTiele(e.target.value)}
-                value={title}
-              />
-            </div>
-
-            <div className="flex flex-col mb-3">
-              <Label htmlFor="caption" className="mb-1">
                 Описание
               </Label>
               <textarea
@@ -131,7 +121,7 @@ const CreatePost = () => {
               />
             </div>
 
-            {title && description && file && !isLoading ? (
+            {description && file && !isLoading ? (
               <button
                 onClick={handleCreatePost}
                 className="bg-blue-500 w-full text-white py-2 px-2.5 rounded-lg text-sm font-medium mb-3"

@@ -16,3 +16,7 @@ export const CREATE_POST = (body: CreatePostBody, token: string) => {
     }
   })
 }
+
+export const GET_USER_POSTS = (id: string) => {
+  return axios.get(BASE_URL + `/api/user-posts/${id}`)
+}

@@ -28,7 +28,6 @@ export type ForgotPasswordBody = {
 }
 
 export type CreatePostBody = {
-  title: string,
   description: string,
   image: string
 }
@@ -46,6 +45,17 @@ export type UserType = {
   profile_img: string
 }
 
+export type PostType = {
+  _id: string,
+  author_id: string,
+  comments: any[],
+  createdAt: string,
+  description: string,
+  image: string,
+  likes: string[],
+  title: string,
+  updatedAt: string,
+}
 
 
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [

@@ -5,6 +5,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import * as dotenv from 'dotenv';
 import storage from "../utils/storage";
 import Post from "../modules/Post";
+import User from "../modules/User";
 
 const router = Router();
 dotenv.config();
@@ -42,16 +43,29 @@ router.post("/api/upload", upload.single("file"), verifyToken, async (req: any, 
 })
 
 router.post("/api/create-post", verifyToken, async (req: any, res) => {
-  const {title, description, image} = req.body;
-  if (!title || !description || !image) {
+  const { description, image} = req.body;
+  if ( !description || !image) {
     return res.status(400).send({ success: false, message: 'Заполните все поля' });
   }
 
   try {
-    const newPost = await Post.create({author_id: req.body.user.id, title, description, image});
+    const newPost = await Post.create({author_id: req.body.user.id, description, image});
+    await User.updateOne({ _id: req.body.user.id }, { $push: { posts: newPost._id } });
     res.send({ success: true, message: 'Пост создан', data: newPost });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при создании поста', error });
+  }
+})
+
+router.get("/api/user-posts/:id", async (req: any, res) => {
+  try {    
+    const id = req.params.id;
+    const posts = await Post.find({author_id: id});
+    console.log(posts);
+    
+    res.send({ success: true, message: 'Посты получены', data: posts });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
   }
 })
 

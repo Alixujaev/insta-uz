@@ -45,7 +45,7 @@ function App() {
           <Route path="/accounts/signup" element={<Register />} />
           <Route path="/accounts/password/reset/" element={<Reset />} />
           <Route path="/accounts/verify" element={<Verify />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/:username" element={<Profile />} />
         </Routes>
 
         <Links />

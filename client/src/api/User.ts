@@ -8,3 +8,7 @@ export const ABOUT_ME = (token: string) => {
     }
   })
 }
+
+export const GET_USER_INFO = (username: string) => {
+  return axios.get(BASE_URL + `/api/${username}`)
+}
