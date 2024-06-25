@@ -27,6 +27,11 @@ export type ForgotPasswordBody = {
   email: string
 }
 
+export type CreatePostBody = {
+  title: string,
+  description: string,
+  image: string
+}
 
 export type UserType = {
   id: string,

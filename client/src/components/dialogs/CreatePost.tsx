@@ -3,32 +3,62 @@ import BaseIcon from "@/components/icon/BaseIcon";
 import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
 import { useState } from "react";
-import { handleImageUpload } from "@/store/post.store";
+import { handleCreate, handleImageUpload } from "@/store/post.store";
 
 const CreatePost = () => {
+  const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
   const [title, setTiele] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = localStorage.getItem("token");
 
   async function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
       console.log(token);
+    }
+  }
 
-      if (token) {
+  async function handleCreatePost() {
+    if (token) {
+      setIsLoading(true);
+      try {
         const formData = new FormData();
-        formData.append("file", event.target.files[0]);
+        formData.append("file", file);
 
         const result = await handleImageUpload(formData, token);
 
-        console.log(result);
+        if (result.status === 200) {
+          try {
+            const res = await handleCreate(
+              {
+                title,
+                description,
+                image: result.data.data.url,
+              },
+              token
+            );
+
+            setOpen(false);
+            setFile(null);
+            setTiele("");
+            setDescription("");
+            setIsLoading(false);
+          } catch (error) {
+            console.log(error);
+            setIsLoading(false);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+        setIsLoading(false);
       }
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer">
           <BaseIcon name="add" />
@@ -101,9 +131,18 @@ const CreatePost = () => {
               />
             </div>
 
-            <button className="bg-blue-500 w-full text-white py-2 px-2.5 rounded-lg text-sm font-medium mb-3">
-              Создать
-            </button>
+            {title && description && file && !isLoading ? (
+              <button
+                onClick={handleCreatePost}
+                className="bg-blue-500 w-full text-white py-2 px-2.5 rounded-lg text-sm font-medium mb-3"
+              >
+                Создать
+              </button>
+            ) : (
+              <button className="bg-[#0094f681] w-full text-white py-2 px-2.5 rounded-lg text-sm font-medium mb-3 cursor-auto">
+                Создать
+              </button>
+            )}
           </div>
         )}
       </DialogContent>
