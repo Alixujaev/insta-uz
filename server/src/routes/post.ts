@@ -6,6 +6,7 @@ import * as dotenv from 'dotenv';
 import storage from "../utils/storage";
 import Post from "../modules/Post";
 import User from "../modules/User";
+import Comment from "../modules/Comment";
 
 const router = Router();
 dotenv.config();
@@ -104,5 +105,40 @@ router.put("/api/unlike/:id", verifyToken, async (req: any, res) => {
   }
 })
 
+router.post("/api/comment", verifyToken, async (req: any, res) => {
+  const { comment, postId } = req.body;
+  if ( !comment) {
+    return res.status(400).send({ success: false, message: 'Заполните все поля' });
+  }
+
+  try {
+    const author = await User.findById(req.body.user.id);
+    const newComment = await Comment.create({
+      author: {
+        id: author._id,
+        username: author.username,
+        profile_img: author.profile_img
+      },
+      post_id: postId,
+      comment
+    })
+    await Post.findByIdAndUpdate({ _id: postId }, { $push: { comments: req.body.user.id } });  
+    res.send({ success: true, message: 'Комментарий добавлен', data: newComment });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при добавлении комментария', error });
+  }
+})
+
+router.get("/api/comments/:id", async (req:any, res) => {
+  const id = req.params.id;
+
+  try {
+    const comments = await Comment.find({post_id: id});
+    
+    res.send({ success: true, message: 'Комментарии получены', data: comments });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении комментариев', error });
+  }
+})
 
 export default router

@@ -1,4 +1,4 @@
-import { BASE_URL, CreatePostBody } from "@/consts"
+import { BASE_URL, CommentBodyType, CreatePostBody } from "@/consts"
 import axios from "axios"
 
 export const UPLOAD = (body: any, token: string) => {
@@ -35,4 +35,16 @@ export const UNLIKE = (id: string, token: string) => {
       Authorization: `Bearer ${token}`
     }
   })
+}
+
+export const COMMENT = (body: CommentBodyType, token: string) => {
+  return axios.post(BASE_URL + "/api/comment", body, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const GET_COMMENTS = (postId: string) => {
+  return axios.get(BASE_URL + `/api/comments/${postId}`)
 }

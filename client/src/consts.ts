@@ -58,6 +58,22 @@ export type PostType = {
   updatedAt: string,
 }
 
+export type CommentBodyType = {
+  postId: string,
+  comment: string
+}
+
+
+export type CommentType = {
+  author: {
+    id: string,
+    username: string,
+    profile_img: string
+  },
+  comment: string,
+  post_id: string,
+  createdAt: string
+}
 
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
   {

@@ -14,7 +14,7 @@ const Comment = ({
   createdAt: Date;
 }) => {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 mb-5 ">
       <Avatar src={authorImage} size="xs" />
       <div className="">
         <p className="text-sm">

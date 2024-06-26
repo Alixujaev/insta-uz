@@ -1,4 +1,4 @@
-import { PostType, UserType } from "@/consts";
+import { CommentBodyType, CommentType, PostType, UserType } from "@/consts";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import BaseIcon from "../icon/BaseIcon";
 import Avatar from "../Avatar";
@@ -6,14 +6,27 @@ import { Link } from "react-router-dom";
 import PostDialog from "./PostDialog";
 import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
-import { handleLike, handleUnLike } from "@/store/post.store";
+import {
+  handleComment,
+  handleGetComments,
+  handleLike,
+  handleUnLike,
+} from "@/store/post.store";
 import { useLocalStorage } from "usehooks-ts";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
+import useClickOutside from "@/hooks/useClickOutside";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const token = localStorage.getItem("token");
-  const [user] = useLocalStorage("user", "");
+  const [user] = useLocalStorage<{ id: string }>("user", { id: "" });
   const [likes, setLikes] = useState<string[]>([...post.likes]);
+  const [commentText, setCommentText] = useState<string>("");
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [comments, setComments] = useState<any[]>([]);
+  const emojiRef = useRef<HTMLDivElement>(null);
 
   function like(id: string, token: string | null) {
     if (!token) return;
@@ -38,6 +51,35 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
         console.log(err);
       });
   }
+
+  function comment(body: CommentBodyType, token: string | null) {
+    if (!token) return;
+
+    setIsLoading(true);
+    handleComment(body, token)
+      .then((res) => {
+        setCommentText("");
+        setShowEmoji(false);
+        setIsLoading(false);
+        setComments([...comments, res.data.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+      });
+  }
+
+  useClickOutside(emojiRef, () => setShowEmoji(false));
+
+  useEffect(() => {
+    handleGetComments(post._id)
+      .then((res) => {
+        setComments(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [post._id]);
 
   return (
     <Dialog>
@@ -95,6 +137,23 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
               authorName={author.username}
               createdAt={new Date(post.createdAt)}
             />
+
+            {comments.length ? (
+              comments.map((comment: CommentType) => (
+                <Comment
+                  key={comment.post_id}
+                  authorImage={comment.author.profile_img}
+                  text={comment.comment}
+                  authorName={comment.author.username}
+                  createdAt={new Date(comment.createdAt)}
+                />
+              ))
+            ) : (
+              <div className="w-full h-full flex flex-col justify-center items-center">
+                <h3 className="text-2xl font-bold">Комментариев нет</h3>
+                <p>Начните переписку.</p>
+              </div>
+            )}
           </div>
           <div>
             <div className="p-3 border-b">
@@ -121,7 +180,9 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
                     </button>
                   )}
                   <button>
-                    <BaseIcon name="comment" />
+                    <label htmlFor="comment" className="cursor-pointer">
+                      <BaseIcon name="comment" />
+                    </label>
                   </button>
                   <button>
                     <BaseIcon name="share" />
@@ -142,16 +203,42 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
               </div>
             </div>
 
-            <div className="flex gap-2 justify-between m-3">
-              <BaseIcon name="smilek" cn=" cursor-pointer mr-1" />
+            <div className="flex gap-2 justify-between m-3 relative">
+              <button onClick={() => setShowEmoji(!showEmoji)}>
+                <BaseIcon name="smilek" cn=" cursor-pointer mr-1" />
+              </button>
+              {showEmoji ? (
+                <div className="absolute -top-[450px]" ref={emojiRef}>
+                  <Picker
+                    data={data}
+                    onEmojiSelect={(emoji: any) =>
+                      setCommentText(commentText + emoji.native)
+                    }
+                  />
+                </div>
+              ) : null}
               <input
+                id="comment"
                 type="text"
                 className="flex-1 outline-none text-sm"
                 placeholder="Добавить комментарий"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
               />
-              <button className="font-medium text-sm text-blue-500">
-                Опубликовать
-              </button>
+              {!commentText.length || isLoading ? (
+                <button className="font-medium text-sm text-[#8E8E8E] cursor-default">
+                  Опубликовать
+                </button>
+              ) : (
+                <button
+                  className="font-medium text-sm text-blue-500"
+                  onClick={() =>
+                    comment({ comment: commentText, postId: post._id }, token)
+                  }
+                >
+                  Опубликовать
+                </button>
+              )}
             </div>
           </div>
         </div>

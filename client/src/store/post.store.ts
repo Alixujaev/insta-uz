@@ -1,5 +1,5 @@
-import { CREATE_POST, GET_USER_POSTS, LIKE, UNLIKE, UPLOAD } from "@/api/Post";
-import { CreatePostBody } from "@/consts";
+import { COMMENT, CREATE_POST, GET_COMMENTS, GET_USER_POSTS, LIKE, UNLIKE, UPLOAD } from "@/api/Post";
+import { CommentBodyType, CreatePostBody } from "@/consts";
 
 export const handleImageUpload = async (formData: any, token: string) => {
   const result = await UPLOAD(formData, token);
@@ -27,3 +27,14 @@ export const handleUnLike = async (id: string, token: string) => {
   return result
 }
 
+
+export const handleComment = async (body: CommentBodyType, token: string) => {
+  const result = await COMMENT(body, token);
+  return result
+}
+
+
+export const handleGetComments = async (postId: string) => {
+  const result = await GET_COMMENTS(postId);
+  return result
+}
