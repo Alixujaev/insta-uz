@@ -96,4 +96,17 @@ router.get("/api/exist/:username", async (req, res) => {
   }
 })
 
+router.get("/api/search/:username", async (req, res) => {
+  const {username} = req.params;
+
+  try {
+    const users = await User.find({username: {$regex: username, $options: 'i'}});
+    
+    res.status(200).send({ success: true, data: users });
+  } catch (error) {
+
+    res.status(500).send({ success: false, message: 'Ошибка при поиске', error });
+  }
+})
+
 export default router

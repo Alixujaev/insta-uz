@@ -24,3 +24,7 @@ export const UPDATE_USER = (body: any, token: string) => {
 export const EXISTS_USER = (username: string) => {
   return axios.get(BASE_URL + `/api/exist/${username}`)
 }
+
+export const SEARCH_USERS = (username: string) => {
+  return axios.get(BASE_URL + `/api/search/${username}`)
+}

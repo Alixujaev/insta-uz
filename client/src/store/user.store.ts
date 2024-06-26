@@ -1,4 +1,4 @@
-import { ABOUT_ME, EXISTS_USER, GET_USER_INFO, UPDATE_USER } from "@/api/User"
+import { ABOUT_ME, EXISTS_USER, GET_USER_INFO, SEARCH_USERS, UPDATE_USER } from "@/api/User"
 
 export const aboutMe = async(token:string) => {
 
@@ -19,5 +19,10 @@ export const handleUpdate = async (body: any, token: string) => {
 
 export const handleCheckUsername = async (username: string) => {
   const result = await EXISTS_USER(username);
+  return result
+}
+
+export const handleSearchUsers = async (username: string) => {
+  const result = await SEARCH_USERS(username);
   return result
 }

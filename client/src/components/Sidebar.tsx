@@ -8,6 +8,7 @@ import userImg from "@/assets/images/user.jpg";
 import CreatePost from "./dialogs/CreatePost";
 import More from "./dropdowns/More";
 import { useState } from "react";
+import Search from "./Search";
 
 const Sidebar = () => {
   const [isSmall, setIsSmall] = useState(false);
@@ -32,11 +33,11 @@ const Sidebar = () => {
   }
 
   return (
-    <div className=" h-screen fixed top-0 left-0 flex">
+    <div className=" h-screen fixed top-0 left-0 flex z-50">
       <div
         className={`${
           isSmall ? "w-20" : "w-64"
-        } border-r border-[#8e8e8e68] flex flex-col justify-between z-10 bg-white transition duration-300 `}
+        } border-r border-[#8e8e8e68] flex flex-col justify-between z-50 bg-white transition duration-300 `}
       >
         <div>
           {isSmall ? (
@@ -144,31 +145,7 @@ const Sidebar = () => {
         <More isSmall={isSmall} />
       </div>
 
-      <div
-        className={`w-[410px] shadow-2xl rounded-2xl transition-all duration-300 transform ${
-          !isShowSearch ? "-translate-x-[500px]" : "-translate-x-4"
-        } bg-white`}
-      >
-        <div className="pb-5 border-b flex flex-col">
-          <h3 className="pt-3 pb-9 my-2 pl-10 text-2xl font-medium">
-            Поисковый запрос
-          </h3>
-
-          <input
-            type="text"
-            placeholder="Поиск"
-            className="ml-8 p-2 bg-[#efefef] rounded-lg text-sm outline-none mr-5 !h-10"
-          />
-        </div>
-
-        <div className="py-5 px-8">
-          <p className="font-semibold">Недавнее</p>
-
-          <div className="flex justify-center items-center h-[50vh]">
-            <p className="text-sm text-[#8E8E8E]">Нет недавних запросов.</p>
-          </div>
-        </div>
-      </div>
+      <Search isShowSearch={isShowSearch} />
     </div>
   );
 };
