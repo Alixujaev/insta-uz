@@ -14,7 +14,7 @@ const Avatar = ({
       case "xs":
         return "max-w-[32px] w-full h-[32px]";
       case "sm":
-        return "max-w-[38px] w-full h-[38px]";
+        return " w-[38px] h-[38px]";
       case "md":
         return "max-w-[44px] w-full h-[44px]";
       case "lg":

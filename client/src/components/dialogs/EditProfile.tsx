@@ -2,11 +2,11 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import userImage from "@/assets/images/user.jpg";
 import upload from "@/assets/images/upload.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { UserType } from "@/consts";
 import { handleImageUpload } from "@/store/post.store";
-import { handleUpdate } from "@/store/user.store";
+import { handleCheckUsername, handleUpdate } from "@/store/user.store";
 
 const EditProfile = ({ user }: { user: UserType }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -17,8 +17,63 @@ const EditProfile = ({ user }: { user: UserType }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [about, setAbout] = useState<string>(user.about);
   const [isDeletePhoto, setIsDeletePhoto] = useState<boolean>(false);
+  const [message, setMessage] = useState<{
+    loading: boolean;
+    status: number;
+    message: string;
+  }>({
+    loading: false,
+    status: 200,
+    message: "",
+  });
 
   const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    let timerId: string | number | NodeJS.Timeout | undefined;
+
+    if (username == user.username) return;
+
+    if (username.length > 30) {
+      setMessage({
+        loading: false,
+        status: 500,
+        message: "Слишком длинное имя",
+      });
+    } else {
+      if (username.length > 6) {
+        setMessage({ loading: true, status: 300, message: "" });
+        setIsLoading(true);
+        timerId = setTimeout(() => {
+          handleCheckUsername(username)
+            .then((res) => {
+              setMessage({
+                loading: false,
+                status: res.status,
+                message: res.data.message,
+              });
+              setIsLoading(false);
+            })
+            .catch((err) => {
+              setMessage({
+                loading: false,
+                status: 500,
+                message: err.response.data.message,
+              });
+              setIsLoading(false);
+            });
+        }, 2000);
+      } else {
+        setMessage({
+          loading: false,
+          status: 500,
+          message: "Недостаточно символов",
+        });
+      }
+    }
+
+    return () => clearTimeout(timerId);
+  }, [username]);
 
   async function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files && event.target.files.length > 0) {
@@ -146,6 +201,19 @@ const EditProfile = ({ user }: { user: UserType }) => {
               placeholder="Введите имя пользователя"
               className="py-2 px-3 border rounded-md border-[#8e8e8e68] outline-none"
             />
+            {username !== user.username ? (
+              <span
+                className={`text-xs ${
+                  isLoading
+                    ? "text-yellow-500"
+                    : message.status === 200
+                    ? "text-green-500"
+                    : "text-red-500"
+                }`}
+              >
+                {message.loading ? "Загрузка..." : message.message}
+              </span>
+            ) : null}
           </div>
           <div className="flex flex-col mb-3">
             <Label htmlFor="full_name" className="mb-1">
@@ -187,7 +255,11 @@ const EditProfile = ({ user }: { user: UserType }) => {
             />
           </div>
 
-          {!isLoading && username && email && fullName ? (
+          {!isLoading &&
+          username &&
+          email &&
+          fullName &&
+          message.status === 200 ? (
             <button
               onClick={() =>
                 onSubmit(file, username, email, fullName, about, token)

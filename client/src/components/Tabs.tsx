@@ -45,7 +45,7 @@ const Tabs = ({ user }: { user: UserType }) => {
             location.search === "?saved" ? " !border-black font-medium" : ""
           }`}
         >
-          <BaseIcon name="saved" viewBox="0 0 30 30" cn="mt-2" />
+          <BaseIcon name="saved" viewBox="0 0 34 34" cn="mt-2" />
           <p className="text-xs">СОХРАНЕННЫЕ</p>
         </div>
       </div>

@@ -61,7 +61,6 @@ router.get("/api/user-posts/:id", async (req: any, res) => {
   try {    
     const id = req.params.id;
     const posts = await Post.find({author_id: id});
-    console.log(posts);
     
     res.send({ success: true, message: 'Посты получены', data: posts });
   } catch (error) {

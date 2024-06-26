@@ -79,7 +79,7 @@ const Sidebar = () => {
             className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md"
             to={`/${user.username}`}
           >
-            {user.profile_img ? (
+            {user.profile_img?.trim() ? (
               <img
                 src={user.profile_img}
                 alt="image"
