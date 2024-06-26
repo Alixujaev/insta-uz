@@ -71,11 +71,12 @@ router.get("/api/user-posts/:id", async (req: any, res) => {
 router.put("/api/like/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   const post = await Post.findById(req.params.id);
-  
-  if (post.likes.includes(req.body.user.id)) {
-    return res.status(400).send({ success: false, message: 'Вы уже поставили лайк этому посту' });
-  }
 
+  if(post.likes.includes(req.body.user.id)) {
+    return res.status(400).send({ success: false, message: 'Вы уже поставили лайк' });
+  }
+  
+  
   try {
     await Post.findByIdAndUpdate({ _id: id }, { $push: { likes: req.body.user.id } });
     res.send({ success: true, message: 'Лайк поставлен' });
@@ -84,5 +85,24 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
       
   }
 })
+
+router.put("/api/unlike/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  const post = await Post.findById(req.params.id);
+
+  if(!post.likes.includes(req.body.user.id)) {
+    return res.status(400).send({ success: false, message: 'Вы не поставили лайк' });
+  }
+  
+  
+  try {
+    await Post.findByIdAndUpdate({ _id: id }, { $pull: { likes: req.body.user.id } });
+    res.send({ success: true, message: 'Лайк снят' });
+  } catch (error) {
+    console.log(error);
+      
+  }
+})
+
 
 export default router

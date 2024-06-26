@@ -6,17 +6,33 @@ import { Link } from "react-router-dom";
 import PostDialog from "./PostDialog";
 import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
-import { handleLike } from "@/store/post.store";
+import { handleLike, handleUnLike } from "@/store/post.store";
+import { useLocalStorage } from "usehooks-ts";
+import { useState } from "react";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const token = localStorage.getItem("token");
+  const [user] = useLocalStorage("user", "");
+  const [likes, setLikes] = useState<string[]>([...post.likes]);
 
   function like(id: string, token: string | null) {
     if (!token) return;
 
     handleLike(id, token)
       .then((res) => {
-        console.log(res);
+        setLikes([...likes, user.id]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function unlike(id: string, token: string | null) {
+    if (!token) return;
+
+    handleUnLike(id, token)
+      .then((res) => {
+        setLikes(likes.filter((like) => like !== user.id));
       })
       .catch((err) => {
         console.log(err);
@@ -35,8 +51,14 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
 
           <div className="absolute hidden top-0 left-0 w-full h-full bg-[#00000056] group-hover:flex justify-center items-center gap-10">
             <div className="flex gap-2 text-white items-center">
-              <BaseIcon name="white_heart" cn="h-fit" />
-              <p className="font-semibold text-lg">{post.likes.length}</p>
+              <BaseIcon
+                name="white_heart"
+                viewBox="0 0 24 24"
+                width={32}
+                height={32}
+                color="white"
+              />
+              <p className="font-semibold text-lg">{likes.length}</p>
             </div>
             <div className="flex gap-2 text-white items-center">
               <BaseIcon name="white_comment" cn="h-fit" />
@@ -78,9 +100,26 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
             <div className="p-3 border-b">
               <div className="mb-4 flex justify-between items-center">
                 <div className="flex gap-4 items-center">
-                  <button onClick={() => like(post._id, token)}>
-                    <BaseIcon name="notifications" />
-                  </button>
+                  {likes.includes(user.id) ? (
+                    <button onClick={() => unlike(post._id, token)}>
+                      <BaseIcon
+                        name="heart_red"
+                        viewBox="0 0 24 24"
+                        width={32}
+                        height={32}
+                        color="red"
+                      />
+                    </button>
+                  ) : (
+                    <button onClick={() => like(post._id, token)}>
+                      <BaseIcon
+                        name="heart"
+                        viewBox="0 0 24 24"
+                        width={32}
+                        height={32}
+                      />
+                    </button>
+                  )}
                   <button>
                     <BaseIcon name="comment" />
                   </button>
@@ -95,7 +134,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
               </div>
               <div>
                 <p className="font-semibold text-sm mb-1">
-                  {post.likes.length} отметок "Нравится"
+                  {likes.length} отметок "Нравится"
                 </p>
                 <p className="text-[#8E8E8E] text-xs">
                   {formatDate(new Date(post.createdAt))}

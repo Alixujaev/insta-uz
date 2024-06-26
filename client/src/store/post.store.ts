@@ -1,4 +1,4 @@
-import { CREATE_POST, GET_USER_POSTS, LIKE, UPLOAD } from "@/api/Post";
+import { CREATE_POST, GET_USER_POSTS, LIKE, UNLIKE, UPLOAD } from "@/api/Post";
 import { CreatePostBody } from "@/consts";
 
 export const handleImageUpload = async (formData: any, token: string) => {
@@ -19,6 +19,11 @@ export const handleGetPosts = async (id: string) => {
 
 export const handleLike = async (id: string, token: string) => {
   const result = await LIKE(id, token);
+  return result
+}
+
+export const handleUnLike = async (id: string, token: string) => {
+  const result = await UNLIKE(id, token);
   return result
 }
 

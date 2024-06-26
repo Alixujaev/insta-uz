@@ -28,3 +28,11 @@ export const LIKE = (id: string, token: string) => {
     }
   })
 }
+
+export const UNLIKE = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/unlike/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
