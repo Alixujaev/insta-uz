@@ -28,3 +28,19 @@ export const EXISTS_USER = (username: string) => {
 export const SEARCH_USERS = (username: string) => {
   return axios.get(BASE_URL + `/api/search/${username}`)
 }
+
+export const FOLLOW = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/follow/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const UNFOLLOW = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/unfollow/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

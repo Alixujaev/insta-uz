@@ -1,9 +1,19 @@
 import { handleSearchUsers } from "@/store/user.store";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
 
-const Search = ({ isShowSearch }: { isShowSearch: boolean }) => {
+const Search = ({
+  isShowSearch,
+  isSmall,
+  setIsShowSearch,
+  setIsSmall,
+}: {
+  isShowSearch: boolean;
+  isSmall: boolean;
+  setIsShowSearch: any;
+  setIsSmall: any;
+}) => {
   const [searchVal, setSearchVal] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
@@ -30,8 +40,8 @@ const Search = ({ isShowSearch }: { isShowSearch: boolean }) => {
 
   return (
     <div
-      className={`w-[410px] shadow-2xl z-10 rounded-2xl transition-all duration-300 transform ${
-        !isShowSearch ? "-translate-x-[500px]" : "-translate-x-4"
+      className={` shadow-2xl z-10 rounded-2xl transition-all duration-300 transform ${
+        !isShowSearch ? "-translate-x-[500px] w-0" : "-translate-x-4 w-[410px]"
       } bg-white`}
     >
       <div className="pb-5 border-b flex flex-col mb-2">
@@ -59,6 +69,12 @@ const Search = ({ isShowSearch }: { isShowSearch: boolean }) => {
           <Link
             to={`/${user.username}`}
             className="py-2 px-8 flex items-center gap-2 hover:bg-[#efefef] cursor-pointer"
+            key={user.id}
+            onClick={() => {
+              setIsShowSearch(false);
+              setIsSmall(false);
+              setSearchVal("");
+            }}
           >
             <Avatar src={user.profile_img} size="sm" />
 

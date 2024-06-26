@@ -5,13 +5,22 @@ import { UserType } from "@/consts";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
-import { handleGetUser } from "@/store/user.store";
+import {
+  handleFollow,
+  handleGetUser,
+  handleUnFollow,
+} from "@/store/user.store";
 import EditProfile from "@/components/dialogs/EditProfile";
+import { useLocalStorage } from "usehooks-ts";
+import { Button } from "@/components/ui/button";
 
 const Profile = () => {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UserType | null>(null);
+  const [my] = useLocalStorage<{ id: string }>("user", { id: "" });
+  const token = localStorage.getItem("token");
+  const [followers, setFollowers] = useState<string[]>([]);
 
   useEffect(() => {
     async function getUserInfo(username: string) {
@@ -25,6 +34,35 @@ const Profile = () => {
 
     getUserInfo(params.username);
   }, [params]);
+
+  useEffect(() => {
+    setFollowers(user?.followers || []);
+  }, [user]);
+
+  function handleFollowUser(id: string, token: string | null, myId: string) {
+    if (!token) return;
+
+    handleFollow(id, token)
+      .then((res) => {
+        console.log(res);
+        setFollowers([...followers, myId]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function handleUnFollowUser(id: string, token: string | null, myId: string) {
+    if (!token) return;
+
+    handleUnFollow(id, token)
+      .then((res) => {
+        setFollowers(followers.filter((follower) => follower !== myId));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   return (
     <div className="flex justify-center">
@@ -43,14 +81,42 @@ const Profile = () => {
                   {user.username}
                 </Link>
 
-                <div className="flex gap-3 items-center">
-                  <div className="flex gap-2">
-                    <EditProfile user={user} />
+                {my.id === user.id ? (
+                  <div className="flex gap-3 items-center">
+                    <div className="flex gap-2">
+                      <EditProfile user={user} />
+                    </div>
+                    <button>
+                      <BaseIcon name="settings" />
+                    </button>
                   </div>
-                  <button>
-                    <BaseIcon name="settings" />
-                  </button>
-                </div>
+                ) : (
+                  <div className="flex gap-3 items-center">
+                    {followers.includes(my.id) ? (
+                      <Button
+                        onClick={() =>
+                          handleUnFollowUser(user.id, token, my.id)
+                        }
+                        className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8"
+                      >
+                        Отменить подписку
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleFollowUser(user.id, token, my.id)}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-8"
+                      >
+                        Подписаться
+                      </Button>
+                    )}
+                    <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8">
+                      Отправить сообщение
+                    </Button>
+                    <button>
+                      <BaseIcon name="settings" />
+                    </button>
+                  </div>
+                )}
               </div>
               <div className="flex gap-10 mb-6">
                 <p>
@@ -58,7 +124,7 @@ const Profile = () => {
                   публикаций
                 </p>
                 <p>
-                  <span className="font-medium">{user.followers.length} </span>
+                  <span className="font-medium">{followers.length} </span>
                   подписчиков
                 </p>
                 <p>
@@ -73,7 +139,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <Tabs user={user} />
+          <Tabs user={user} myAcc={my.id === user.id} />
         </div>
       )}
     </div>

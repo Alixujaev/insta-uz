@@ -33,7 +33,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div className=" h-screen fixed top-0 left-0 flex z-50">
+    <div className={`h-screen fixed top-0 left-0 flex z-50`}>
       <div
         className={`${
           isSmall ? "w-20" : "w-64"
@@ -145,7 +145,12 @@ const Sidebar = () => {
         <More isSmall={isSmall} />
       </div>
 
-      <Search isShowSearch={isShowSearch} />
+      <Search
+        isShowSearch={isShowSearch}
+        isSmall={isSmall}
+        setIsSmall={setIsSmall}
+        setIsShowSearch={setIsShowSearch}
+      />
     </div>
   );
 };

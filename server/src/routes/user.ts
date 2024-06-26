@@ -109,4 +109,28 @@ router.get("/api/search/:username", async (req, res) => {
   }
 })
 
+router.put("/api/follow/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+
+  try {
+    await User.findByIdAndUpdate({ _id: id }, { $push: { followers: req.body.user.id } });
+    await User.findByIdAndUpdate({ _id: req.body.user.id }, { $push: { following: id } });
+    res.send({ success: true, message: 'Вы подписались на пользователя' });
+  } catch (error) {
+    res.send({ success: false, message: 'Ошибка при подписке', error });
+  }
+})
+
+router.put("/api/unfollow/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+
+  try {
+    await User.findByIdAndUpdate({ _id: id }, { $pull: { followers: req.body.user.id } });
+    await User.findByIdAndUpdate({ _id: req.body.user.id }, { $pull: { following: id } });
+    res.send({ success: true, message: 'Вы отписались от пользователя' });
+  } catch (error) {
+    res.send({ success: false, message: 'Ошибка при отписке', error });
+  }
+})
+
 export default router
