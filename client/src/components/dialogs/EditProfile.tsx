@@ -156,7 +156,7 @@ const EditProfile = ({ user }: { user: UserType }) => {
                 src={
                   file
                     ? URL.createObjectURL(file)
-                    : user.profile_img.trim() && !isDeletePhoto
+                    : user.profile_img?.trim() && !isDeletePhoto
                     ? user.profile_img
                     : userImage
                 }
@@ -177,7 +177,7 @@ const EditProfile = ({ user }: { user: UserType }) => {
                 onChange={handleSetFile}
               />
             </div>
-            {(!isDeletePhoto && user.profile_img.trim()) || file ? (
+            {(!isDeletePhoto && user.profile_img?.trim()) || file ? (
               <button
                 onClick={() => {
                   setIsDeletePhoto(!isDeletePhoto);

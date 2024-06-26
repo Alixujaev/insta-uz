@@ -55,7 +55,7 @@ const Tabs = ({ user }: { user: UserType }) => {
           {isLoading ? (
             <p>Загрузка...</p>
           ) : !isLoading && posts.length === 0 ? (
-            <div className="h-[40vh] flex flex-col justify-center items-center w-full">
+            <div className="!h-[40vh] mt-20 flex flex-col justify-center items-center w-full">
               <h2 className="text-3xl font-bold mb-3">Поделиться фото</h2>
               <p className="text-sm w-[35%] mx-auto text-center mb-2">
                 Фото, которыми вы делитесь, будут показываться в вашем профиле.
@@ -72,11 +72,7 @@ const Tabs = ({ user }: { user: UserType }) => {
         </>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-20">
-            {/* {user.posts.map((item: any) => (
-          <Post key={item.id} post={item} author={user} />
-        ))} */}
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-20"></div>
           <div className="h-[40vh] flex flex-col justify-center items-center w-full">
             <h2 className="text-3xl font-bold mb-3">Поделиться фото</h2>
             <p className="text-sm w-[35%] mx-auto text-center mb-2">

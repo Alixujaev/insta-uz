@@ -5,7 +5,13 @@ import { Label } from "../ui/label";
 import { useState } from "react";
 import { handleCreate, handleImageUpload } from "@/store/post.store";
 
-const CreatePost = ({ profile = false }: { profile?: boolean }) => {
+const CreatePost = ({
+  profile = false,
+  isSmall = false,
+}: {
+  profile?: boolean;
+  isSmall?: boolean;
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
@@ -63,7 +69,7 @@ const CreatePost = ({ profile = false }: { profile?: boolean }) => {
         ) : (
           <div className="p-3.5 py-2.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer">
             <BaseIcon name="add" />
-            <span className="">Создать</span>
+            {!isSmall ? <span className="">Создать</span> : null}
           </div>
         )}
       </DialogTrigger>

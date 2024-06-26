@@ -1,23 +1,32 @@
+import BaseIcon from "../icon/BaseIcon";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-const More = () => {
+const More = ({ isSmall }: { isSmall?: boolean }) => {
+  function handleLogout() {
+    localStorage.clear();
+    window.location.reload();
+  }
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>Open</DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuItem>Subscription</DropdownMenuItem>
+      <DropdownMenuTrigger>
+        <div className="ml-3 flex gap-4 items-center px-3.5 mb-8">
+          <BaseIcon name="more" />
+
+          {!isSmall ? <p>Ещё</p> : null}
+        </div>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56 p-2">
+        <DropdownMenuItem className="cursor-pointer p-3" onClick={handleLogout}>
+          Выйти
+        </DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer p-3">
+          Профиль
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
