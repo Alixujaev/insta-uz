@@ -20,3 +20,11 @@ export const CREATE_POST = (body: CreatePostBody, token: string) => {
 export const GET_USER_POSTS = (id: string) => {
   return axios.get(BASE_URL + `/api/user-posts/${id}`)
 }
+
+export const LIKE = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/like/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

@@ -6,8 +6,23 @@ import { Link } from "react-router-dom";
 import PostDialog from "./PostDialog";
 import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
+import { handleLike } from "@/store/post.store";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
+  const token = localStorage.getItem("token");
+
+  function like(id: string, token: string | null) {
+    if (!token) return;
+
+    handleLike(id, token)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -63,7 +78,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
             <div className="p-3 border-b">
               <div className="mb-4 flex justify-between items-center">
                 <div className="flex gap-4 items-center">
-                  <button>
+                  <button onClick={() => like(post._id, token)}>
                     <BaseIcon name="notifications" />
                   </button>
                   <button>
