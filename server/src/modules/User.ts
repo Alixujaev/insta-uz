@@ -6,8 +6,18 @@ const UserSchema = new Schema({
   password: String,
   email: String,
   about: String,
-  followers: [String],
-  following: [String],
+  followers: [{
+    id: String,
+    username: String,
+    profile_img: String,
+    full_name: String
+  }],
+  following: [{
+    id: String,
+    username: String,
+    profile_img: String,
+    full_name: String
+  }],
   posts: [String],
   stories: [String],
   profile_img: String
