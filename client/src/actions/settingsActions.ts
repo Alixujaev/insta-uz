@@ -4,3 +4,9 @@ export const setAcceptVerify = (item: boolean) => {
     payload: item
   }
 }
+
+export const updatePosts = () => {
+  return {
+    type: 'UPDATE_POSTS'
+  }
+}

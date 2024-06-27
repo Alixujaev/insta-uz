@@ -1,6 +1,6 @@
 const initialState = {
-  acceptVerify: false
-
+  acceptVerify: false,
+  isUpdatePosts: false
 }
 
 export const settingsReducer = (state = initialState, action: { type: string, payload: any }) => {
@@ -11,7 +11,11 @@ export const settingsReducer = (state = initialState, action: { type: string, pa
         acceptVerify: action.payload
       }
 
-
+    case 'UPDATE_POSTS':
+      return {
+        ...state,
+        isUpdatePosts: !state.isUpdatePosts
+      }
     default:
       return state
   }

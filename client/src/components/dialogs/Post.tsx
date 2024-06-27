@@ -20,6 +20,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const token = localStorage.getItem("token");
+  const [open, setOpen] = useState<boolean>(false);
   const [user] = useLocalStorage<{ id: string }>("user", { id: "" });
   const [likes, setLikes] = useState<string[]>([...post.likes]);
   const [commentText, setCommentText] = useState<string>("");
@@ -72,17 +73,19 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
   useEffect(() => {
-    handleGetComments(post._id)
-      .then((res) => {
-        setComments(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [post._id]);
+    if (open) {
+      handleGetComments(post._id)
+        .then((res) => {
+          setComments(res.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [post._id, open]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <div className="group cursor-pointer w-full !h-[309px] relative">
           <img
@@ -113,7 +116,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
         <img
           src={post.image}
           alt="post image"
-          className="h-full !w-[411px] object-contain"
+          className=" !w-[411px] object-cover"
         />
 
         <div className="flex-1 py-2 flex flex-col justify-between">

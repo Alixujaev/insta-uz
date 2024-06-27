@@ -4,6 +4,8 @@ import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
 import { useState } from "react";
 import { handleCreate, handleImageUpload } from "@/store/post.store";
+import { useDispatch } from "react-redux";
+import { updatePosts } from "@/actions/settingsActions";
 
 const CreatePost = ({
   profile = false,
@@ -12,6 +14,7 @@ const CreatePost = ({
   profile?: boolean;
   isSmall?: boolean;
 }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
@@ -35,14 +38,14 @@ const CreatePost = ({
 
         if (result.status === 200) {
           try {
-            const res = await handleCreate(
+            await handleCreate(
               {
                 description,
                 image: result.data.data.url,
               },
               token
             );
-
+            dispatch(updatePosts());
             setOpen(false);
             setFile(null);
             setDescription("");

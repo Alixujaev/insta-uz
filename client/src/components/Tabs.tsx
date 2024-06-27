@@ -5,38 +5,33 @@ import CreatePost from "./dialogs/CreatePost";
 import { useEffect, useState } from "react";
 import { handleGetPosts } from "@/store/post.store";
 import Post from "./dialogs/Post";
+import { useSelector } from "react-redux";
 
 const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+  const { isUpdatePosts } = useSelector((state: any) => state.settings);
+
+  const getPosts = async (id: string) => {
+    const result = await handleGetPosts(id);
+
+    setPosts(result.data.data.reverse());
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     setIsLoading(true);
 
     if (myAcc) {
       if (location.search === "") {
-        const getPosts = async (id: string) => {
-          const result = await handleGetPosts(id);
-
-          setPosts(result.data.data);
-          setIsLoading(false);
-        };
-
         getPosts(user.id);
       }
     } else {
-      const getPosts = async (id: string) => {
-        const result = await handleGetPosts(id);
-
-        setPosts(result.data.data);
-        setIsLoading(false);
-      };
-
       getPosts(user.id);
     }
-  }, [location, myAcc]);
+  }, [location, myAcc, isUpdatePosts]);
 
   return (
     <div>

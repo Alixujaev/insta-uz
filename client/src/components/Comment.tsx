@@ -18,7 +18,7 @@ const Comment = ({
       <Avatar src={authorImage} size="xs" />
       <div className="">
         <p className="text-sm">
-          <Link to="/" className="text-sm font-semibold mr-2">
+          <Link to={`/${authorName}`} className="text-sm font-semibold mr-2">
             {authorName}
           </Link>
           {text}

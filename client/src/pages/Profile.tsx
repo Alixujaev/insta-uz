@@ -7,7 +7,6 @@ import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
 import {
   handleFollow,
-  handleGetFollowers,
   handleGetUser,
   handleUnFollow,
 } from "@/store/user.store";
@@ -42,8 +41,6 @@ const Profile = () => {
     setFollowers(user?.followers || []);
     setFollowing(user?.following || []);
   }, [user]);
-
-  console.log(following);
 
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
