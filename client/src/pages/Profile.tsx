@@ -14,6 +14,7 @@ import {
 import EditProfile from "@/components/dialogs/EditProfile";
 import { useLocalStorage } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
+import UserList from "@/components/dialogs/UserList";
 
 const Profile = () => {
   const params = useParams();
@@ -65,15 +66,6 @@ const Profile = () => {
       });
   }
 
-  function handleFollowersGet(id: string) {
-    handleGetFollowers(id)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
   return (
     <div className="flex justify-center">
       {isLoading || !user ? (
@@ -133,14 +125,31 @@ const Profile = () => {
                   <span className="font-medium">{user.posts.length} </span>
                   публикаций
                 </p>
-                <p onClick={() => handleFollowersGet(user.id)}>
-                  <span className="font-medium">{followers.length} </span>
-                  подписчиков
-                </p>
-                <p>
-                  <span className="font-medium">{user.following.length} </span>
-                  подписок
-                </p>
+                {user.followers.length > 0 ? (
+                  <UserList
+                    count={user.followers.length}
+                    type="followers"
+                    id={user.id}
+                  />
+                ) : (
+                  <p>
+                    <span className="font-medium">{user.followers.length}</span>{" "}
+                    подписчиков
+                  </p>
+                )}
+
+                {user.following.length > 0 ? (
+                  <UserList
+                    count={user.following.length}
+                    type="following"
+                    id={user.id}
+                  />
+                ) : (
+                  <p>
+                    <span className="font-medium">{user.following.length}</span>{" "}
+                    подписок
+                  </p>
+                )}
               </div>
 
               <p className="font-semibold">{user.full_name}</p>

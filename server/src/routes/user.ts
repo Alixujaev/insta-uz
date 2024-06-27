@@ -191,5 +191,16 @@ router.get("/api/followers/:id", async (req, res) => {
   
 })
 
+router.get("/api/following/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findById(id).select('following').populate('following', 'profile_img username full_name');
+    res.status(200).send({ success: true, data: user });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении подписок', error });
+  }
+})
+
 
 export default router
