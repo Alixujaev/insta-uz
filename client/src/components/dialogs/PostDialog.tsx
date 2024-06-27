@@ -1,18 +1,44 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import {
+  areYouSureOpenAction,
+  editModalOpenAction,
+  editPostIdAction,
+} from "@/actions/settingsActions";
 
-const PostDialog = () => {
+const PostDialog = ({ id, setPostOpen }: { id: string; setPostOpen: any }) => {
   const [open, setOpen] = useState<boolean>(false);
+  const dispatch = useDispatch();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
         <BaseIcon name="dots" />
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-3 !px-0 !gap-0 !w-[400px]">
-        <p className="text-center text-sm cursor-pointer font-bold text-red-500 pb-3 mb-3 border-b">
+        <button
+          onClick={() => {
+            dispatch(areYouSureOpenAction());
+            setOpen(!open);
+          }}
+          className="text-center text-sm cursor-pointer font-bold text-red-500 pb-3 mb-3 border-b"
+        >
           Удалить публикацию
-        </p>
+        </button>
+
+        <button
+          onClick={() => {
+            dispatch(editModalOpenAction());
+            setOpen(!open);
+            setPostOpen(false);
+            dispatch(editPostIdAction(id));
+          }}
+          className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
+        >
+          Редактировать
+        </button>
 
         <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
           Добавить в избранное

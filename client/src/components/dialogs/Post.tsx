@@ -8,6 +8,7 @@ import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
 import {
   handleComment,
+  handleDelete,
   handleGetComments,
   handleLike,
   handleUnLike,
@@ -17,6 +18,9 @@ import { useEffect, useRef, useState } from "react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import useClickOutside from "@/hooks/useClickOutside";
+import AreYouSure from "./AreYouSure";
+import { useDispatch } from "react-redux";
+import { updatePosts } from "@/actions/settingsActions";
 
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const token = localStorage.getItem("token");
@@ -28,6 +32,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [comments, setComments] = useState<any[]>([]);
   const emojiRef = useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   function like(id: string, token: string | null) {
     if (!token) return;
@@ -84,6 +89,21 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
     }
   }, [post._id, open]);
 
+  function handleDeletePost(id: string, token: string | null) {
+    if (!token) return;
+
+    setOpen(false);
+
+    handleDelete(id, token)
+      .then((res) => {
+        setOpen(false);
+        dispatch(updatePosts());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
@@ -131,7 +151,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
                 {author.username}
               </Link>
             </div>
-            <PostDialog />
+            <PostDialog id={post._id} setPostOpen={setOpen} />
           </div>
           <div className="flex-1 p-3 border-b">
             <Comment
@@ -244,6 +264,10 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
               )}
             </div>
           </div>
+          <AreYouSure
+            type="post"
+            fn={() => handleDeletePost(post._id, token)}
+          />
         </div>
       </DialogContent>
     </Dialog>

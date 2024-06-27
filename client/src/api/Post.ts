@@ -17,8 +17,28 @@ export const CREATE_POST = (body: CreatePostBody, token: string) => {
   })
 }
 
+export const DELETE_POST = (id: string, token: string) => {
+  return axios.delete(BASE_URL + `/api/delete-post/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const EDIT_POST = (body: any, token: string, id: string,)   => {
+  return axios.put(BASE_URL + `/api/post/${id}`, body, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
 export const GET_USER_POSTS = (id: string) => {
   return axios.get(BASE_URL + `/api/user-posts/${id}`)
+}
+
+export const GET_ONE_POST = (id: string) => {
+  return axios.get(BASE_URL + `/api/post/${id}`)
 }
 
 export const LIKE = (id: string, token: string) => {

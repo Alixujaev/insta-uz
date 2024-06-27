@@ -141,4 +141,53 @@ router.get("/api/comments/:id", async (req:any, res) => {
   }
 })
 
+router.delete("/api/delete-post/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  const post = await Post.findById(id);
+  if (post.author_id !== req.body.user.id) {
+    return res.status(400).send({ success: false, message: 'Вы не можете удалить пост' });
+  }
+
+  try {
+    await User.updateOne({ _id: req.body.user.id }, { $pull: { posts: id } });
+    await Post.findByIdAndDelete({ _id: id });
+    res.send({ success: true, message: 'Пост удален' });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при удалении поста', error });
+  }
+})
+
+router.get("/api/post/:id", async (req: any, res) => {
+  const id = req.params.id;
+  try {
+    const post = await Post.findById(id);
+    res.send({ success: true, message: 'Пост получен', data: post });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении поста', error });
+  }
+})
+
+router.put("/api/post/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  const post = await Post.findById(id);
+  if (post.author_id !== req.body.user.id) {
+    return res.status(400).send({ success: false, message: 'Вы не можете редактировать пост' });
+  }
+
+  try {
+    await Post.findByIdAndUpdate({ _id: id }, { description: req.body.description });
+    res.send({ success: true, message: 'Пост отредактирован' });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при редактировании поста', error });
+  }
+})
+
+
+
+
+
+
+
+
+
 export default router

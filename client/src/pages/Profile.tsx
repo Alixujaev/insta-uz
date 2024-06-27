@@ -14,8 +14,10 @@ import EditProfile from "@/components/dialogs/EditProfile";
 import { useLocalStorage } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import UserList from "@/components/dialogs/UserList";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+  const { isUpdatePosts } = useSelector((state: any) => state.settings);
   const params = useParams();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<UserType | null>(null);
@@ -35,7 +37,7 @@ const Profile = () => {
     if (!params.username) return;
 
     getUserInfo(params.username);
-  }, [params]);
+  }, [params, isUpdatePosts]);
 
   useEffect(() => {
     setFollowers(user?.followers || []);

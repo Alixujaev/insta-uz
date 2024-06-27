@@ -9,6 +9,7 @@ import Sidebar from "./components/Sidebar";
 import Links from "./components/Links";
 import { useEffect } from "react";
 import { aboutMe } from "./store/user.store";
+import EditPost from "./components/dialogs/EditPost";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -48,6 +49,7 @@ function App() {
           <Route path="/:username" element={<Profile />} />
         </Routes>
 
+        <EditPost />
         <Links />
       </div>
     </div>

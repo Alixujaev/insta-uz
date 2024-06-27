@@ -1,6 +1,9 @@
 const initialState = {
   acceptVerify: false,
-  isUpdatePosts: false
+  isUpdatePosts: false,
+  areYouSureOpen: false,
+  editModalOpen: false,
+  editPostId: ''
 }
 
 export const settingsReducer = (state = initialState, action: { type: string, payload: any }) => {
@@ -16,6 +19,25 @@ export const settingsReducer = (state = initialState, action: { type: string, pa
         ...state,
         isUpdatePosts: !state.isUpdatePosts
       }
+
+    case 'ARE_YOU_SURE_OPEN':
+      return {
+        ...state,
+        areYouSureOpen: !state.areYouSureOpen
+      }
+
+    case 'EDIT_MODAL_OPEN':
+      return {
+        ...state,
+        editModalOpen: !state.editModalOpen
+      }
+
+    case 'EDIT_POST_ID':
+      return {
+        ...state,
+        editPostId: action.payload
+      }
+
     default:
       return state
   }
