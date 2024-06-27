@@ -52,3 +52,11 @@ export const GET_FOLLOWERS = (id: string) => {
 export const GET_FOLLOWING = (id: string) => {
   return axios.get(BASE_URL + `/api/following/${id}`)
 }
+
+export const DELETE_FOLLOWER = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/follower/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

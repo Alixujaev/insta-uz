@@ -202,5 +202,28 @@ router.get("/api/following/:id", async (req, res) => {
   }
 })
 
+router.put("/api/follower/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  const myId = req.body.user?.id;
+
+  if (!myId) {
+    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+  }
+
+  try {
+        const updatedUser = await User.findByIdAndUpdate(
+          myId,
+          { $pull: { followers: id } },
+          { new: true }
+        );
+  
+    res.status(200).send({ success: true, message: 'Подписчик удален', data: updatedUser })
+  } catch (error) {
+    console.log(error);
+    
+    res.status(500).send({ success: false, message: 'Ошибка при удалении подписчика', error });
+  }
+})
+
 
 export default router

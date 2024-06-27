@@ -1,4 +1,4 @@
-import { ABOUT_ME, EXISTS_USER, FOLLOW, GET_FOLLOWERS, GET_FOLLOWING, GET_USER_INFO, SEARCH_USERS, UNFOLLOW, UPDATE_USER } from "@/api/User"
+import { ABOUT_ME, DELETE_FOLLOWER, EXISTS_USER, FOLLOW, GET_FOLLOWERS, GET_FOLLOWING, GET_USER_INFO, SEARCH_USERS, UNFOLLOW, UPDATE_USER } from "@/api/User"
 
 export const aboutMe = async(token:string) => {
 
@@ -44,5 +44,10 @@ export const handleGetFollowers = async (id: string) => {
 
 export const handleGetFollowing = async (id: string) => {
   const result = await GET_FOLLOWING(id);
+  return result
+}
+
+export const handleDeleteFollower = async (id: string, token: string) => {
+  const result = await DELETE_FOLLOWER(id, token);
   return result
 }

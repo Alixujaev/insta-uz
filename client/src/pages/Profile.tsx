@@ -23,6 +23,7 @@ const Profile = () => {
   const [my] = useLocalStorage<{ id: string }>("user", { id: "" });
   const token = localStorage.getItem("token");
   const [followers, setFollowers] = useState<string[]>([]);
+  const [following, setFollowing] = useState<string[]>([]);
 
   useEffect(() => {
     async function getUserInfo(username: string) {
@@ -39,7 +40,10 @@ const Profile = () => {
 
   useEffect(() => {
     setFollowers(user?.followers || []);
+    setFollowing(user?.following || []);
   }, [user]);
+
+  console.log(following);
 
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
@@ -127,26 +131,32 @@ const Profile = () => {
                 </p>
                 {user.followers.length > 0 ? (
                   <UserList
-                    count={user.followers.length}
+                    count={followers.length}
+                    token={token}
                     type="followers"
                     id={user.id}
+                    followers={followers}
+                    setFollowers={setFollowers}
                   />
                 ) : (
                   <p>
-                    <span className="font-medium">{user.followers.length}</span>{" "}
+                    <span className="font-medium">{followers.length}</span>{" "}
                     подписчиков
                   </p>
                 )}
 
                 {user.following.length > 0 ? (
                   <UserList
-                    count={user.following.length}
+                    count={following.length}
+                    token={token}
                     type="following"
                     id={user.id}
+                    following={following}
+                    setFollowing={setFollowing}
                   />
                 ) : (
                   <p>
-                    <span className="font-medium">{user.following.length}</span>{" "}
+                    <span className="font-medium">{following.length}</span>{" "}
                     подписок
                   </p>
                 )}

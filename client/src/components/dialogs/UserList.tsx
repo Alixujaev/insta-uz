@@ -1,21 +1,33 @@
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useEffect, useState } from "react";
-import { handleGetFollowers, handleGetFollowing } from "@/store/user.store";
+import {
+  handleDeleteFollower,
+  handleGetFollowers,
+  handleGetFollowing,
+  handleUnFollow,
+} from "@/store/user.store";
 import Avatar from "../Avatar";
 import { Button } from "../ui/button";
+import { Link } from "react-router-dom";
 
 const UserList = ({
   count,
   type,
   id,
   token,
-  myId,
+  followers,
+  setFollowers,
+  following,
+  setFollowing,
 }: {
   count: number;
   type: "followers" | "following";
   id: string;
   token?: string | null;
-  myId?: string;
+  followers?: string[];
+  setFollowers?: any;
+  following?: string[];
+  setFollowing?: any;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const [searchVal, setSearchVal] = useState<string>("");
@@ -50,6 +62,36 @@ const UserList = ({
     }
   }, [open, type, id]);
 
+  function handleUnFollowUser(id: string, token: string | null | undefined) {
+    if (!token) return;
+
+    handleUnFollow(id, token)
+      .then((res) => {
+        setUsers(users.filter((user) => user._id !== id));
+        setFollowing(following?.filter((following) => following !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function handleFollowerDelete(id: string, token: string | null | undefined) {
+    if (!token) return;
+
+    handleDeleteFollower(id, token)
+      .then((res) => {
+        setUsers(users.filter((user) => user._id !== id));
+        setFollowers(followers?.filter((follower) => follower !== id));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    if (!users.length) setOpen(false);
+  }, [users]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
@@ -63,14 +105,6 @@ const UserList = ({
           {type === "followers" ? "Подписчики" : "Ваши подписки"}
         </h4>
         <div className="mx-3 my-2">
-          {/* <input
-            type="text"
-            placeholder="Поиск"
-            className="mb-4 p-2 py-1.5 bg-[#efefef] rounded-lg text-sm outline-none w-full"
-            value={searchVal}
-            onChange={(e) => setSearchVal(e.target.value)}
-          /> */}
-
           <div className="max-h-72 overflow-y-auto">
             {isLoading ? (
               <div className="flex justify-center items-center h-24">
@@ -85,18 +119,29 @@ const UserList = ({
                   <div className="flex gap-2 items-center flex-1">
                     <Avatar size="md" src={item.profile_img} />
                     <div>
-                      <p className="text-sm font-medium">{item.username}</p>
+                      <Link
+                        to={`/${item.username}`}
+                        className="text-sm font-medium"
+                      >
+                        {item.username}
+                      </Link>
                       <p className="text-xs text-[#8E8E8E] whitespace-nowrap">
                         {item.full_name}
                       </p>
                     </div>
                   </div>
                   {type === "followers" ? (
-                    <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold">
+                    <Button
+                      onClick={() => handleFollowerDelete(item._id, token)}
+                      className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
+                    >
                       Удалить
                     </Button>
                   ) : (
-                    <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold">
+                    <Button
+                      onClick={() => handleUnFollowUser(item._id, token)}
+                      className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
+                    >
                       Отписаться
                     </Button>
                   )}

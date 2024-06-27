@@ -1,5 +1,5 @@
 import { handleSearchUsers } from "@/store/user.store";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
 
@@ -17,8 +17,10 @@ const Search = ({
   const [searchVal, setSearchVal] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (isShowSearch) inputRef.current?.focus();
     let timerId: NodeJS.Timeout;
     if (searchVal) {
       setIsLoading(true);
@@ -36,7 +38,7 @@ const Search = ({
     }
 
     return () => clearTimeout(timerId);
-  }, [searchVal]);
+  }, [searchVal, isShowSearch]);
 
   return (
     <div
@@ -50,6 +52,7 @@ const Search = ({
         </h3>
 
         <input
+          ref={inputRef}
           type="text"
           placeholder="Поиск"
           className="ml-8 p-2 bg-[#efefef] rounded-lg text-sm outline-none mr-5 !h-10"
