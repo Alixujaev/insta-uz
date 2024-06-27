@@ -7,16 +7,12 @@ const UserSchema = new Schema({
   email: String,
   about: String,
   followers: [{
-    id: String,
-    username: String,
-    profile_img: String,
-    full_name: String
+    type: Schema.Types.ObjectId,
+    ref: "User"
   }],
   following: [{
-    id: String,
-    username: String,
-    profile_img: String,
-    full_name: String
+    type: Schema.Types.ObjectId,
+    ref: "User"
   }],
   posts: [String],
   stories: [String],

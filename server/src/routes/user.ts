@@ -110,45 +110,86 @@ router.get("/api/search/:username", async (req, res) => {
 })
 
 router.put("/api/follow/:id", verifyToken, async (req: any, res) => {
-  const id = req.params.id;
+  const userIdToFollow = req.params.id;
+  const userId = req.body.user?.id;
+
+  if (!userId) {
+    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+  }
 
   try {
-    const user = await User.findById(id);
-    const me = await User.findById(req.body.user.id);
+    const userBeingFollowed = await User.findByIdAndUpdate(
+      userIdToFollow,
+      { $push: { followers: userId } },
+      { new: true }
+    );
 
-    await User.findByIdAndUpdate({ _id: id }, { $push: { followers: {
-      id: req.body.user.id,
-      username: me.username,
-      profile_img: me.profile_img,
-      full_name: me.full_name
-    } } });
-    await User.findByIdAndUpdate({ _id: req.body.user.id }, { $push: { following: {
-      id: id,
-      username: user.username,
-      profile_img: user.profile_img,
-      full_name: user.full_name
-    } } });
-    
-    
- 
-    res.status(200).send({ success: true, message: 'Вы подписались на пользователя', data: user });
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { following: userIdToFollow } },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: 'Вы подписались на пользователя',
+      data: { userBeingFollowed, updatedUser }
+    });
   } catch (error) {
-    res.status(500).send({ success: false, message: 'Ошибка при подписке', error });
+    res.status(500).send({
+      success: false,
+      message: 'Ошибка при подписке',
+      error: error.message
+    });
   }
-})
+});
 
 router.put("/api/unfollow/:id", verifyToken, async (req: any, res) => {
+  const userIdToUnfollow = req.params.id;
+  const userId = req.body.user?.id;
+
+  if (!userId) {
+    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+  }
+
+  try {
+    const userBeingUnfollowed = await User.findByIdAndUpdate(
+      userIdToUnfollow,
+      { $pull: { followers: userId } },
+      { new: true }
+    );
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { following: userIdToUnfollow } },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: 'Вы отписались от пользователя',
+      data: { userBeingUnfollowed, updatedUser }
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: 'Ошибка при отписке',
+      error: error.message
+    });
+  }
+});
+
+router.get("/api/followers/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    await User.findByIdAndUpdate({ _id: id }, { $pull: { followers: req.body.user.id } });
-    await User.findByIdAndUpdate({ _id: req.body.user.id }, { $pull: { following: id } });
-    res.send({ success: true, message: 'Вы отписались от пользователя' });
+    const user = await User.findById(id).select('followers').populate('followers', 'profile_img username full_name');
+    res.status(200).send({ success: true, data: user });
   } catch (error) {
-    res.send({ success: false, message: 'Ошибка при отписке', error });
+    res.status(500).send({ success: false, message: 'Ошибка при получении подписчиков', error });
   }
+  
 })
-
 
 
 export default router

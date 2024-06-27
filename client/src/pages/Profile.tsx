@@ -7,6 +7,7 @@ import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
 import {
   handleFollow,
+  handleGetFollowers,
   handleGetUser,
   handleUnFollow,
 } from "@/store/user.store";
@@ -64,6 +65,15 @@ const Profile = () => {
       });
   }
 
+  function handleFollowersGet(id: string) {
+    handleGetFollowers(id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
   return (
     <div className="flex justify-center">
       {isLoading || !user ? (
@@ -123,7 +133,7 @@ const Profile = () => {
                   <span className="font-medium">{user.posts.length} </span>
                   публикаций
                 </p>
-                <p>
+                <p onClick={() => handleFollowersGet(user.id)}>
                   <span className="font-medium">{followers.length} </span>
                   подписчиков
                 </p>

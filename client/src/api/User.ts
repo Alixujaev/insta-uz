@@ -44,3 +44,7 @@ export const UNFOLLOW = (id: string, token: string) => {
     }
   })
 }
+
+export const GET_FOLLOWERS = (id: string) => {
+  return axios.get(BASE_URL + `/api/followers/${id}`)
+}
