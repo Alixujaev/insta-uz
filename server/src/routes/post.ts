@@ -61,8 +61,8 @@ router.post("/api/create-post", verifyToken, async (req: any, res) => {
 
 router.get("/api/user-posts/:id", async (req: any, res) => {
   try {    
-    const id = req.params.id;
-    const posts = await Post.find({author_id: id});
+    const user = await User.findById(req.params.id);
+    const posts = await Post.find({author: user.username});
     
     res.send({ success: true, message: 'Посты получены', data: posts });
   } catch (error) {

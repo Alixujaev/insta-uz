@@ -132,12 +132,10 @@ const Post = () => {
   function handleDeletePost(id: string, token: string | null) {
     if (!token) return;
 
-    setOpen(false);
-
     handleDelete(id, token)
       .then((res) => {
-        setOpen(false);
         dispatch(updatePosts());
+        navigate("/");
       })
       .catch((err) => {
         console.log(err);
@@ -169,9 +167,9 @@ const Post = () => {
 
   return (
     <div className="flex justify-center">
-      {isLoading || !post || !author ? (
+      {isLoading || !author ? (
         <Loader />
-      ) : error ? (
+      ) : error || !post ? (
         <div>Пост не найден</div>
       ) : (
         <div className="!max-w-[910px] w-full max-h-[568px] h-full !rounded-md !py-0 !px-0 !gap-0 flex my-16">
@@ -194,7 +192,7 @@ const Post = () => {
                 </Link>
               </div>
               <PostDialog
-                id={id}
+                id={id || ""}
                 author={author.username}
                 saveds={saveds}
                 setSaveds={setSaveds}

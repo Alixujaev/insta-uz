@@ -20,7 +20,7 @@ const PostDialog = ({
 }: {
   author: string;
   id: string;
-  setPostOpen: any;
+  setPostOpen?: any;
   saveds?: string[];
   setSaveds?: any;
 }) => {

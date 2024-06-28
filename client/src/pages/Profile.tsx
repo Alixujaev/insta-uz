@@ -25,18 +25,21 @@ const Profile = () => {
   const token = localStorage.getItem("token");
   const [followers, setFollowers] = useState<string[]>([]);
   const [following, setFollowing] = useState<string[]>([]);
+  const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    async function getUserInfo(username: string) {
-      const result = await handleGetUser(username);
-
-      setUser(result.data.data.user);
-      setIsLoading(false);
-    }
-
     if (!params.username) return;
 
-    getUserInfo(params.username);
+    handleGetUser(params.username)
+      .then((res) => {
+        setUser(res.data.data.user);
+        setIsLoading(false);
+        setError(false);
+      })
+      .catch((err) => {
+        setError(true);
+        console.log(err);
+      });
   }, [params, isUpdatePosts]);
 
   useEffect(() => {
@@ -75,6 +78,8 @@ const Profile = () => {
     <div className="flex justify-center">
       {isLoading || !user ? (
         <Loader />
+      ) : error ? (
+        <div>Пользователь не найден</div>
       ) : (
         <div className="w-[930px] mt-8 ml-14">
           <div className="flex gap-20 mb-16">
