@@ -3,7 +3,9 @@ const initialState = {
   isUpdatePosts: false,
   areYouSureOpen: false,
   editModalOpen: false,
-  editPostId: ''
+  aboutModalOpen: false,
+  editPostId: '',
+  authorName: ''
 }
 
 export const settingsReducer = (state = initialState, action: { type: string, payload: any }) => {
@@ -32,10 +34,22 @@ export const settingsReducer = (state = initialState, action: { type: string, pa
         editModalOpen: !state.editModalOpen
       }
 
+    case 'ABOUT_MODAL_OPEN':
+      return {
+        ...state,
+        aboutModalOpen: !state.aboutModalOpen
+      }
+
     case 'EDIT_POST_ID':
       return {
         ...state,
         editPostId: action.payload
+      }
+
+    case 'AUTHOR_NAME':
+      return {
+        ...state,
+        authorName: action.payload
       }
 
     default:

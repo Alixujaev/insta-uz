@@ -1,21 +1,24 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
+  aboutModalOpenAction,
   areYouSureOpenAction,
+  authorNameAction,
   editModalOpenAction,
   editPostIdAction,
 } from "@/actions/settingsActions";
 import { handleSavePost } from "@/store/post.store";
-import { useLocation, useParams } from "react-router-dom";
 
 const PostDialog = ({
+  author,
   id,
   setPostOpen,
   saveds,
   setSaveds,
 }: {
+  author: string;
   id: string;
   setPostOpen: any;
   saveds?: string[];
@@ -23,7 +26,6 @@ const PostDialog = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const token = localStorage.getItem("token");
-  const params = useLocation();
   const dispatch = useDispatch();
 
   function handleSave(id: string, token: string | null) {
@@ -101,7 +103,14 @@ const PostDialog = ({
           Копировать ссылку
         </button>
 
-        <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
+        <p
+          onClick={() => {
+            setOpen(!open);
+            dispatch(aboutModalOpenAction());
+            dispatch(authorNameAction(author));
+          }}
+          className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
+        >
           Об аккаунте
         </p>
         <p

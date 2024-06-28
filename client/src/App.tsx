@@ -12,6 +12,7 @@ import { aboutMe } from "./store/user.store";
 import EditPost from "./components/dialogs/EditPost";
 import Post from "./pages/Post";
 import NotFound from "./pages/NotFound";
+import AboutProfile from "./components/dialogs/AboutProfile";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -54,6 +55,7 @@ function App() {
         </Routes>
 
         <EditPost />
+        <AboutProfile />
         <Links />
       </div>
     </div>

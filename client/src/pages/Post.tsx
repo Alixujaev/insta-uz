@@ -193,7 +193,12 @@ const Post = () => {
                   {author.username}
                 </Link>
               </div>
-              <PostDialog id={id} saveds={saveds} setSaveds={setSaveds} />
+              <PostDialog
+                id={id}
+                author={author.username}
+                saveds={saveds}
+                setSaveds={setSaveds}
+              />
             </div>
             <div className="flex-1 p-3 border-b">
               <Comment

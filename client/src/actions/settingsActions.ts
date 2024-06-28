@@ -23,9 +23,22 @@ export const editModalOpenAction = () => {
   }
 }
 
+export const aboutModalOpenAction = () => {
+  return {
+    type: 'ABOUT_MODAL_OPEN'
+  }
+}
+
 export const editPostIdAction = (item: string) => {
   return {
     type: 'EDIT_POST_ID',
+    payload: item
+  }
+}
+
+export const authorNameAction = (item: string) => {
+  return {
+    type: 'AUTHOR_NAME',
     payload: item
   }
 }

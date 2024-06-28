@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { areYouSureOpenAction } from "@/actions/settingsActions";
 

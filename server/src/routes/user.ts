@@ -44,6 +44,7 @@ router.get("/api/:username", async (req, res) => {
         profile_img: user.profile_img,
         about: user.about,
         posts: user.posts,
+        createdAt: user.createdAt
       }
     } });
 

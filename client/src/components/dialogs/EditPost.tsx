@@ -49,7 +49,10 @@ const EditPost = () => {
   }
 
   return (
-    <Dialog open={editModalOpen}>
+    <Dialog
+      open={editModalOpen}
+      onOpenChange={() => dispatch(editModalOpenAction())}
+    >
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-[482px]">
         <h4 className="text-center font-medium pb-2 border-b-2">
           Редактировать

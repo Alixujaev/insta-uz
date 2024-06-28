@@ -186,6 +186,7 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
               </Link>
             </div>
             <PostDialog
+              author={author.username}
               id={post._id}
               setPostOpen={setOpen}
               saveds={saveds}
