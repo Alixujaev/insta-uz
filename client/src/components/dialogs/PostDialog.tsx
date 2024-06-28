@@ -1,16 +1,58 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   areYouSureOpenAction,
   editModalOpenAction,
   editPostIdAction,
 } from "@/actions/settingsActions";
+import { handleSavePost } from "@/store/post.store";
+import { useLocation, useParams } from "react-router-dom";
 
-const PostDialog = ({ id, setPostOpen }: { id: string; setPostOpen: any }) => {
+const PostDialog = ({
+  id,
+  setPostOpen,
+  saveds,
+  setSaveds,
+}: {
+  id: string;
+  setPostOpen: any;
+  saveds?: string[];
+  setSaveds?: any;
+}) => {
   const [open, setOpen] = useState<boolean>(false);
+  const token = localStorage.getItem("token");
+  const params = useLocation();
   const dispatch = useDispatch();
+
+  function handleSave(id: string, token: string | null) {
+    if (!token || !saveds) return;
+
+    if (saveds.includes(id)) {
+      setSaveds(saveds.filter((saved) => saved !== id));
+    } else {
+      setSaveds([...saveds, id]);
+    }
+
+    handleSavePost(id, token)
+      .then((res) => {
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (saveds.includes(id)) {
+          setSaveds([...saveds, id]);
+        } else {
+          setSaveds(saveds.filter((saved) => saved !== id));
+        }
+      });
+  }
+
+  function handleCopyLink() {
+    navigator.clipboard.writeText(`${window.location.origin}/p/${id}`);
+    setOpen(false);
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -40,16 +82,24 @@ const PostDialog = ({ id, setPostOpen }: { id: string; setPostOpen: any }) => {
           Редактировать
         </button>
 
-        <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
-          Добавить в избранное
-        </p>
+        <button
+          onClick={() => handleSave(id, token)}
+          className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
+        >
+          {saveds?.includes(id)
+            ? "Убрать из избранного"
+            : "Добавить в избранное"}
+        </button>
 
         <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
           Поделиться...
         </p>
-        <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
+        <button
+          onClick={() => handleCopyLink()}
+          className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
+        >
           Копировать ссылку
-        </p>
+        </button>
 
         <p className="text-center text-sm cursor-pointer pb-3 mb-3 border-b">
           Об аккаунте

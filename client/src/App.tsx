@@ -10,6 +10,8 @@ import Links from "./components/Links";
 import { useEffect } from "react";
 import { aboutMe } from "./store/user.store";
 import EditPost from "./components/dialogs/EditPost";
+import Post from "./pages/Post";
+import NotFound from "./pages/NotFound";
 
 function App() {
   const token = localStorage.getItem("token");
@@ -47,6 +49,8 @@ function App() {
           <Route path="/accounts/password/reset/" element={<Reset />} />
           <Route path="/accounts/verify" element={<Verify />} />
           <Route path="/:username" element={<Profile />} />
+          <Route path="/p/:id" element={<Post />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <EditPost />

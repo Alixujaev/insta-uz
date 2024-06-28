@@ -11,6 +11,7 @@ import {
   handleDelete,
   handleGetComments,
   handleLike,
+  handleSavePost,
   handleUnLike,
 } from "@/store/post.store";
 import { useLocalStorage } from "usehooks-ts";
@@ -25,8 +26,12 @@ import { updatePosts } from "@/actions/settingsActions";
 const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   const token = localStorage.getItem("token");
   const [open, setOpen] = useState<boolean>(false);
-  const [user] = useLocalStorage<{ id: string }>("user", { id: "" });
+  const [user] = useLocalStorage<{ id: string; saved: string[] }>("user", {
+    id: "",
+    saved: [],
+  });
   const [likes, setLikes] = useState<string[]>([...post.likes]);
+  const [saveds, setSaveds] = useState<string[]>([...user.saved]);
   const [commentText, setCommentText] = useState<string>("");
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,24 +42,30 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   function like(id: string, token: string | null) {
     if (!token) return;
 
+    setLikes([...likes, user.id]);
+
     handleLike(id, token)
       .then((res) => {
-        setLikes([...likes, user.id]);
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
+        setLikes(likes.filter((like) => like !== user.id));
       });
   }
 
   function unlike(id: string, token: string | null) {
     if (!token) return;
 
+    setLikes(likes.filter((like) => like !== user.id));
+
     handleUnLike(id, token)
       .then((res) => {
-        setLikes(likes.filter((like) => like !== user.id));
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
+        setLikes([...likes, user.id]);
       });
   }
 
@@ -101,6 +112,29 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
       })
       .catch((err) => {
         console.log(err);
+      });
+  }
+
+  function handleSave(id: string, token: string | null) {
+    if (!token) return;
+
+    if (saveds.includes(id)) {
+      setSaveds(saveds.filter((saved) => saved !== id));
+    } else {
+      setSaveds([...saveds, id]);
+    }
+
+    handleSavePost(id, token)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (saveds.includes(id)) {
+          setSaveds([...saveds, id]);
+        } else {
+          setSaveds(saveds.filter((saved) => saved !== id));
+        }
       });
   }
 
@@ -151,7 +185,12 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
                 {author.username}
               </Link>
             </div>
-            <PostDialog id={post._id} setPostOpen={setOpen} />
+            <PostDialog
+              id={post._id}
+              setPostOpen={setOpen}
+              saveds={saveds}
+              setSaveds={setSaveds}
+            />
           </div>
           <div className="flex-1 p-3 border-b">
             <Comment
@@ -212,9 +251,15 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
                   </button>
                 </div>
 
-                <button>
-                  <BaseIcon name="saved" />
-                </button>
+                {saveds.includes(post._id) ? (
+                  <button onClick={() => handleSave(post._id, token)}>
+                    <BaseIcon name="saved_active" />
+                  </button>
+                ) : (
+                  <button onClick={() => handleSave(post._id, token)}>
+                    <BaseIcon name="saved" />
+                  </button>
+                )}
               </div>
               <div>
                 <p className="font-semibold text-sm mb-1">

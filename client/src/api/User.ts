@@ -60,3 +60,4 @@ export const DELETE_FOLLOWER = (id: string, token: string) => {
     }
   })
 }
+

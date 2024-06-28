@@ -19,8 +19,8 @@ router.get("/api/about-me", verifyToken, async (req, res) => {
       about: user.about,
       posts: user.posts,
       stories: user.stories,
-      profile_img: user.profile_img
-      
+      profile_img: user.profile_img,
+      saved: user.saved
     } });
       
   } catch (error) {
@@ -183,8 +183,8 @@ router.get("/api/followers/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    const user = await User.findById(id).select('followers').populate('followers', 'profile_img username full_name');
-    res.status(200).send({ success: true, data: user });
+    const users = await User.findById(id).select('followers').populate('followers', 'profile_img username full_name');
+    res.status(200).send({ success: true, data: users });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении подписчиков', error });
   }

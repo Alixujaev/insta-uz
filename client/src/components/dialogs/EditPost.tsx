@@ -1,14 +1,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import BaseIcon from "@/components/icon/BaseIcon";
-import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
-import {
-  handleCreate,
-  handleEditPost,
-  handleGetPost,
-  handleImageUpload,
-} from "@/store/post.store";
+import { handleEditPost, handleGetPost } from "@/store/post.store";
 import { useDispatch, useSelector } from "react-redux";
 import { editModalOpenAction, updatePosts } from "@/actions/settingsActions";
 
@@ -24,16 +17,18 @@ const EditPost = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    handleGetPost(editPostId)
-      .then((res) => {
-        setDescription(res.data.data.description);
-        setImage(res.data.data.image);
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
+    if (editModalOpen) {
+      handleGetPost(editPostId)
+        .then((res) => {
+          setDescription(res.data.data.description);
+          setImage(res.data.data.image);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    }
   }, [editModalOpen]);
 
   function handleEdit(body: any, token: string | null, id: string) {

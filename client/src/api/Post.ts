@@ -68,3 +68,19 @@ export const COMMENT = (body: CommentBodyType, token: string) => {
 export const GET_COMMENTS = (postId: string) => {
   return axios.get(BASE_URL + `/api/comments/${postId}`)
 }
+
+export const SAVE_POST = (id: string, token: string) =>{
+  return axios.put(BASE_URL + `/api/save/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const GET_SAVED = (token:string) => {
+  return axios.get(BASE_URL + `/api/saved`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

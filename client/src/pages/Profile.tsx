@@ -47,25 +47,27 @@ const Profile = () => {
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
 
+    setFollowers([...followers, myId]);
+
     handleFollow(id, token)
       .then((res) => {
         console.log(res);
-        setFollowers([...followers, myId]);
       })
       .catch((err) => {
         console.log(err);
+        setFollowers(followers.filter((follower) => follower !== myId));
       });
   }
 
   function handleUnFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
 
+    setFollowers(followers.filter((follower) => follower !== myId));
     handleUnFollow(id, token)
-      .then((res) => {
-        setFollowers(followers.filter((follower) => follower !== myId));
-      })
+      .then((res) => {})
       .catch((err) => {
         console.log(err);
+        setFollowers([...followers, myId]);
       });
   }
 

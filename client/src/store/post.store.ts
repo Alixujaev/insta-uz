@@ -1,4 +1,4 @@
-import { COMMENT, CREATE_POST, DELETE_POST, EDIT_POST, GET_COMMENTS, GET_ONE_POST, GET_USER_POSTS, LIKE, UNLIKE, UPLOAD } from "@/api/Post";
+import { COMMENT, CREATE_POST, DELETE_POST, EDIT_POST, GET_COMMENTS, GET_ONE_POST, GET_SAVED, GET_USER_POSTS, LIKE, SAVE_POST, UNLIKE, UPLOAD } from "@/api/Post";
 import { CommentBodyType, CreatePostBody } from "@/consts";
 
 export const handleImageUpload = async (formData: any, token: string) => {
@@ -50,5 +50,15 @@ export const handleGetComments = async (postId: string) => {
 
 export const handleEditPost = async (body: any, token: string, id: string) => {
   const result = await EDIT_POST(body, token, id);
+  return result
+}
+
+export const handleSavePost = async (id: string, token: string) => {
+  const result = await SAVE_POST(id, token);
+  return result
+}
+
+export const handleGetSaved = async (token: string) => {
+  const result = await GET_SAVED(token);
   return result
 }

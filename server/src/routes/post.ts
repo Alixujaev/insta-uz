@@ -50,7 +50,8 @@ router.post("/api/create-post", verifyToken, async (req: any, res) => {
   }
 
   try {
-    const newPost = await Post.create({author_id: req.body.user.id, description, image});
+    const author = await User.findById(req.body.user.id);
+    const newPost = await Post.create({author: author.username, description, image});
     await User.updateOne({ _id: req.body.user.id }, { $push: { posts: newPost._id } });
     res.send({ success: true, message: 'Пост создан', data: newPost });
   } catch (error) {
@@ -144,9 +145,9 @@ router.get("/api/comments/:id", async (req:any, res) => {
 router.delete("/api/delete-post/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   const post = await Post.findById(id);
-  if (post.author_id !== req.body.user.id) {
-    return res.status(400).send({ success: false, message: 'Вы не можете удалить пост' });
-  }
+  // if (post.author_id !== req.body.user.id) {
+  //   return res.status(400).send({ success: false, message: 'Вы не можете удалить пост' });
+  // }
 
   try {
     await User.updateOne({ _id: req.body.user.id }, { $pull: { posts: id } });
@@ -170,9 +171,9 @@ router.get("/api/post/:id", async (req: any, res) => {
 router.put("/api/post/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   const post = await Post.findById(id);
-  if (post.author_id !== req.body.user.id) {
-    return res.status(400).send({ success: false, message: 'Вы не можете редактировать пост' });
-  }
+  // if (post.author_id !== req.body.user.id) {
+  //   return res.status(400).send({ success: false, message: 'Вы не можете редактировать пост' });
+  // }
 
   try {
     await Post.findByIdAndUpdate({ _id: id }, { description: req.body.description });
@@ -183,9 +184,44 @@ router.put("/api/post/:id", verifyToken, async (req: any, res) => {
 })
 
 
+router.put("/api/save/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  const myId = req.body.user?.id;
+  
+  try {
+    const user = await User.findById(myId);
+    let updatedUser;
 
+    if(user.saved.includes(id)) {
+      updatedUser = await User.findByIdAndUpdate(
+        myId,
+        { $pull: { saved: id } },
+        { new: true }
+      );
+    }else{
+      updatedUser = await User.findByIdAndUpdate(
+        myId,
+        { $push: { saved: id } },
+        { new: true }
+      );
+    }
 
+    res.status(200).send({ success: true, message: 'Пост сохранен', data: updatedUser })
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при сохранении поста', error });
+  }
+})
 
+router.get("/api/saved", verifyToken, async (req: any, res) => {
+  try {
+    const saved = await User.findById(req.body.user.id).select('saved').populate('saved', '_id image description');
+    console.log(saved);
+    
+    res.send({ success: true, message: 'Посты получены', data: saved });
+  }catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
+  }
+})
 
 
 

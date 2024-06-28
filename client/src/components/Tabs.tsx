@@ -3,7 +3,7 @@ import BaseIcon from "./icon/BaseIcon";
 import { UserType } from "@/consts";
 import CreatePost from "./dialogs/CreatePost";
 import { useEffect, useState } from "react";
-import { handleGetPosts } from "@/store/post.store";
+import { handleGetPosts, handleGetSaved } from "@/store/post.store";
 import Post from "./dialogs/Post";
 import { useSelector } from "react-redux";
 
@@ -13,6 +13,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
+  const token = localStorage.getItem("token");
 
   const getPosts = async (id: string) => {
     const result = await handleGetPosts(id);
@@ -24,14 +25,20 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
   useEffect(() => {
     setIsLoading(true);
 
+    if (!token) return;
+
     if (myAcc) {
       if (location.search === "") {
         getPosts(user.id);
+      } else {
+        handleGetSaved(token).then((res) => {
+          console.log(res);
+        });
       }
     } else {
       getPosts(user.id);
     }
-  }, [location, myAcc, isUpdatePosts]);
+  }, [location, myAcc, isUpdatePosts, token]);
 
   return (
     <div>
