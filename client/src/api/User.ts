@@ -13,6 +13,10 @@ export const GET_USER_INFO = (username: string) => {
   return axios.get(BASE_URL + `/api/profile/${username}`)
 }
 
+export const GET_USER_INFO_ID = (id: string) => {
+  return axios.get(BASE_URL + `/api/profile/${id}`)
+}
+
 export const UPDATE_USER = (body: any, token: string) => {
   return axios.put(BASE_URL + "/api/update-user", body, {
     headers: {

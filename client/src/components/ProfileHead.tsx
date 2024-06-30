@@ -1,6 +1,7 @@
 import { handleFollow, handleUnFollow } from "@/store/user.store";
 import Avatar from "./Avatar";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const ProfileHead = ({ user }: { user: any }) => {
   const [followers, setFollowers] = useState<string[]>([]);
@@ -38,7 +39,9 @@ const ProfileHead = ({ user }: { user: any }) => {
       <div className="flex gap-4 items-center">
         <Avatar src={user.profile_img} size="md" />
         <div>
-          <p className="text-sm font-medium">{user.username}</p>
+          <Link to={`/${user.username}`} className="text-sm font-medium">
+            {user.username}
+          </Link>
           <p className="text-xs text-[#8E8E8E]">Рекомендации для вас</p>
         </div>
       </div>

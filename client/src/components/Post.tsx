@@ -2,26 +2,41 @@ import Avatar from "@/components/Avatar";
 import me from "@/assets/images/my.jpg";
 import { Link } from "react-router-dom";
 import PostDialog from "@/components/dialogs/PostDialog";
-import my from "@/assets/images/me.jpg";
 import BaseIcon from "@/components/icon/BaseIcon";
+import { useEffect, useState } from "react";
+import { formatDate } from "@/lib/utils";
 
-const Post = () => {
+const Post = ({ post }: any) => {
+  const [saveds, setSaveds] = useState<string[]>([]);
+
+  console.log(post);
+
   return (
     <div className="w-[470px] ">
       <div className="py-[7px] flex justify-between">
         <div className="flex items-center gap-1.5">
           <Avatar src={me} size="sm" />
 
-          <Link to="/" className="text-sm font-semibold">
-            lewishamilton
+          <Link
+            to={`/${post.author.username}`}
+            className="text-sm font-semibold"
+          >
+            {post.author.username}
           </Link>
 
-          <p className="text-[#8E8E8E] text-sm">• 5h</p>
+          <p className="text-[#8E8E8E] text-sm">
+            • {formatDate(new Date(post.createdAt))}
+          </p>
         </div>
-        <PostDialog />
+        <PostDialog
+          author={post.author}
+          saveds={saveds}
+          setSaveds={setSaveds}
+          id={post._id}
+        />
       </div>
       <img
-        src={my}
+        src={post.image}
         alt="post image"
         className="max-h-[585px] object-cover object-center w-full"
       />
@@ -44,16 +59,22 @@ const Post = () => {
       </div>
       <div className="border-b border-[#dbdbdb] pb-2 mb-3">
         <p className="text-sm font-semibold mb-1.5">
-          20,000 отметок "Нравится"
+          {post.likes.length} отметок "Нравится"
         </p>
         <p className="text-sm mb-1.5">
-          <span className="font-semibold mr-1">lewishamilton</span>Parabéns
-          Ayrton, minha inspiração sempre 🇧🇷💫
+          <span className="font-semibold mr-1">{post.author.username}</span>{" "}
+          {post.description}
         </p>
 
-        <p className="text-sm text-[#8E8E8E] cursor-pointer mb-1.5">
-          Посмотреть все комментарии (23)
-        </p>
+        {post.comments.length ? (
+          <p className="text-sm text-[#8E8E8E] cursor-pointer mb-1.5">
+            Посмотреть все комментарии ({post.comments.length})
+          </p>
+        ) : (
+          <p className="text-sm text-[#8E8E8E] cursor-pointer mb-1.5">
+            Нет комментариев
+          </p>
+        )}
 
         <div className="relative w-full h-4 mb-2">
           <input

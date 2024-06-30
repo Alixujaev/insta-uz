@@ -77,6 +77,32 @@ router.get("/api/profile/:username", async (req, res) => {
   }
 })
 
+router.get("/api/profile/:id", async (req, res) => {
+  try {
+    const user = await User.findOne({_id: req.params.id});    
+
+    res.status(200).send({ success: true, data: {
+      user: {
+        id: user?._id,
+        email: user?.email,
+        username: user?.username,
+        full_name: user?.full_name,
+        followers: user?.followers,
+        following: user?.following,
+        profile_img: user?.profile_img,
+        about: user?.about,
+        posts: user?.posts,
+        createdAt: user?.createdAt
+      }
+    } });
+
+      
+  } catch (error) {
+    console.log(error);
+    
+  }
+})
+
 router.put("/api/update-user", verifyToken, async (req, res) => {
   try {
     

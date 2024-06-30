@@ -7,6 +7,7 @@ import storage from "../utils/storage";
 import Post from "../modules/Post";
 import User from "../modules/User";
 import Comment from "../modules/Comment";
+import { ObjectId } from "mongodb";
 
 const router = Router();
 dotenv.config();
@@ -51,9 +52,10 @@ router.post("/api/create-post", verifyToken, async (req: any, res) => {
     return res.status(400).send({ success: false, message: 'Заполните все поля' });
   }
 
+
   try {
     const author = await User.findById(req.body.user.id);
-    const newPost = await Post.create({author: author.username, description, image});
+    const newPost = await Post.create({author: author, author_id: req.body.user.id, description, image});
     await User.updateOne({ _id: req.body.user.id }, { $push: { posts: newPost._id } });
     res.send({ success: true, message: 'Пост создан', data: newPost });
   } catch (error) {
@@ -62,16 +64,17 @@ router.post("/api/create-post", verifyToken, async (req: any, res) => {
 })
 
 router.get("/api/user-posts/:id", async (req: any, res) => {
+  const id = req.params.id;
   try {    
-    const user = await User.findById(req.params.id);
-    const posts = await Post.find({author: user.username});
+    const posts = await Post.find({author_id: id});
+
+
     
     res.send({ success: true, message: 'Посты получены', data: posts });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
   }
 })
-
 
 router.put("/api/like/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
@@ -227,24 +230,22 @@ router.get("/api/saved", verifyToken, async (req: any, res) => {
 })
 
 
-// router.get("/api/following-posts", verifyToken, async (req: any, res) => {
-//   res.send('sendded');
-//   // const myId = req.body.user.id;
+router.get("/api/following-posts", verifyToken, async (req: any, res) => {
+  const myId = req.body.user.id;
 
 
+  try {
+    const user = await User.findById(myId);
+    const subbed = await Post.find({author_id: {$in: user.following}});
 
-//   // try {
-//   //   const user = await User.findById(myId);
-//   //   const subbed = await Post.find({author: {$in: user.following}});
-
-//   //   console.log(subbed);
     
+    res.send({ success: true, message: 'Посты получены', data: subbed });
+  }catch (error) {
+    console.log(error);
     
-//   //   res.send({ success: true, message: 'Посты получены', data: subbed });
-//   // }catch (error) {
-//   //   res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
-//   // }
-// })
+    res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
+  }
+})
 
 
 
