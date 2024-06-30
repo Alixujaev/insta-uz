@@ -10,6 +10,9 @@ import {
   editPostIdAction,
 } from "@/actions/settingsActions";
 import { handleSavePost } from "@/store/post.store";
+import { checkPostAuthor } from "@/lib/utils";
+import { UserType } from "@/consts";
+import { useLocalStorage } from "usehooks-ts";
 
 const PostDialog = ({
   author,
@@ -18,12 +21,13 @@ const PostDialog = ({
   saveds,
   setSaveds,
 }: {
-  author: string;
+  author: UserType;
   id: string;
   setPostOpen?: any;
   saveds?: string[];
   setSaveds?: any;
 }) => {
+  const [user] = useLocalStorage("user", {} as UserType);
   const [open, setOpen] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
@@ -62,27 +66,31 @@ const PostDialog = ({
         <BaseIcon name="dots" />
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-3 !px-0 !gap-0 !w-[400px]">
-        <button
-          onClick={() => {
-            dispatch(areYouSureOpenAction());
-            setOpen(!open);
-          }}
-          className="text-center text-sm cursor-pointer font-bold text-red-500 pb-3 mb-3 border-b"
-        >
-          Удалить публикацию
-        </button>
+        {checkPostAuthor(author.id, user.id) ? (
+          <>
+            <button
+              onClick={() => {
+                dispatch(areYouSureOpenAction());
+                setOpen(!open);
+              }}
+              className="text-center text-sm cursor-pointer font-bold text-red-500 pb-3 mb-3 border-b"
+            >
+              Удалить публикацию
+            </button>
 
-        <button
-          onClick={() => {
-            dispatch(editModalOpenAction());
-            setOpen(!open);
-            setPostOpen(false);
-            dispatch(editPostIdAction(id));
-          }}
-          className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
-        >
-          Редактировать
-        </button>
+            <button
+              onClick={() => {
+                dispatch(editModalOpenAction());
+                setOpen(!open);
+                setPostOpen(false);
+                dispatch(editPostIdAction(id));
+              }}
+              className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
+            >
+              Редактировать
+            </button>
+          </>
+        ) : null}
 
         <button
           onClick={() => handleSave(id, token)}
@@ -107,7 +115,7 @@ const PostDialog = ({
           onClick={() => {
             setOpen(!open);
             dispatch(aboutModalOpenAction());
-            dispatch(authorNameAction(author));
+            dispatch(authorNameAction(author.username));
           }}
           className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
         >

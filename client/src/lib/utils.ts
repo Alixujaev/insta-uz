@@ -31,4 +31,8 @@ export function formatDate(date: Date): string {
 }
 
 
+export function checkPostAuthor(authorId: string, userId: string) {
+  return authorId === userId
+}
+
 

@@ -43,11 +43,13 @@ export type UserType = {
   posts: string[],
   stories: string[],
   profile_img: string,
-  about: string
+  about: string,
+  saved: string[]
 }
 
 export type PostType = {
   _id: string,
+  author: UserType,
   author_id: string,
   comments: any[],
   createdAt: string,

@@ -4,7 +4,7 @@ import Comment from "@/components/Comment";
 import AreYouSure from "@/components/dialogs/AreYouSure";
 import PostDialog from "@/components/dialogs/PostDialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { CommentBodyType, CommentType } from "@/consts";
+import { CommentBodyType, CommentType, PostType } from "@/consts";
 import useClickOutside from "@/hooks/useClickOutside";
 import { formatDate } from "@/lib/utils";
 import Picker from "@emoji-mart/react";
@@ -28,8 +28,7 @@ import Loader from "@/components/Loader";
 const Post = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [post, setPost] = useState<any>({});
-  const [author, setAuthor] = useState<any>({});
+  const [post, setPost] = useState<PostType>({});
   const token = localStorage.getItem("token");
   const [user] = useLocalStorage<{ id: string; saved: string[] }>("user", {
     id: "",
@@ -167,7 +166,7 @@ const Post = () => {
 
   return (
     <div className="flex justify-center">
-      {isLoading || !author ? (
+      {isLoading || !post.author ? (
         <Loader />
       ) : error || !post ? (
         <div>Пост не найден</div>
@@ -182,27 +181,27 @@ const Post = () => {
           <div className="flex-1 py-2 flex flex-col justify-between">
             <div className="pb-4 pt-2 px-3 flex justify-between !w-full border-b">
               <div className="flex items-center gap-1.5">
-                <Avatar src={author.profile_img} size="sm" />
+                <Avatar src={post.author.profile_img} size="sm" />
 
                 <Link
-                  to={`/${author.username}`}
+                  to={`/${post.author.username}`}
                   className="text-sm font-semibold"
                 >
-                  {author.username}
+                  {post.author.username}
                 </Link>
               </div>
               <PostDialog
                 id={id || ""}
-                author={author.username}
+                author={post.author}
                 saveds={saveds}
                 setSaveds={setSaveds}
               />
             </div>
             <div className="flex-1 p-3 border-b">
               <Comment
-                authorImage={author.profile_img}
+                authorImage={post.author.profile_img}
                 text={post.description}
-                authorName={author.username}
+                authorName={post.author.username}
                 createdAt={new Date(post.createdAt)}
               />
 

@@ -23,7 +23,13 @@ import AreYouSure from "./AreYouSure";
 import { useDispatch } from "react-redux";
 import { updatePosts } from "@/actions/settingsActions";
 
-const Post = ({ post, author }: { post: PostType; author: UserType }) => {
+const Post = ({
+  post,
+  triggerComponent,
+}: {
+  post: PostType;
+  triggerComponent?: any;
+}) => {
   const token = localStorage.getItem("token");
   const [open, setOpen] = useState<boolean>(false);
   const [user] = useLocalStorage<{ id: string; saved: string[] }>("user", {
@@ -141,30 +147,34 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger>
-        <div className="group cursor-pointer w-full !h-[309px] relative">
-          <img
-            src={post.image}
-            alt="image"
-            className="w-full h-full object-cover object-center"
-          />
+        {triggerComponent ? (
+          triggerComponent
+        ) : (
+          <div className="group cursor-pointer w-full !h-[309px] relative">
+            <img
+              src={post.image}
+              alt="image"
+              className="w-full h-full object-cover object-center"
+            />
 
-          <div className="absolute hidden top-0 left-0 w-full h-full bg-[#00000056] group-hover:flex justify-center items-center gap-10">
-            <div className="flex gap-2 text-white items-center">
-              <BaseIcon
-                name="white_heart"
-                viewBox="0 0 24 24"
-                width={32}
-                height={32}
-                color="white"
-              />
-              <p className="font-semibold text-lg">{likes.length}</p>
-            </div>
-            <div className="flex gap-2 text-white items-center">
-              <BaseIcon name="white_comment" cn="h-fit" />
-              <p className="font-semibold text-lg">{post.comments.length}</p>
+            <div className="absolute hidden top-0 left-0 w-full h-full bg-[#00000056] group-hover:flex justify-center items-center gap-10">
+              <div className="flex gap-2 text-white items-center">
+                <BaseIcon
+                  name="white_heart"
+                  viewBox="0 0 24 24"
+                  width={32}
+                  height={32}
+                  color="white"
+                />
+                <p className="font-semibold text-lg">{likes.length}</p>
+              </div>
+              <div className="flex gap-2 text-white items-center">
+                <BaseIcon name="white_comment" cn="h-fit" />
+                <p className="font-semibold text-lg">{post.comments.length}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </DialogTrigger>
       <DialogContent className="!max-w-[910px] w-full max-h-[568px] h-full !rounded-md !py-0 !px-0 !gap-0 flex">
         <img
@@ -176,17 +186,17 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
         <div className="flex-1 py-2 flex flex-col justify-between">
           <div className="pb-4 pt-2 px-3 flex justify-between !w-full border-b">
             <div className="flex items-center gap-1.5">
-              <Avatar src={author.profile_img} size="sm" />
+              <Avatar src={post.author.profile_img} size="sm" />
 
               <Link
-                to={`/${author.username}`}
+                to={`/${post.author.username}`}
                 className="text-sm font-semibold"
               >
-                {author.username}
+                {post.author.username}
               </Link>
             </div>
             <PostDialog
-              author={author.username}
+              author={post.author}
               id={post._id}
               setPostOpen={setOpen}
               saveds={saveds}
@@ -195,9 +205,9 @@ const Post = ({ post, author }: { post: PostType; author: UserType }) => {
           </div>
           <div className="flex-1 p-3 border-b">
             <Comment
-              authorImage={author.profile_img}
+              authorImage={post.author.profile_img}
               text={post.description}
-              authorName={author.username}
+              authorName={post.author.username}
               createdAt={new Date(post.createdAt)}
             />
 

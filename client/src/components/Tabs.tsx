@@ -80,7 +80,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-20">
             {posts.map((item: any) => (
-              <Post key={item.id} post={item} author={user} />
+              <Post key={item.id} post={item} />
             ))}
           </div>
         )
@@ -99,7 +99,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-20">
               {posts.map((item: any) => (
-                <Post key={item.id} post={item} author={user} />
+                <Post key={item.id} post={item} />
               ))}
             </div>
           )}
