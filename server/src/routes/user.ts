@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { verifyToken } from "../middlewares/utils";
 import User from "../modules/User";
+import { ObjectId } from "mongodb";
 
 const router = Router();
 
@@ -29,22 +30,43 @@ router.get("/api/about-me", verifyToken, async (req, res) => {
   }
 })
 
-router.get("/api/:username", async (req, res) => {
+router.get("/api/recomendeds", verifyToken, async (req: any, res) => {
+  const myId = req.body.user?.id;
+
+  if (!myId) {
+    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+  }
+  
+  const myObjectId = ObjectId.createFromHexString(myId);
+
+  try {
+   const users = await User.find()
+
+   const filteredUsers = users.filter((user) => user._id.toHexString() !== myId && !user.followers.includes(myId));
+    
+    res.status(200).send({ success: true, data: filteredUsers });
+
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении подписок', error });
+  }
+})
+
+router.get("/api/profile/:username", async (req, res) => {
   try {
     const user = await User.findOne({username: req.params.username});    
-    
+
     res.status(200).send({ success: true, data: {
       user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
-        full_name: user.full_name,
-        followers: user.followers,
-        following: user.following,
-        profile_img: user.profile_img,
-        about: user.about,
-        posts: user.posts,
-        createdAt: user.createdAt
+        id: user?._id,
+        email: user?.email,
+        username: user?.username,
+        full_name: user?.full_name,
+        followers: user?.followers,
+        following: user?.following,
+        profile_img: user?.profile_img,
+        about: user?.about,
+        posts: user?.posts,
+        createdAt: user?.createdAt
       }
     } });
 
@@ -225,6 +247,7 @@ router.put("/api/follower/:id", verifyToken, async (req: any, res) => {
     res.status(500).send({ success: false, message: 'Ошибка при удалении подписчика', error });
   }
 })
+
 
 
 export default router

@@ -84,3 +84,11 @@ export const GET_SAVED = (token:string) => {
     }
   })
 }
+
+export const GET_FOLLOWING_POSTS = (token: string) => {
+  return axios.get(BASE_URL + `/api/following-posts`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

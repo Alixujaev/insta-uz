@@ -10,7 +10,7 @@ export const ABOUT_ME = (token: string) => {
 }
 
 export const GET_USER_INFO = (username: string) => {
-  return axios.get(BASE_URL + `/api/${username}`)
+  return axios.get(BASE_URL + `/api/profile/${username}`)
 }
 
 export const UPDATE_USER = (body: any, token: string) => {
@@ -61,3 +61,10 @@ export const DELETE_FOLLOWER = (id: string, token: string) => {
   })
 }
 
+export const RECOMENDEDS = (token: string) => {
+  return axios.get(BASE_URL + `/api/recomendeds`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
