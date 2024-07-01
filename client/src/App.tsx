@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Reset from "./pages/Reset";
@@ -13,9 +13,11 @@ import EditPost from "./components/dialogs/EditPost";
 import Post from "./pages/Post";
 import NotFound from "./pages/NotFound";
 import AboutProfile from "./components/dialogs/AboutProfile";
+import Story from "./pages/Story";
 
 function App() {
   const token = localStorage.getItem("token");
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const fetchData = async (token: string | null) => {
@@ -34,9 +36,10 @@ function App() {
 
     fetchData(token);
   }, []);
+
   return (
     <div className="flex">
-      {token ? (
+      {token && !pathname.includes("/stories/") ? (
         <>
           <Sidebar />
           <div className="w-64"></div>
@@ -52,11 +55,13 @@ function App() {
           <Route path="/:username" element={<Profile />} />
           <Route path="/p/:id" element={<Post />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/stories/:id" element={<Story />} />
         </Routes>
 
         <EditPost />
         <AboutProfile />
-        <Links />
+
+        {!pathname.includes("/stories/") ? <Links /> : null}
       </div>
     </div>
   );

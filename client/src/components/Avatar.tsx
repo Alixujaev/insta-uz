@@ -28,7 +28,7 @@ const Avatar = ({
 
   return hasStory ? (
     <div
-      className={`gradient-border flex items-center justify-center rounded-full ${generateSizes(
+      className={`cursor-pointer gradient-border flex items-center justify-center rounded-full ${generateSizes(
         size
       )}`}
     >

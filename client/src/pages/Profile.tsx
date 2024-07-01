@@ -16,6 +16,9 @@ import { Button } from "@/components/ui/button";
 import UserList from "@/components/dialogs/UserList";
 import { useSelector } from "react-redux";
 import NotFound from "@/components/NotFound";
+import CreateStory from "@/components/dialogs/CreateStory";
+import Story from "@/components/Story";
+import StoryDialog from "@/components/dialogs/Story";
 
 const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
@@ -85,7 +88,11 @@ const Profile = () => {
         <div className="w-[930px] mt-8 ml-14">
           <div className="flex gap-20 mb-16">
             <div className="mt-5 ml-2">
-              <Avatar size="xl" src={user.profile_img} />
+              {user.stories.length ? (
+                <Avatar size="xl" src={user.profile_img} hasStory />
+              ) : (
+                <CreateStory profile_img={user.profile_img} />
+              )}
             </div>
 
             <div>
@@ -93,6 +100,8 @@ const Profile = () => {
                 <Link to="/profile" className="text-2xl">
                   {user.username}
                 </Link>
+
+                <StoryDialog />
 
                 {my.id === user.id ? (
                   <div className="flex gap-3 items-center">
