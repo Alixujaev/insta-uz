@@ -2,10 +2,13 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
 import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { handleCreate, handleImageUpload } from "@/store/post.store";
 import { useDispatch } from "react-redux";
 import { updatePosts } from "@/actions/settingsActions";
+import useClickOutside from "@/hooks/useClickOutside";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 const CreatePost = ({
   profile = false,
@@ -15,11 +18,15 @@ const CreatePost = ({
   isSmall?: boolean;
 }) => {
   const dispatch = useDispatch();
+  const emojiRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [file, setFile] = useState<any>(null);
   const [description, setDescription] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
+
+  useClickOutside(emojiRef, () => setShowEmoji(false));
 
   async function handleSetFile(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target.files && event.target.files.length > 0) {
@@ -117,16 +124,35 @@ const CreatePost = ({
               />
             </div>
 
-            <div className="flex flex-col mb-3">
-              <Label htmlFor="caption" className="mb-1">
-                Описание
-              </Label>
-              <textarea
-                placeholder="Напишите о чем вы думаете"
-                className="py-2 px-3 border rounded-md border-[#8e8e8e68] outline-none max-h-20"
-                onChange={(e) => setDescription(e.target.value)}
-                value={description}
-              />
+            <div className="flex gap-2 relative">
+              <div className="flex flex-col mb-3 flex-1">
+                <Label htmlFor="caption" className="mb-1">
+                  Описание
+                </Label>
+                <input
+                  type="text"
+                  placeholder="Напишите о чем вы думаете"
+                  className="py-1 px-3 border rounded-md border-[#8e8e8e68] outline-none"
+                  onChange={(e) => setDescription(e.target.value)}
+                  value={description}
+                />
+              </div>
+              <button onClick={() => setShowEmoji(!showEmoji)}>
+                <BaseIcon name="smilek" cn=" cursor-pointer ml-0" />
+              </button>
+              {showEmoji ? (
+                <div
+                  className="absolute -top-[430px] -right-[350px]"
+                  ref={emojiRef}
+                >
+                  <Picker
+                    data={data}
+                    onEmojiSelect={(emoji: any) =>
+                      setDescription(description + emoji.native)
+                    }
+                  />
+                </div>
+              ) : null}
             </div>
 
             {description && file && !isLoading ? (
