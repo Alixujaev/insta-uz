@@ -220,8 +220,7 @@ router.put("/api/save/:id", verifyToken, async (req: any, res) => {
 
 router.get("/api/saved", verifyToken, async (req: any, res) => {
   try {
-    const saved = await User.findById(req.body.user.id).select('saved').populate('saved', '_id image description');
-    console.log(saved);
+    const saved = await User.findById(req.body.user.id).select('saved').populate('saved', '_id image description author likes comments author_id createdAt');
     
     res.send({ success: true, message: 'Посты получены', data: saved });
   }catch (error) {

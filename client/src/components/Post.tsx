@@ -15,6 +15,7 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Post from "./dialogs/Post";
+import useClickOutside from "@/hooks/useClickOutside";
 
 const PostComponent = ({ post }: any) => {
   const emojiRef = useRef<HTMLDivElement>(null);
@@ -95,6 +96,8 @@ const PostComponent = ({ post }: any) => {
         }
       });
   }
+
+  useClickOutside(emojiRef, () => setShowEmoji(false));
 
   return (
     <div className="w-[470px] ">
