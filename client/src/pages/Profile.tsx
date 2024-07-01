@@ -89,7 +89,11 @@ const Profile = () => {
           <div className="flex gap-20 mb-16">
             <div className="mt-5 ml-2">
               {user.stories.length ? (
-                <Avatar size="xl" src={user.profile_img} hasStory />
+                <Avatar
+                  size="xl"
+                  src={user.profile_img}
+                  storyId={user.stories[0]}
+                />
               ) : (
                 <CreateStory profile_img={user.profile_img} />
               )}
@@ -100,8 +104,6 @@ const Profile = () => {
                 <Link to="/profile" className="text-2xl">
                   {user.username}
                 </Link>
-
-                <StoryDialog />
 
                 {my.id === user.id ? (
                   <div className="flex gap-3 items-center">

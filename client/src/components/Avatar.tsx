@@ -1,14 +1,17 @@
 import user from "@/assets/images/user.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Avatar = ({
   src,
   size = "lg",
-  hasStory = false,
+  storyId,
 }: {
   src?: string;
   size?: string;
-  hasStory?: boolean;
+  storyId?: string;
 }) => {
+  const navigate = useNavigate();
+
   function generateSizes(size: string) {
     switch (size) {
       case "xs":
@@ -26,18 +29,23 @@ const Avatar = ({
     }
   }
 
-  return hasStory ? (
+  return storyId ? (
     <div
+      onClick={() => navigate(`/stories/${storyId}`)}
       className={`cursor-pointer gradient-border flex items-center justify-center rounded-full ${generateSizes(
         size
       )}`}
     >
-      <div className="!w-[93%] h-[93%] bg-white rounded-full flex justify-center items-center">
+      <div
+        className={`${
+          size !== "xl" ? "!w-[93%] h-[93%]" : "!w-[95%] h-[95%]"
+        } bg-white rounded-full flex justify-center items-center`}
+      >
         {src ? (
           <img
             src={src}
             alt="Profile"
-            className="rounded-full w-[95%] h-[97%] object-cover object-center"
+            className={`rounded-full object-cover object-center w-[95%] h-[97%]`}
           />
         ) : (
           <img

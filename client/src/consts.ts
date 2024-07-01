@@ -60,6 +60,19 @@ export type PostType = {
   updatedAt: string,
 }
 
+export type StoryType = {
+  _id: string,
+  author: UserType,
+  author_id: string,
+  views: string[],
+  createdAt: string,
+  description: string,
+  image: string,
+  likes: string[],
+  title: string,
+  updatedAt: string,
+}
+
 export type CommentBodyType = {
   postId: string,
   comment: string

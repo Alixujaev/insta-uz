@@ -8,3 +8,11 @@ export const CREATE_STORY = (body: CreatePostBody, token: string) => {
     }
   })
 }
+
+export const GET_STORY = (id: string, token: string) => {
+  return axios.get(BASE_URL + `/api/story/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
