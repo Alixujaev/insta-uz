@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { handleGetPosts, handleGetSaved } from "@/store/post.store";
 import Post from "./dialogs/Post";
 import { useSelector } from "react-redux";
+import Loader from "./Loader";
 
 const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
   const location = useLocation();
@@ -74,7 +75,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
 
       {!myAcc ? (
         isLoading ? (
-          <p>Загрузка...</p>
+          <Loader />
         ) : !isLoading && posts.length === 0 ? (
           <div className="!h-[40vh] mt-20 flex flex-col justify-center items-center w-full">
             <h2 className="text-3xl font-bold mb-3">Поделиться фото</h2>
@@ -93,7 +94,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
       ) : location.search === "" ? (
         <>
           {isLoading ? (
-            <p>Загрузка...</p>
+            <Loader className="h-[40vh]" />
           ) : !isLoading && posts.length === 0 ? (
             <div className="!h-[40vh] mt-20 flex flex-col justify-center items-center w-full">
               <h2 className="text-3xl font-bold mb-3">Поделиться фото</h2>
@@ -113,7 +114,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
       ) : (
         <>
           {isLoading ? (
-            <p>Загрузка...</p>
+            <Loader className="h-[40vh]" />
           ) : !isLoading && saved.length === 0 ? (
             <div className="!h-[40vh] mt-20 flex flex-col justify-center items-center w-full">
               <h2 className="text-3xl font-bold mb-3">Поделиться фото</h2>

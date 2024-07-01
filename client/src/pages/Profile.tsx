@@ -15,6 +15,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import UserList from "@/components/dialogs/UserList";
 import { useSelector } from "react-redux";
+import NotFound from "@/components/NotFound";
 
 const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
@@ -38,8 +39,8 @@ const Profile = () => {
       })
       .catch((err) => {
         setError(true);
-        console.log(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [params, isUpdatePosts]);
 
   useEffect(() => {
@@ -76,10 +77,10 @@ const Profile = () => {
 
   return (
     <div className="flex justify-center">
-      {isLoading || !user ? (
-        <Loader />
-      ) : error ? (
-        <div>Пользователь не найден</div>
+      {isLoading ? (
+        <Loader className="!h-screen" />
+      ) : error || !user ? (
+        <NotFound />
       ) : (
         <div className="w-[930px] mt-8 ml-14">
           <div className="flex gap-20 mb-16">
@@ -132,10 +133,10 @@ const Profile = () => {
               </div>
               <div className="flex gap-10 mb-6">
                 <p>
-                  <span className="font-medium">{user.posts.length} </span>
+                  <span className="font-medium">{user.posts?.length} </span>
                   публикаций
                 </p>
-                {user.followers.length > 0 ? (
+                {user.followers?.length > 0 ? (
                   <UserList
                     count={followers.length}
                     token={token}
@@ -151,7 +152,7 @@ const Profile = () => {
                   </p>
                 )}
 
-                {user.following.length > 0 ? (
+                {user.following?.length > 0 ? (
                   <UserList
                     count={following.length}
                     token={token}

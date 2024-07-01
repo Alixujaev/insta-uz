@@ -6,6 +6,7 @@ import { useLocalStorage } from "usehooks-ts";
 import { UserType } from "@/consts";
 import { useEffect, useState } from "react";
 import { handleGetRecomendeds } from "@/store/user.store";
+import Loader from "./Loader";
 
 const Profiles = () => {
   const [user] = useLocalStorage("user", {} as UserType);
@@ -50,9 +51,7 @@ const Profiles = () => {
 
       <div className="mb-20">
         {isLoading ? (
-          <div className="flex justify-center items-center">
-            <div className="w-10 h-10 rounded-full border-4 border-blue-400 border-t-transparent border-b-transparent animate-spin"></div>
-          </div>
+          <Loader className="h-[30vh]" />
         ) : users.length ? (
           users.map((item) => <ProfileHead key={item.id} user={item} />)
         ) : (

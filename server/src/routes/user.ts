@@ -55,24 +55,29 @@ router.get("/api/profile/:username", async (req, res) => {
   try {
     const user = await User.findOne({username: req.params.username});    
 
-    res.status(200).send({ success: true, data: {
-      user: {
-        id: user?._id,
-        email: user?.email,
-        username: user?.username,
-        full_name: user?.full_name,
-        followers: user?.followers,
-        following: user?.following,
-        profile_img: user?.profile_img,
-        about: user?.about,
-        posts: user?.posts,
-        createdAt: user?.createdAt
-      }
-    } });
-
+    
+    if(user) {
+      res.status(200).send({ success: true, data: {
+        user: {
+          id: user?._id,
+          email: user?.email,
+          username: user?.username,
+          full_name: user?.full_name,
+          followers: user?.followers,
+          following: user?.following,
+          profile_img: user?.profile_img,
+          about: user?.about,
+          posts: user?.posts,
+          createdAt: user?.createdAt
+        }
+      } });
+    }else{
+      res.status(404).send({ success: false, message: 'Пользователь не найден' });
+    }
+  
       
   } catch (error) {
-    console.log(error);
+    res.status(500).send({ success: false, message: 'Пользователь не найден', error });
     
   }
 })
