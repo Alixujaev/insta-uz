@@ -16,3 +16,11 @@ export const GET_STORY = (id: string, token: string) => {
     }
   })
 }
+
+export const DELETE_STORY = (id: string, token: string) => {
+  return axios.delete(BASE_URL + `/api/delete-story/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

@@ -1,11 +1,12 @@
 import logo from "@/assets/icons/white-logo.svg";
-import my from "@/assets/images/my.jpg";
 import Avatar from "@/components/Avatar";
 import Loader from "@/components/Loader";
+import AreYouSure from "@/components/dialogs/AreYouSure";
+import StoryMore from "@/components/dialogs/StoryMore";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { StoryType } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { handleGetStory } from "@/store/story.store";
+import { handleDeleteStory, handleGetStory } from "@/store/story.store";
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -37,6 +38,18 @@ const Story = () => {
     return () => clearInterval(interval);
   }, [params]);
 
+  function handleDelete(id: string, token: string | null) {
+    if (!token) return;
+
+    handleDeleteStory(id, token)
+      .then((res) => {
+        navigate(-1);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <div className="bg-[#1a1a1a] w-full h-screen text-white pt-3 flex justify-between relative">
       <img src={logo} alt="logo" className="w-32 h-10" />
@@ -61,18 +74,24 @@ const Story = () => {
               ></div>
             </div>
             <div className="flex gap-2 items-center">
-              <Avatar size="sm" src={story.author?.profile_img} />
-              <div className="flex gap-2 items-center">
-                <Link
-                  to={story.author ? `/${story.author.username}` : "/"}
-                  className="text-sm"
-                >
-                  {story.author ? story.author.username : ""}
-                </Link>
-                <p className="text-sm text-[#d5d5d5]">
-                  {formatDate(new Date(story.createdAt))}
-                </p>
+              <div className="flex flex-1 gap-2">
+                <Avatar size="sm" src={story.author?.profile_img} />
+                <div className="flex gap-2 items-center">
+                  <Link
+                    to={story.author ? `/${story.author.username}` : "/"}
+                    className="text-sm"
+                  >
+                    {story.author ? story.author.username : ""}
+                  </Link>
+                  <p className="text-sm text-[#8d8b8b]">
+                    {formatDate(new Date(story.createdAt))}
+                  </p>
+                </div>
               </div>
+
+              {story.author ? (
+                <StoryMore author={story.author} id={story._id} />
+              ) : null}
             </div>
           </div>
 
@@ -94,6 +113,8 @@ const Story = () => {
       <button className="absolute top-5 right-5" onClick={() => navigate(-1)}>
         <BaseIcon name="close" width={30} height={30} />
       </button>
+
+      <AreYouSure type="post" fn={() => handleDelete(story._id, token)} />
     </div>
   );
 };

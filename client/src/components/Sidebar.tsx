@@ -13,19 +13,7 @@ import Search from "./Search";
 const Sidebar = () => {
   const [isSmall, setIsSmall] = useState(false);
   const [isShowSearch, setIsShowSearch] = useState(false);
-  const [user] = useLocalStorage<UserType>("user", {
-    id: "",
-    email: "",
-    username: "",
-    full_name: "",
-    password: "",
-    followers: [],
-    following: [],
-    posts: [],
-    stories: [],
-    profile_img: "",
-    about: "",
-  });
+  const [user] = useLocalStorage<UserType>("user", {} as UserType);
 
   function handleClickSearch() {
     setIsSmall(!isSmall);
