@@ -235,10 +235,11 @@ router.get("/api/following-posts", verifyToken, async (req: any, res) => {
 
   try {
     const user = await User.findById(myId);
+    const myPost = await Post.find({author_id: myId});
     const subbed = await Post.find({author_id: {$in: user.following}});
 
     
-    res.send({ success: true, message: 'Посты получены', data: subbed });
+    res.send({ success: true, message: 'Посты получены', data: [...subbed, ...myPost] });
   }catch (error) {
     console.log(error);
     

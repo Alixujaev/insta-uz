@@ -1,4 +1,3 @@
-import my from "@/assets/images/my.jpg";
 import Avatar from "./Avatar";
 import { useLocalStorage } from "usehooks-ts";
 import { StoryType, UserType } from "@/consts";
@@ -8,7 +7,7 @@ const Story = ({ story }: { story: StoryType }) => {
   return (
     <div className="w-[66px]">
       <Avatar
-        src={my}
+        src={story.author.profile_img}
         storyId={story._id}
         viewed={story.views.includes(user.id)}
       />

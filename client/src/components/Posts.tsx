@@ -30,7 +30,12 @@ const Posts = () => {
       ) : posts.length ? (
         posts.map((item) => <Post key={item.id} post={item} />)
       ) : (
-        <p>No posts</p>
+        <div className="h-[50vh] text-center flex justify-center items-center">
+          <div>
+            <h2 className="text-2xl font-bold">Пока нет публикации</h2>
+            <p>Для вас пока нет публикаций</p>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -79,28 +79,14 @@ router.get("/api/stories", verifyToken, async (req: any, res) => {
   const myId = req.body.user.id;
   try {
     const user = await User.findById(myId);
+    const myStory = await Story.find({author_id: myId});
     const stories = await Story.find({author_id: {$in: user.following}});
-    res.send({ success: true, message: 'Посты получены', data: stories });
+    res.send({ success: true, message: 'Посты получены', data: [...stories, ...myStory] });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
   }
 })
 
-// router.get("/api/following-posts", verifyToken, async (req: any, res) => {
-//   const myId = req.body.user.id;
 
-
-//   try {
-//     const user = await User.findById(myId);
-//     const subbed = await Post.find({author_id: {$in: user.following}});
-
-    
-//     res.send({ success: true, message: 'Посты получены', data: subbed });
-//   }catch (error) {
-//     console.log(error);
-    
-//     res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });
-//   }
-// })
 
 export default router

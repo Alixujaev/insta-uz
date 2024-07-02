@@ -38,7 +38,7 @@ const Stories = () => {
       {isLoading ? (
         <Loader className="h-[10vh]" />
       ) : stories.length === 0 ? (
-        <h4 className="text-lg font-medium">no Stories</h4>
+        <h4 className="font-medium text-center">Пока нет историй</h4>
       ) : stories.length < 8 ? (
         <div className="flex gap-2">
           {stories.map((item: StoryType) => (
