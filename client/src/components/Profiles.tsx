@@ -4,29 +4,17 @@ import ProfileLinks from "./ProfileLinks";
 import { Link } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import { UserType } from "@/consts";
-import { useEffect, useState } from "react";
 import { handleGetRecomendeds } from "@/store/user.store";
 import Loader from "./Loader";
+import useFetchData from "@/hooks/useFetchData";
 
 const Profiles = () => {
   const [user] = useLocalStorage("user", {} as UserType);
   const token = localStorage.getItem("token");
-  const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState<UserType[]>([]);
-
-  useEffect(() => {
-    if (!token) return;
-
-    setIsLoading(true);
-    handleGetRecomendeds(token)
-      .then((res) => {
-        setUsers(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, []);
+  const { data: users, isLoading } = useFetchData<UserType[]>(
+    "users",
+    handleGetRecomendeds
+  );
 
   return (
     <div className="mt-6">
@@ -52,7 +40,7 @@ const Profiles = () => {
       <div className="mb-20">
         {isLoading ? (
           <Loader className="h-[30vh]" />
-        ) : users.length ? (
+        ) : users?.length ? (
           users.map((item) => <ProfileHead key={item.id} user={item} />)
         ) : (
           <div className="flex justify-center items-center h-20">
