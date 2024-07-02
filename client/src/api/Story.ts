@@ -24,3 +24,27 @@ export const DELETE_STORY = (id: string, token: string) => {
     }
   })
 }
+
+export const GET_VIEWERS = (id: string, token: string) => {
+  return axios.get(BASE_URL + `/api/viewers/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const VIEW_STORY = (id: string, token: string) => {
+  return axios.put(BASE_URL + `/api/view/${id}`, {}, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}
+
+export const GET_FOLLOWING_STORIES = (token: string) => {
+  return axios.get(BASE_URL + `/api/stories`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

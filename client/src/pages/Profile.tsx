@@ -1,7 +1,7 @@
 import Avatar from "@/components/Avatar";
 import { Link, useParams } from "react-router-dom";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { UserType } from "@/consts";
+import { StoryType, UserType } from "@/consts";
 import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
@@ -17,39 +17,45 @@ import UserList from "@/components/dialogs/UserList";
 import { useSelector } from "react-redux";
 import NotFound from "@/components/NotFound";
 import CreateStory from "@/components/dialogs/CreateStory";
-import Story from "@/components/Story";
-import StoryDialog from "@/components/dialogs/Story";
+
+import { handleGetStory } from "@/store/story.store";
 
 const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
   const params = useParams();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<UserType | null>(null);
   const [my] = useLocalStorage<{ id: string }>("user", { id: "" });
   const token = localStorage.getItem("token");
   const [followers, setFollowers] = useState<string[]>([]);
   const [following, setFollowing] = useState<string[]>([]);
   const [error, setError] = useState<boolean>(false);
+  const [story, setStory] = useState<StoryType>({} as StoryType);
 
   useEffect(() => {
-    if (!params.username) return;
+    if (!params.username || !token) return;
+
+    setIsLoading(true);
 
     handleGetUser(params.username)
       .then((res) => {
         setUser(res.data.data.user);
-        setIsLoading(false);
         setError(false);
+        setFollowers(res.data.data.user.followers || []);
+        setFollowing(res.data.data.user.following || []);
+        handleGetStory(res.data.data.user?.stories[0], token)
+          .then((res) => {
+            setStory(res.data.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          })
+          .finally(() => setIsLoading(false));
       })
       .catch((err) => {
         setError(true);
-      })
-      .finally(() => setIsLoading(false));
-  }, [params, isUpdatePosts]);
-
-  useEffect(() => {
-    setFollowers(user?.followers || []);
-    setFollowing(user?.following || []);
-  }, [user]);
+      });
+  }, [params, isUpdatePosts, token]);
 
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
@@ -82,9 +88,9 @@ const Profile = () => {
     <div className="flex justify-center">
       {isLoading ? (
         <Loader className="!h-screen" />
-      ) : error || !user ? (
+      ) : !isLoading && error && !user ? (
         <NotFound />
-      ) : (
+      ) : !isLoading && user ? (
         <div className="w-[930px] mt-8 ml-14">
           <div className="flex gap-20 mb-16">
             <div className="mt-5 ml-2">
@@ -93,6 +99,7 @@ const Profile = () => {
                   size="xl"
                   src={user.profile_img}
                   storyId={user.stories[0]}
+                  viewed={story?.views?.includes(my.id)}
                 />
               ) : (
                 <CreateStory profile_img={user.profile_img} />
@@ -188,7 +195,7 @@ const Profile = () => {
 
           <Tabs user={user} myAcc={my.id === user.id} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 };

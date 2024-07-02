@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   aboutModalOpenAction,
@@ -18,15 +18,11 @@ import { useNavigate } from "react-router-dom";
 const StoryMore = ({
   author,
   id,
-  setPostOpen,
-  saveds,
-  setSaveds,
+  setStop,
 }: {
   author: any;
   id: string;
-  setPostOpen?: any;
-  saveds?: string[];
-  setSaveds?: any;
+  setStop: (v: boolean) => void;
 }) => {
   const [user] = useLocalStorage("user", {} as UserType);
   const [open, setOpen] = useState<boolean>(false);
@@ -38,6 +34,14 @@ const StoryMore = ({
     navigator.clipboard.writeText(`${window.location.origin}/story/${id}`);
     setOpen(false);
   }
+
+  useEffect(() => {
+    if (open) {
+      setStop(true);
+    } else {
+      setStop(false);
+    }
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

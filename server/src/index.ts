@@ -5,6 +5,7 @@ import cors from "cors"
 import AuthRoutes from "./routes/auth"
 import UserRoutes from "./routes/user"
 import PostRoutes from "./routes/post"
+import StoryRoutes from "./routes/story"
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(AuthRoutes);
 app.use(UserRoutes);
 app.use(PostRoutes);
+app.use(StoryRoutes);
 
 
 app.get("/", (req, res) => {

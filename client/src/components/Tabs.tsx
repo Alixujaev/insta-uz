@@ -45,7 +45,7 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
     } else {
       getPosts(user.id);
     }
-  }, [location, myAcc, isUpdatePosts, token]);
+  }, [location, myAcc, isUpdatePosts]);
 
   return (
     <div>

@@ -1,17 +1,23 @@
-import { Link } from "react-router-dom";
 import my from "@/assets/images/my.jpg";
 import Avatar from "./Avatar";
+import { useLocalStorage } from "usehooks-ts";
+import { StoryType, UserType } from "@/consts";
 
-const Story = () => {
+const Story = ({ story }: { story: StoryType }) => {
+  const [user] = useLocalStorage("user", {} as UserType);
   return (
-    <Link to="/" className="w-[66px]">
-      <Avatar src={my} hasStory />
+    <div className="w-[66px]">
+      <Avatar
+        src={my}
+        storyId={story._id}
+        viewed={story.views.includes(user.id)}
+      />
       <p className="text-xs text-center text-[#262626]">
-        {`alixujaev_islom`.length > 10
-          ? `alixujaev_islom`.slice(0, 10) + "..."
-          : `alixujaev_islom`}
+        {story.author.username.length > 10
+          ? story.author.username.slice(0, 10) + "..."
+          : story.author.username}
       </p>
-    </Link>
+    </div>
   );
 };
 

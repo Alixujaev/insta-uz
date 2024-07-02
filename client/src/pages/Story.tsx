@@ -1,21 +1,32 @@
+import { setStoryAction } from "@/actions/settingsActions";
 import logo from "@/assets/icons/white-logo.svg";
 import Avatar from "@/components/Avatar";
 import Loader from "@/components/Loader";
 import AreYouSure from "@/components/dialogs/AreYouSure";
 import StoryMore from "@/components/dialogs/StoryMore";
+import Viewers from "@/components/dialogs/Viewers";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { StoryType } from "@/consts";
+import { UserType } from "@/consts";
 import { formatDate } from "@/lib/utils";
-import { handleDeleteStory, handleGetStory } from "@/store/story.store";
+import {
+  handleDeleteStory,
+  handleGetStory,
+  handleViewStory,
+} from "@/store/story.store";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { useLocalStorage } from "usehooks-ts";
 
 const Story = () => {
+  const { story } = useSelector((state: any) => state.settings);
+  const dispatch = useDispatch();
   const params = useParams();
   const [progress, setProgress] = useState(0);
   const token = localStorage.getItem("token");
-  const [story, setStory] = useState<StoryType>({} as StoryType);
+  const [user] = useLocalStorage<UserType>("user", {} as UserType);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [stop, setStop] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,19 +35,34 @@ const Story = () => {
     setIsLoading(true);
     handleGetStory(params.id as string, token)
       .then((res) => {
-        setStory(res.data.data);
+        dispatch(setStoryAction(res.data.data));
+        handleViewStory(params.id as string, token)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       })
       .catch((err) => {
         console.log(err);
       })
       .finally(() => setIsLoading(false));
+  }, [params]);
 
+  useEffect(() => {
     const interval = setInterval(() => {
-      setProgress((prev) => (prev < 100 ? prev + 1 : 100));
+      setProgress((prev) => (stop ? prev : prev < 100 ? prev + 1 : 100));
     }, 100);
 
     return () => clearInterval(interval);
-  }, [params]);
+  }, [stop]);
+
+  useEffect(() => {
+    if (progress === 100) {
+      navigate(-1);
+    }
+  }, [progress]);
 
   function handleDelete(id: string, token: string | null) {
     if (!token) return;
@@ -64,6 +90,7 @@ const Story = () => {
             src={story.image}
             alt="story"
             className="w-full h-full object-cover rounded-md"
+            onClick={() => setStop(!stop)}
           />
 
           <div className="pt-4 px-3.5 pb-8 absolute top-0 w-full">
@@ -90,13 +117,32 @@ const Story = () => {
               </div>
 
               {story.author ? (
-                <StoryMore author={story.author} id={story._id} />
+                <StoryMore
+                  author={story.author}
+                  id={story._id}
+                  setStop={setStop}
+                />
               ) : null}
             </div>
           </div>
 
           <div className="absolute bottom-3 flex items-center gap-2 w-full">
-            <p className="flex-1 pl-3 text-sm">{story?.description}</p>
+            <div className="flex-1 pl-3 text-sm">
+              <p>{story?.description}</p>
+              {story?.author_id ? (
+                story?.author_id === user.id ? (
+                  story.views.length > 1 ? (
+                    <Viewers
+                      count={story?.views?.length - 1}
+                      id={story._id}
+                      setStop={setStop}
+                    />
+                  ) : (
+                    <p>0 просмотров</p>
+                  )
+                ) : null
+              ) : null}
+            </div>
             <button className="mr-3">
               <BaseIcon
                 name="heart"

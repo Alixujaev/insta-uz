@@ -30,7 +30,6 @@ const UserList = ({
   setFollowing?: any;
 }) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [searchVal, setSearchVal] = useState<string>("");
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 

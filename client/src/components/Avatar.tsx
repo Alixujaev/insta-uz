@@ -1,15 +1,20 @@
-import user from "@/assets/images/user.jpg";
+import userImg from "@/assets/images/user.jpg";
 import { useNavigate } from "react-router-dom";
+import { useLocalStorage } from "usehooks-ts";
 
 const Avatar = ({
   src,
   size = "lg",
   storyId,
+  viewed,
 }: {
   src?: string;
   size?: string;
   storyId?: string;
+  viewed?: boolean;
 }) => {
+  const token = localStorage.getItem("token");
+  const [user] = useLocalStorage<{ id: string }>("user", { id: "" });
   const navigate = useNavigate();
 
   function generateSizes(size: string) {
@@ -29,9 +34,11 @@ const Avatar = ({
     }
   }
 
-  return storyId ? (
+  return storyId && !viewed ? (
     <div
-      onClick={() => navigate(`/stories/${storyId}`)}
+      onClick={() =>
+        token && user ? navigate(`/stories/${storyId}`) : navigate("/")
+      }
       className={`cursor-pointer gradient-border flex items-center justify-center rounded-full ${generateSizes(
         size
       )}`}
@@ -49,7 +56,36 @@ const Avatar = ({
           />
         ) : (
           <img
-            src={user}
+            src={userImg}
+            alt="Profile"
+            className="rounded-full w-[95%] h-[97%] object-cover object-center"
+          />
+        )}
+      </div>
+    </div>
+  ) : viewed ? (
+    <div
+      onClick={() =>
+        token && user ? navigate(`/stories/${storyId}`) : navigate("/")
+      }
+      className={`cursor-pointer bg-[#dbdbdb] flex items-center justify-center rounded-full ${generateSizes(
+        size
+      )}`}
+    >
+      <div
+        className={`${
+          size !== "xl" ? "!w-[93%] h-[93%]" : "!w-[95%] h-[95%]"
+        } bg-white rounded-full flex justify-center items-center`}
+      >
+        {src ? (
+          <img
+            src={src}
+            alt="Profile"
+            className={`rounded-full object-cover object-center w-[95%] h-[97%]`}
+          />
+        ) : (
+          <img
+            src={userImg}
             alt="Profile"
             className="rounded-full w-[95%] h-[97%] object-cover object-center"
           />
@@ -66,7 +102,7 @@ const Avatar = ({
     />
   ) : (
     <img
-      src={user}
+      src={userImg}
       alt="Profile"
       className={`rounded-full ${generateSizes(
         size
