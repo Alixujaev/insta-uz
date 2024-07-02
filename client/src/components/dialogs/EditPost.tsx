@@ -17,7 +17,7 @@ const EditPost = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    if (editModalOpen) {
+    if (editModalOpen && editPostId) {
       handleGetPost(editPostId)
         .then((res) => {
           setDescription(res.data.data.description);
@@ -29,7 +29,7 @@ const EditPost = () => {
           setIsLoading(false);
         });
     }
-  }, [editModalOpen]);
+  }, [editModalOpen, editPostId]);
 
   function handleEdit(body: any, token: string | null, id: string) {
     if (!token) return;

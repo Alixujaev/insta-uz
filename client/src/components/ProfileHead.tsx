@@ -7,8 +7,6 @@ const ProfileHead = ({ user }: { user: any }) => {
   const [followers, setFollowers] = useState<string[]>([]);
   const token = localStorage.getItem("token");
 
-  console.log(user);
-
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
     setFollowers([...followers, myId]);

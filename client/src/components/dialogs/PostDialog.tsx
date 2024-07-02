@@ -21,7 +21,7 @@ const PostDialog = ({
   saveds,
   setSaveds,
 }: {
-  author: UserType;
+  author: any;
   id: string;
   setPostOpen?: any;
   saveds?: string[];
@@ -66,7 +66,7 @@ const PostDialog = ({
         <BaseIcon name="dots" />
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-3 !px-0 !gap-0 !w-[400px]">
-        {checkPostAuthor(author.id, user.id) ? (
+        {checkPostAuthor(author._id, user.id) ? (
           <>
             <button
               onClick={() => {
@@ -80,10 +80,10 @@ const PostDialog = ({
 
             <button
               onClick={() => {
+                dispatch(editPostIdAction(id));
                 dispatch(editModalOpenAction());
                 setOpen(!open);
                 setPostOpen(false);
-                dispatch(editPostIdAction(id));
               }}
               className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
             >
