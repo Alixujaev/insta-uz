@@ -2,8 +2,10 @@ import { Router } from "express";
 import { verifyToken } from "../middlewares/utils";
 import User from "../modules/User";
 import { ObjectId } from "mongodb";
+import { io, users } from "..";
 
 const router = Router();
+
 
 
 router.get("/api/about-me", verifyToken, async (req, res) => {
@@ -164,38 +166,42 @@ router.get("/api/search/:username", async (req, res) => {
   }
 })
 
-router.put("/api/follow/:id", verifyToken, async (req: any, res) => {
+router.put('/api/follow/:id', verifyToken, async (req, res) => {
   const userIdToFollow = req.params.id;
   const userId = req.body.user?.id;
 
   if (!userId) {
-    return res.status(400).send({ success: false, message: 'Пользователь не найден' });
+      return res.status(400).send({ success: false, message: 'User not found' });
   }
 
   try {
-    const userBeingFollowed = await User.findByIdAndUpdate(
-      userIdToFollow,
-      { $push: { followers: userId } },
-      { new: true }
-    );
+      const userBeingFollowed = await User.findByIdAndUpdate(
+          userIdToFollow,
+          { $push: { followers: userId } },
+          { new: true }
+      );
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $push: { following: userIdToFollow } },
-      { new: true }
-    );
+      const updatedUser = await User.findByIdAndUpdate(
+          userId,
+          { $push: { following: userIdToFollow } },
+          { new: true }
+      );
 
-    res.status(200).send({
-      success: true,
-      message: 'Вы подписались на пользователя',
-      data: { userBeingFollowed, updatedUser }
-    });
+      // Emit the follow event to the specific user being followed
+     
+      io.to('XyxHZeEtsdQ_TdR7AAAB').emit('follow', `User ${userId} has followed you.`)
+
+      res.status(200).send({
+          success: true,
+          message: 'You have followed the user',
+          data: { userBeingFollowed, updatedUser },
+      });
   } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: 'Ошибка при подписке',
-      error: error.message
-    });
+      res.status(500).send({
+          success: false,
+          message: 'Error while following',
+          error: error.message,
+      });
   }
 });
 
