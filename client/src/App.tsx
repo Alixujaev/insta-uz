@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Sidebar from "./components/Sidebar";
 import Links from "./components/Links";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { aboutMe } from "./store/user.store";
 import EditPost from "./components/dialogs/EditPost";
 import Post from "./pages/Post";
@@ -15,13 +15,15 @@ import NotFound from "./pages/NotFound";
 import AboutProfile from "./components/dialogs/AboutProfile";
 import Story from "./pages/Story";
 import io from "socket.io-client";
+import { useDispatch } from "react-redux";
+import { createUser, setNotify } from "./actions/userActions";
 
 const ENDPOINT = "http://localhost:5000"; // The server endpoint
 
 function App() {
+  const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const { pathname } = useLocation();
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async (token: string | null) => {
@@ -31,6 +33,7 @@ function App() {
       }
       try {
         const result = await aboutMe(token);
+        dispatch(createUser(result.data.data));
         localStorage.setItem("user", JSON.stringify(result.data.data));
       } catch (error) {
         console.log(error);
@@ -50,11 +53,10 @@ function App() {
 
     socket.on("message", (data) => {
       console.log("Message from server:", data);
-      setMessage(data);
     });
 
     socket.on("follow", (data) => {
-      console.log(data);
+      dispatch(setNotify(data));
     });
 
     return () => {

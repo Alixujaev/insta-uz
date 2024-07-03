@@ -1,8 +1,14 @@
-import { USER_ACTIONS } from "@/consts"
 
 export const createUser = (item:any) => {
   return {
-    type: USER_ACTIONS.SET_USER,
+    type: 'SET_USER',
+    payload: item
+  }
+}
+
+export const setNotify = (item:any) => {
+  return {
+    type: 'SET_NOTIFY',
     payload: item
   }
 }

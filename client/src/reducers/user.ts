@@ -1,5 +1,6 @@
 const initialState = {
   user: {},
+  notify: ''
 }
 
 export const userReducer = (state = initialState, action: { type: string, payload: any }) => {
@@ -8,6 +9,11 @@ export const userReducer = (state = initialState, action: { type: string, payloa
       return {
         ...state,
         user: action.payload
+      }
+    case 'SET_NOTIFY':
+      return {
+        ...state,
+        notify: action.payload
       }
     default:
       return state

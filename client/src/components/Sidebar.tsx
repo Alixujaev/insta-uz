@@ -10,12 +10,14 @@ import More from "./dropdowns/More";
 import { useState } from "react";
 import Search from "./Search";
 import Notifications from "./Notifications";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
+  const { notify, user } = useSelector((state: any) => state.user);
   const [isSmall, setIsSmall] = useState(false);
   const [isShowSearch, setIsShowSearch] = useState(false);
   const [isShowNotifications, setIsShowNotifications] = useState(false);
-  const [user] = useLocalStorage<UserType>("user", {} as UserType);
+  // const [user] = useLocalStorage<UserType>("user", {} as UserType);
 
   function handleClickSearch() {
     if (!isSmall) {
@@ -123,8 +125,21 @@ const Sidebar = () => {
             >
               <BaseIcon name="notifications" />
               {!isSmall ? (
-                <span className="whitespace-nowrap">Уведомления</span>
+                <span
+                  className={`whitespace-nowrap ${
+                    user.id === notify.receiver_id ? "text-red-500" : ""
+                  }`}
+                >
+                  Уведомления
+                </span>
               ) : null}
+
+              <div className=" bg-red-500 rounded">
+                <div className="flex items-center gap-1">
+                  <BaseIcon name="user" color="black" viewBox="0 0 24 24" />
+                  <p>1</p>
+                </div>
+              </div>
             </div>
 
             <CreatePost isSmall={isSmall} />

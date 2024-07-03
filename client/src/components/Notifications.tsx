@@ -3,6 +3,9 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import { NotificationType } from "@/consts";
+import { handleGetNotification } from "@/store/notification.store";
+import { useSelector } from "react-redux";
 
 const Notifications = ({
   isShowNotifications,
@@ -15,31 +18,14 @@ const Notifications = ({
   setIsShowNotifications: any;
   setIsSmall: any;
 }) => {
-  const [searchVal, setSearchVal] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [users, setUsers] = useState<any[]>([]);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (isShowNotifications) inputRef.current?.focus();
-    let timerId: NodeJS.Timeout;
-    if (searchVal) {
-      setIsLoading(true);
-      timerId = setTimeout(() => {
-        handleSearchUsers(searchVal)
-          .then((res) => {
-            setUsers(res.data.data);
-            setIsLoading(false);
-          })
-          .catch((err) => {
-            console.log(err);
-            setIsLoading(false);
-          });
-      }, 2000);
-    }
+    if (!token || !isShowNotifications) return;
 
-    return () => clearTimeout(timerId);
-  }, [searchVal, isShowNotifications]);
+    handleGetNotification(token).then((res) => {});
+  }, [isShowNotifications]);
 
   return (
     <div

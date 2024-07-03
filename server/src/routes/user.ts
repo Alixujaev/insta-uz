@@ -3,6 +3,7 @@ import { verifyToken } from "../middlewares/utils";
 import User from "../modules/User";
 import { ObjectId } from "mongodb";
 import { io, users } from "..";
+import Notification from "../modules/Notification";
 
 const router = Router();
 
@@ -187,9 +188,21 @@ router.put('/api/follow/:id', verifyToken, async (req, res) => {
           { new: true }
       );
 
+      await Notification.create({
+          sender: userId,
+          receiver: userIdToFollow,
+          type: 'follow'
+      })
+
       // Emit the follow event to the specific user being followed
      
-      io.to('XyxHZeEtsdQ_TdR7AAAB').emit('follow', `User ${userId} has followed you.`)
+      io.emit('follow', {
+          event: 'follow',
+          sender_id: userId,
+          receiver_id: userIdToFollow
+      })
+
+      
 
       res.status(200).send({
           success: true,

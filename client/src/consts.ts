@@ -90,6 +90,13 @@ export type CommentType = {
   createdAt: string
 }
 
+export type NotificationType = {
+  id: string,
+  sender: string,
+  receiver: string,
+  type: string
+}
+
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
   {
     icon: "home",
