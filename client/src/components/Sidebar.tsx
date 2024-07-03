@@ -9,15 +9,35 @@ import CreatePost from "./dialogs/CreatePost";
 import More from "./dropdowns/More";
 import { useState } from "react";
 import Search from "./Search";
+import Notifications from "./Notifications";
 
 const Sidebar = () => {
   const [isSmall, setIsSmall] = useState(false);
   const [isShowSearch, setIsShowSearch] = useState(false);
+  const [isShowNotifications, setIsShowNotifications] = useState(false);
   const [user] = useLocalStorage<UserType>("user", {} as UserType);
 
   function handleClickSearch() {
-    setIsSmall(!isSmall);
+    if (!isSmall) {
+      setIsSmall(true);
+    } else if (isShowNotifications) {
+    } else {
+      setIsSmall(false);
+    }
     setIsShowSearch(!isShowSearch);
+    setIsShowNotifications(false);
+  }
+
+  function handleClickNotify() {
+    if (!isSmall) {
+      setIsSmall(true);
+    } else if (isShowSearch) {
+      setIsSmall(true);
+    } else {
+      setIsSmall(false);
+    }
+    setIsShowNotifications(!isShowNotifications);
+    setIsShowSearch(false);
   }
 
   return (
@@ -96,7 +116,10 @@ const Sidebar = () => {
             </Link>
 
             <div
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer`}
+              onClick={handleClickNotify}
+              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer ${
+                isShowNotifications ? "border" : ""
+              }`}
             >
               <BaseIcon name="notifications" />
               {!isSmall ? (
@@ -138,6 +161,13 @@ const Sidebar = () => {
         isSmall={isSmall}
         setIsSmall={setIsSmall}
         setIsShowSearch={setIsShowSearch}
+      />
+
+      <Notifications
+        isSmall={isSmall}
+        setIsSmall={setIsSmall}
+        isShowNotifications={isShowNotifications}
+        setIsShowNotifications={setIsShowNotifications}
       />
     </div>
   );
