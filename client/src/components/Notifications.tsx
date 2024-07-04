@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { NotificationType } from "@/consts";
 import { handleGetNotification } from "@/store/notification.store";
 import { formatDate } from "@/lib/utils";
 import Loader from "./Loader";
+import { useSelector } from "react-redux";
 
 const Notifications = ({
   isShowNotifications,
+  setIsShowNotifications,
+  setIsSmall,
 }: {
   isShowNotifications: boolean;
   isSmall: boolean;
@@ -16,6 +19,8 @@ const Notifications = ({
 }) => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { pathname } = useLocation();
+  const { user } = useSelector((state: any) => state.user);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -33,6 +38,11 @@ const Notifications = ({
       .finally(() => setIsLoading(false));
   }, [isShowNotifications]);
 
+  useEffect(() => {
+    setIsShowNotifications(false);
+    setIsSmall(false);
+  }, [pathname]);
+
   return (
     <div
       className={`overflow-y-auto pb-5 shadow-2xl z-10 rounded-2xl transition-all duration-200 transform ${
@@ -46,99 +56,105 @@ const Notifications = ({
       </div>
 
       <div className="pl-10 pr-5">
-        {isLoading ? <Loader className="h-[60vh]" /> : null}
-
-        {!isLoading && notifications.length === 0 ? (
+        {isLoading ? (
+          <Loader className="h-[60vh]" />
+        ) : !isLoading && notifications.length === 0 ? (
           <p className="text-center text-sm">Нет уведомлений</p>
-        ) : null}
+        ) : (
+          notifications.map((notification) =>
+            notification.type === "follow" ? (
+              <div className="flex gap-2 items-center mb-3 justify-between">
+                <div className="flex gap-1 flex-1">
+                  <div className="flex-none">
+                    <Avatar size="sm" src={notification.sender.profile_img} />
+                  </div>
 
-        {notifications.map((notification) =>
-          notification.type === "follow" ? (
-            <div className="flex gap-2 items-center mb-3 justify-between">
-              <div className="flex gap-1 flex-1">
-                <div className="flex-none">
-                  <Avatar size="sm" src={notification.sender.profile_img} />
+                  <p className="text-sm">
+                    <Link
+                      to={`/${notification.sender.username}`}
+                      className="font-semibold"
+                    >
+                      {notification.sender.username}
+                    </Link>{" "}
+                    подписался(-ась) на ваши обновления.
+                    <span className="text-[#8E8E8E]">
+                      {" "}
+                      {formatDate(new Date(notification.updatedAt))}
+                    </span>
+                  </p>
                 </div>
 
-                <p className="text-sm">
-                  <Link
-                    to={`/${notification.sender.username}`}
-                    className="font-semibold"
-                  >
-                    {notification.sender.username}
-                  </Link>{" "}
-                  подписался(-ась) на ваши обновления.
-                  <span className="text-[#8E8E8E]">
-                    {" "}
-                    {formatDate(new Date(notification.updatedAt))}
-                  </span>
-                </p>
+                {user.following.includes(notification.sender._id) ? (
+                  <button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black font-semibold px-2 !py-1 !rounded-lg text-sm">
+                    Отписаться
+                  </button>
+                ) : (
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm">
+                    Подписаться
+                  </button>
+                )}
               </div>
+            ) : notification.type === "like" ? (
+              <div className="flex gap-2 items-center mb-3 justify-between">
+                <div className="flex gap-1 flex-1">
+                  <div className="flex-none">
+                    <Avatar size="sm" src={notification.sender.profile_img} />
+                  </div>
 
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm">
-                Подписаться
-              </button>
-            </div>
-          ) : notification.type === "like" ? (
-            <div className="flex gap-2 items-center mb-3 justify-between">
-              <div className="flex gap-1 flex-1">
-                <div className="flex-none">
-                  <Avatar size="sm" src={notification.sender.profile_img} />
+                  <p className="text-sm">
+                    <Link
+                      to={`/${notification.sender.username}`}
+                      className="font-semibold"
+                    >
+                      {notification.sender.username}
+                    </Link>{" "}
+                    поставил(-а) "Нравится" вашей публикации.
+                    <span className="text-[#8E8E8E]">
+                      {" "}
+                      {formatDate(new Date(notification.updatedAt))}
+                    </span>
+                  </p>
                 </div>
 
-                <p className="text-sm">
-                  <Link
-                    to={`/${notification.sender.username}`}
-                    className="font-semibold"
-                  >
-                    {notification.sender.username}
-                  </Link>{" "}
-                  поставил(-а) "Нравится" вашей публикации.
-                  <span className="text-[#8E8E8E]">
-                    {" "}
-                    {formatDate(new Date(notification.updatedAt))}
-                  </span>
-                </p>
+                <Link to={`/p/${notification.post?._id}`}>
+                  <img
+                    src={notification?.post?.image}
+                    alt="public"
+                    className="w-11 h-11 rounded object-cover object-center"
+                  />
+                </Link>
               </div>
+            ) : (
+              <div className="flex gap-2 items-center mb-3 justify-between">
+                <div className="flex gap-1 flex-1">
+                  <div className="flex-none">
+                    <Avatar size="sm" src={notification.sender.profile_img} />
+                  </div>
 
-              <Link to={`/p/${notification.post?._id}`}>
-                <img
-                  src={notification?.post?.image}
-                  alt="public"
-                  className="w-11 h-11 rounded object-cover object-center"
-                />
-              </Link>
-            </div>
-          ) : (
-            <div className="flex gap-2 items-center mb-3 justify-between">
-              <div className="flex gap-1 flex-1">
-                <div className="flex-none">
-                  <Avatar size="sm" src={notification.sender.profile_img} />
+                  <p className="text-sm">
+                    <Link
+                      to={`/${notification.sender.username}`}
+                      className="font-semibold"
+                    >
+                      {notification.sender.username}
+                    </Link>{" "}
+                    прокомментировал ваше публикации: {notification.comment}.
+                    <span className="text-[#8E8E8E]">
+                      {" "}
+                      {formatDate(new Date(notification.updatedAt))}
+                    </span>
+                  </p>
                 </div>
 
-                <p className="text-sm">
-                  <Link
-                    to={`/${notification.sender.username}`}
-                    className="font-semibold"
-                  >
-                    {notification.sender.username}
-                  </Link>{" "}
-                  прокомментировал ваше публикации: {notification.comment}.
-                  <span className="text-[#8E8E8E]">
-                    {" "}
-                    {formatDate(new Date(notification.updatedAt))}
-                  </span>
-                </p>
+                <Link to={`/p/${notification.post?._id}`}>
+                  <img
+                    src={notification?.post?.image}
+                    alt="public"
+                    className="w-11 h-11 rounded object-cover object-center"
+                  />
+                </Link>
               </div>
-
-              <Link to={`/p/${notification.post?._id}`}>
-                <img
-                  src={notification?.post?.image}
-                  alt="public"
-                  className="w-11 h-11 rounded object-cover object-center"
-                />
-              </Link>
-            </div>
+            )
           )
         )}
       </div>

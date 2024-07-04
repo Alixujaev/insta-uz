@@ -209,7 +209,7 @@ const Post = ({
               setSaveds={setSaveds}
             />
           </div>
-          <div className="flex-1 p-3 border-b">
+          <div className="flex-1 p-3 border-b overflow-y-auto">
             <Comment
               authorImage={post.author.profile_img}
               text={post.description}

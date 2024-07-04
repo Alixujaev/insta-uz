@@ -26,8 +26,11 @@ const Sidebar = () => {
     if (!isSmall) {
       setIsSmall(true);
     } else if (isShowNotifications) {
+      setIsSmall(true);
     } else {
-      setIsSmall(false);
+      setTimeout(() => {
+        setIsSmall(false);
+      }, 200);
     }
     setIsShowSearch(!isShowSearch);
     setIsShowNotifications(false);
@@ -39,7 +42,9 @@ const Sidebar = () => {
     } else if (isShowSearch) {
       setIsSmall(true);
     } else {
-      setIsSmall(false);
+      setTimeout(() => {
+        setIsSmall(false);
+      }, 200);
     }
     localStorage.removeItem("notify");
     setIsShowNotifications(!isShowNotifications);

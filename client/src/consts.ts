@@ -92,7 +92,7 @@ export type CommentType = {
 
 export type NotificationType = {
   id: string,
-  sender: UserType,
+  sender: UserType & {_id: string},
   receiver: string,
   type: string,
   post: PostType,

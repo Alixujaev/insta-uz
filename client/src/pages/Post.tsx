@@ -28,6 +28,7 @@ import Loader from "@/components/Loader";
 const Post = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [commentLoad, setCommentLoad] = useState<boolean>(false);
   const [post, setPost] = useState<PostType>({} as PostType);
   const token = localStorage.getItem("token");
   const [user] = useLocalStorage<{ id: string; saved: string[] }>("user", {
@@ -77,18 +78,17 @@ const Post = () => {
   function comment(body: CommentBodyType, token: string | null) {
     if (!token) return;
 
-    setIsLoading(true);
+    setCommentLoad(true);
     handleComment(body, token)
       .then((res) => {
         setCommentText("");
         setShowEmoji(false);
-        setIsLoading(false);
         setComments([...comments, res.data.data]);
       })
       .catch((err) => {
         console.log(err);
-        setIsLoading(false);
-      });
+      })
+      .finally(() => setCommentLoad(false));
   }
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
@@ -196,7 +196,7 @@ const Post = () => {
                 setSaveds={setSaveds}
               />
             </div>
-            <div className="flex-1 p-3 border-b">
+            <div className="flex-1 p-3 border-b overflow-y-auto">
               <Comment
                 authorImage={post.author.profile_img}
                 text={post.description}
@@ -297,7 +297,7 @@ const Post = () => {
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                 />
-                {!commentText.length || isLoading ? (
+                {!commentText.length || commentLoad ? (
                   <button className="font-medium text-sm text-[#8E8E8E] cursor-default">
                     Опубликовать
                   </button>
