@@ -28,7 +28,7 @@ import Loader from "@/components/Loader";
 const Post = () => {
   const { id } = useParams();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [post, setPost] = useState<PostType>({});
+  const [post, setPost] = useState<PostType>({} as PostType);
   const token = localStorage.getItem("token");
   const [user] = useLocalStorage<{ id: string; saved: string[] }>("user", {
     id: "",
@@ -101,9 +101,8 @@ const Post = () => {
       .then((res) => {
         setPost(res.data.data);
         setLikes(res.data.data.likes);
-        handleGetUser(res.data.data.author)
+        handleGetUser(res.data.data.author.username)
           .then((res) => {
-            setAuthor(res.data.data.user);
             setIsLoading(false);
           })
           .catch((err) => {
@@ -167,7 +166,7 @@ const Post = () => {
   return (
     <div className="flex justify-center">
       {isLoading || !post.author ? (
-        <Loader />
+        <Loader className="h-screen" />
       ) : error || !post ? (
         <div>Пост не найден</div>
       ) : (

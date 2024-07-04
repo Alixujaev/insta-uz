@@ -8,7 +8,11 @@ import More from "./dropdowns/More";
 import { useEffect, useState } from "react";
 import Search from "./Search";
 import Notifications from "./Notifications";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import io from "socket.io-client";
+import { setNotify } from "@/actions/userActions";
+
+const ENDPOINT = "http://localhost:5000"; // The server endpoint
 
 const Sidebar = () => {
   const { notify, user } = useSelector((state: any) => state.user);
@@ -16,6 +20,7 @@ const Sidebar = () => {
   const [isShowSearch, setIsShowSearch] = useState(false);
   const [isShowNotifications, setIsShowNotifications] = useState(false);
   const [notifyTime, setNotifyTime] = useState<number>(0);
+  const dispatch = useDispatch();
 
   function handleClickSearch() {
     if (!isSmall) {
@@ -42,11 +47,10 @@ const Sidebar = () => {
   }
 
   useEffect(() => {
-    if (
-      notify.event === "follow" ||
-      (notify.event === "like" && notify.receiver_id === user.id)
-    ) {
-      setNotifyTime(10);
+    if (!notify) return;
+
+    if (notify.receiver_id === user.id) {
+      setNotifyTime(5);
     }
   }, [notify]);
 
@@ -65,6 +69,39 @@ const Sidebar = () => {
       clearTimeout(timerId);
     };
   }, [notifyTime]);
+
+  useEffect(() => {
+    const socket = io(ENDPOINT);
+
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+
+    socket.on("follow", (data) => {
+      if (data.receiver_id === user.id) {
+        localStorage.setItem("notify", JSON.stringify(data));
+      }
+      dispatch(setNotify(data));
+    });
+
+    socket.on("like", (data) => {
+      if (data.receiver_id === user.id) {
+        localStorage.setItem("notify", JSON.stringify(data));
+      }
+      dispatch(setNotify(data));
+    });
+
+    socket.on("comment", (data) => {
+      if (data.receiver_id === user.id) {
+        localStorage.setItem("notify", JSON.stringify(data));
+      }
+      dispatch(setNotify(data));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  });
 
   return (
     <div className={`h-screen fixed top-0 left-0 flex z-50`}>
@@ -158,7 +195,7 @@ const Sidebar = () => {
 
               <div
                 className={`absolute bg-red-500 rounded-lg py-1 px-3 transition-all transform -right-10 ${
-                  notifyTime > 0 ? "scale-100" : "scale-0"
+                  notifyTime > 0 && !isSmall ? "scale-100" : "scale-0"
                 }`}
               >
                 <div className="flex items-center gap-.5">
@@ -171,7 +208,7 @@ const Sidebar = () => {
                       width={22}
                       height={22}
                     />
-                  ) : (
+                  ) : notify.event === "like" ? (
                     <BaseIcon
                       name="white_heart"
                       color="white"
@@ -179,6 +216,15 @@ const Sidebar = () => {
                       cn="mt-2"
                       width={24}
                       height={24}
+                    />
+                  ) : (
+                    <BaseIcon
+                      name="white_comment"
+                      color="white"
+                      viewBox="0 0 45 45"
+                      cn="mt-2"
+                      width={22}
+                      height={22}
                     />
                   )}
 

@@ -14,14 +14,10 @@ import Post from "./pages/Post";
 import NotFound from "./pages/NotFound";
 import AboutProfile from "./components/dialogs/AboutProfile";
 import Story from "./pages/Story";
-import io from "socket.io-client";
-import { useDispatch, useSelector } from "react-redux";
-import { createUser, setNotify } from "./actions/userActions";
-
-const ENDPOINT = "http://localhost:5000"; // The server endpoint
+import { useDispatch } from "react-redux";
+import { createUser } from "./actions/userActions";
 
 function App() {
-  const { user } = useSelector((state: any) => state.user);
   const dispatch = useDispatch();
   const token = localStorage.getItem("token");
   const { pathname } = useLocation();
@@ -44,36 +40,6 @@ function App() {
 
     fetchData(token);
   }, []);
-
-  useEffect(() => {
-    const socket = io(ENDPOINT);
-
-    socket.on("connect", () => {
-      console.log("Connected to server");
-    });
-
-    socket.on("message", (data) => {
-      console.log("Message from server:", data);
-    });
-
-    socket.on("follow", (data) => {
-      if (data.receiver_id === user.id) {
-        localStorage.setItem("notify", JSON.stringify(data));
-      }
-      dispatch(setNotify(data));
-    });
-
-    socket.on("like", (data) => {
-      if (data.receiver_id === user.id) {
-        localStorage.setItem("notify", JSON.stringify(data));
-      }
-      dispatch(setNotify(data));
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  });
 
   return (
     <div className="flex">

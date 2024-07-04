@@ -96,6 +96,7 @@ export type NotificationType = {
   receiver: string,
   type: string,
   post: PostType,
+  comment: string,
   updatedAt: string
 }
 

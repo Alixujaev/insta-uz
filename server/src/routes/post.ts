@@ -92,18 +92,22 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
     const post = await Post.findByIdAndUpdate({ _id: id }, { $push: { likes: req.body.user.id } });
     const authorId = post.author_id
 
-    await Notification.create({
-      sender: req.body.user.id,
-      receiver: authorId,
-      post: post,
-      type: 'like'
-  })
-
-      io.emit('like', {
-        event: 'like',
-        sender_id: req.body.user.id,
-        receiver_id: authorId
+    if(authorId !== req.body.user.id) {
+      await Notification.create({
+        sender: req.body.user.id,
+        receiver: authorId,
+        post: post,
+        type: 'like'
     })
+  
+        io.emit('like', {
+          event: 'like',
+          sender_id: req.body.user.id,
+          receiver_id: authorId
+      })
+    }
+
+    
 
     res.send({ success: true, message: 'Лайк поставлен' });
   } catch (error) {
@@ -147,7 +151,28 @@ router.post("/api/comment", verifyToken, async (req: any, res) => {
       post_id: postId,
       comment
     })
-    await Post.findByIdAndUpdate({ _id: postId }, { $push: { comments: req.body.user.id } });  
+    const post = await Post.findByIdAndUpdate({ _id: postId }, { $push: { comments: req.body.user.id } });  
+    const authorId = post.author_id
+
+
+    if(authorId !== req.body.user.id) {
+      await Notification.create({
+        sender: req.body.user.id,
+        receiver: authorId,
+        post: post,
+        comment,
+        type: 'comment'
+    })
+  
+        io.emit('comment', {
+          event: 'comment',
+          sender_id: req.body.user.id,
+          receiver_id: authorId
+      })
+    }
+
+
+    
     res.send({ success: true, message: 'Комментарий добавлен', data: newComment });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при добавлении комментария', error });

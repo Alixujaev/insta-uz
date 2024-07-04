@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { NotificationType } from "@/consts";
 import { handleGetNotification } from "@/store/notification.store";
 import { formatDate } from "@/lib/utils";
+import Loader from "./Loader";
 
 const Notifications = ({
   isShowNotifications,
@@ -14,10 +15,13 @@ const Notifications = ({
   setIsSmall: any;
 }) => {
   const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token || !isShowNotifications) return;
+
+    setIsLoading(true);
 
     handleGetNotification(token)
       .then((res) => {
@@ -25,10 +29,9 @@ const Notifications = ({
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
   }, [isShowNotifications]);
-
-  console.log(notifications);
 
   return (
     <div
@@ -43,6 +46,12 @@ const Notifications = ({
       </div>
 
       <div className="pl-10 pr-5">
+        {isLoading ? <Loader className="h-[60vh]" /> : null}
+
+        {!isLoading && notifications.length === 0 ? (
+          <p className="text-center text-sm">Нет уведомлений</p>
+        ) : null}
+
         {notifications.map((notification) =>
           notification.type === "follow" ? (
             <div className="flex gap-2 items-center mb-3 justify-between">
@@ -70,7 +79,7 @@ const Notifications = ({
                 Подписаться
               </button>
             </div>
-          ) : (
+          ) : notification.type === "like" ? (
             <div className="flex gap-2 items-center mb-3 justify-between">
               <div className="flex gap-1 flex-1">
                 <div className="flex-none">
@@ -92,11 +101,43 @@ const Notifications = ({
                 </p>
               </div>
 
-              <img
-                src="https://picsum.photos/200"
-                alt="public"
-                className="w-11 h-11 rounded object-cover object-center"
-              />
+              <Link to={`/p/${notification.post?._id}`}>
+                <img
+                  src={notification?.post?.image}
+                  alt="public"
+                  className="w-11 h-11 rounded object-cover object-center"
+                />
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center mb-3 justify-between">
+              <div className="flex gap-1 flex-1">
+                <div className="flex-none">
+                  <Avatar size="sm" src={notification.sender.profile_img} />
+                </div>
+
+                <p className="text-sm">
+                  <Link
+                    to={`/${notification.sender.username}`}
+                    className="font-semibold"
+                  >
+                    {notification.sender.username}
+                  </Link>{" "}
+                  прокомментировал ваше публикации: {notification.comment}.
+                  <span className="text-[#8E8E8E]">
+                    {" "}
+                    {formatDate(new Date(notification.updatedAt))}
+                  </span>
+                </p>
+              </div>
+
+              <Link to={`/p/${notification.post?._id}`}>
+                <img
+                  src={notification?.post?.image}
+                  alt="public"
+                  className="w-11 h-11 rounded object-cover object-center"
+                />
+              </Link>
             </div>
           )
         )}
