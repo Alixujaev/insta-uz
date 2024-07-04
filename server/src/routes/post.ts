@@ -8,6 +8,8 @@ import Post from "../modules/Post";
 import User from "../modules/User";
 import Comment from "../modules/Comment";
 import { ObjectId } from "mongodb";
+import Notification from "../modules/Notification";
+import { io } from "..";
 
 const router = Router();
 dotenv.config();
@@ -86,7 +88,23 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
   
   
   try {
-    await Post.findByIdAndUpdate({ _id: id }, { $push: { likes: req.body.user.id } });
+    
+    const post = await Post.findByIdAndUpdate({ _id: id }, { $push: { likes: req.body.user.id } });
+    const authorId = post.author_id
+
+    await Notification.create({
+      sender: req.body.user.id,
+      receiver: authorId,
+      post: post,
+      type: 'like'
+  })
+
+      io.emit('like', {
+        event: 'like',
+        sender_id: req.body.user.id,
+        receiver_id: authorId
+    })
+
     res.send({ success: true, message: 'Лайк поставлен' });
   } catch (error) {
     console.log(error);

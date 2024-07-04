@@ -2,12 +2,10 @@ import Logo from "@/assets/icons/instagram-text-logo.png";
 import instagram from "@/assets/images/instagram.png";
 import { Link } from "react-router-dom";
 import BaseIcon from "./icon/BaseIcon";
-import { useLocalStorage } from "usehooks-ts";
-import { UserType } from "@/consts";
 import userImg from "@/assets/images/user.jpg";
 import CreatePost from "./dialogs/CreatePost";
 import More from "./dropdowns/More";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Search from "./Search";
 import Notifications from "./Notifications";
 import { useSelector } from "react-redux";
@@ -17,7 +15,7 @@ const Sidebar = () => {
   const [isSmall, setIsSmall] = useState(false);
   const [isShowSearch, setIsShowSearch] = useState(false);
   const [isShowNotifications, setIsShowNotifications] = useState(false);
-  // const [user] = useLocalStorage<UserType>("user", {} as UserType);
+  const [notifyTime, setNotifyTime] = useState<number>(0);
 
   function handleClickSearch() {
     if (!isSmall) {
@@ -38,9 +36,35 @@ const Sidebar = () => {
     } else {
       setIsSmall(false);
     }
+    localStorage.removeItem("notify");
     setIsShowNotifications(!isShowNotifications);
     setIsShowSearch(false);
   }
+
+  useEffect(() => {
+    if (
+      notify.event === "follow" ||
+      (notify.event === "like" && notify.receiver_id === user.id)
+    ) {
+      setNotifyTime(10);
+    }
+  }, [notify]);
+
+  useEffect(() => {
+    let timerId: any;
+
+    if (notifyTime <= 0) return;
+
+    if (notifyTime > 0) {
+      timerId = setTimeout(() => {
+        setNotifyTime(notifyTime - 1);
+      }, 1000);
+    }
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [notifyTime]);
 
   return (
     <div className={`h-screen fixed top-0 left-0 flex z-50`}>
@@ -119,25 +143,46 @@ const Sidebar = () => {
 
             <div
               onClick={handleClickNotify}
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer ${
+              className={`relative py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md cursor-pointer ${
                 isShowNotifications ? "border" : ""
               }`}
             >
               <BaseIcon name="notifications" />
               {!isSmall ? (
-                <span
-                  className={`whitespace-nowrap ${
-                    user.id === notify.receiver_id ? "text-red-500" : ""
-                  }`}
-                >
-                  Уведомления
-                </span>
+                <span className={`whitespace-nowrap `}>Уведомления</span>
               ) : null}
 
-              <div className=" bg-red-500 rounded">
-                <div className="flex items-center gap-1">
-                  <BaseIcon name="user" color="black" viewBox="0 0 24 24" />
-                  <p>1</p>
+              {localStorage.getItem("notify") ? (
+                <div className="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-3 left-8"></div>
+              ) : null}
+
+              <div
+                className={`absolute bg-red-500 rounded-lg py-1 px-3 transition-all transform -right-10 ${
+                  notifyTime > 0 ? "scale-100" : "scale-0"
+                }`}
+              >
+                <div className="flex items-center gap-.5">
+                  {notify.event === "follow" ? (
+                    <BaseIcon
+                      name="user"
+                      color="white"
+                      viewBox="0 0 30 30"
+                      cn="mt-2"
+                      width={22}
+                      height={22}
+                    />
+                  ) : (
+                    <BaseIcon
+                      name="white_heart"
+                      color="white"
+                      viewBox="0 0 28 28"
+                      cn="mt-2"
+                      width={24}
+                      height={24}
+                    />
+                  )}
+
+                  <p className=" text-white font-semibold">1</p>
                 </div>
               </div>
             </div>

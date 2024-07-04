@@ -169,7 +169,13 @@ const Post = ({
                 <p className="font-semibold text-lg">{likes.length}</p>
               </div>
               <div className="flex gap-2 text-white items-center">
-                <BaseIcon name="white_comment" cn="h-fit" />
+                <BaseIcon
+                  name="white_comment"
+                  cn="h-fit"
+                  viewBox="0 0 42 42"
+                  width={32}
+                  height={32}
+                />
                 <p className="font-semibold text-lg">{post.comments.length}</p>
               </div>
             </div>

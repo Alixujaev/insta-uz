@@ -9,7 +9,10 @@ const NotificationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User"
   },
-  post_id: String,
+  post: {
+    type: Schema.Types.ObjectId,
+    ref: "Post"
+  },
   type: String
 }, {timestamps: true});
 

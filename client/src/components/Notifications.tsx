@@ -1,17 +1,12 @@
-import { handleSearchUsers } from "@/store/user.store";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
 import { NotificationType } from "@/consts";
 import { handleGetNotification } from "@/store/notification.store";
-import { useSelector } from "react-redux";
+import { formatDate } from "@/lib/utils";
 
 const Notifications = ({
   isShowNotifications,
-  isSmall,
-  setIsShowNotifications,
-  setIsSmall,
 }: {
   isShowNotifications: boolean;
   isSmall: boolean;
@@ -24,12 +19,20 @@ const Notifications = ({
   useEffect(() => {
     if (!token || !isShowNotifications) return;
 
-    handleGetNotification(token).then((res) => {});
+    handleGetNotification(token)
+      .then((res) => {
+        setNotifications(res.data.data.reverse());
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [isShowNotifications]);
+
+  console.log(notifications);
 
   return (
     <div
-      className={` shadow-2xl z-10 rounded-2xl transition-all duration-200 transform ${
+      className={`overflow-y-auto pb-5 shadow-2xl z-10 rounded-2xl transition-all duration-200 transform ${
         !isShowNotifications
           ? "-translate-x-[700px] w-0 h-full"
           : "-translate-x-4 w-[410px]"
@@ -40,33 +43,63 @@ const Notifications = ({
       </div>
 
       <div className="pl-10 pr-5">
-        <div className="flex gap-2 items-center mb-3">
-          <Avatar size="sm" />
-          <p className="text-sm">
-            <span className="font-semibold">isl0m.ali</span> подписался(-ась) на
-            ваши обновления.
-            <span className="text-[#8E8E8E]"> 2 часа назад</span>
-          </p>
+        {notifications.map((notification) =>
+          notification.type === "follow" ? (
+            <div className="flex gap-2 items-center mb-3 justify-between">
+              <div className="flex gap-1 flex-1">
+                <div className="flex-none">
+                  <Avatar size="sm" src={notification.sender.profile_img} />
+                </div>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-8">
-            Подписаться
-          </Button>
-        </div>
+                <p className="text-sm">
+                  <Link
+                    to={`/${notification.sender.username}`}
+                    className="font-semibold"
+                  >
+                    {notification.sender.username}
+                  </Link>{" "}
+                  подписался(-ась) на ваши обновления.
+                  <span className="text-[#8E8E8E]">
+                    {" "}
+                    {formatDate(new Date(notification.updatedAt))}
+                  </span>
+                </p>
+              </div>
 
-        <div className="flex gap-2 items-center">
-          <Avatar size="sm" />
-          <p className="text-sm">
-            <span className="font-semibold">isl0m.ali</span> поставил(-а)
-            "Нравится" вашей публикации.
-            <span className="text-[#8E8E8E]"> 2 часа назад</span>
-          </p>
+              <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm">
+                Подписаться
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center mb-3 justify-between">
+              <div className="flex gap-1 flex-1">
+                <div className="flex-none">
+                  <Avatar size="sm" src={notification.sender.profile_img} />
+                </div>
 
-          <img
-            src="https://picsum.photos/200"
-            alt="public"
-            className="w-11 h-11 rounded object-cover object-center"
-          />
-        </div>
+                <p className="text-sm">
+                  <Link
+                    to={`/${notification.sender.username}`}
+                    className="font-semibold"
+                  >
+                    {notification.sender.username}
+                  </Link>{" "}
+                  поставил(-а) "Нравится" вашей публикации.
+                  <span className="text-[#8E8E8E]">
+                    {" "}
+                    {formatDate(new Date(notification.updatedAt))}
+                  </span>
+                </p>
+              </div>
+
+              <img
+                src="https://picsum.photos/200"
+                alt="public"
+                className="w-11 h-11 rounded object-cover object-center"
+              />
+            </div>
+          )
+        )}
       </div>
     </div>
   );

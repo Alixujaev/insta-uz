@@ -92,9 +92,11 @@ export type CommentType = {
 
 export type NotificationType = {
   id: string,
-  sender: string,
+  sender: UserType,
   receiver: string,
-  type: string
+  type: string,
+  post: PostType,
+  updatedAt: string
 }
 
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [

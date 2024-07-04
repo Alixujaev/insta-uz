@@ -6,10 +6,10 @@ import AuthRoutes from './routes/auth';
 import UserRoutes from './routes/user';
 import PostRoutes from './routes/post';
 import StoryRoutes from './routes/story';
+import NotificationRoutes from "./routes/notify"
 import { createServer } from 'http'; // Import the http module
 import { Server as SocketIOServer } from 'socket.io'; // Import socket.io
-import { verifyToken } from './middlewares/utils';
-import User from './modules/User';
+
 
 dotenv.config();
 
@@ -26,6 +26,7 @@ app.use(AuthRoutes);
 app.use(UserRoutes);
 app.use(PostRoutes);
 app.use(StoryRoutes);
+app.use(NotificationRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
