@@ -1,5 +1,5 @@
 import Avatar from "@/components/Avatar";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { StoryType, UserType } from "@/consts";
 import { useEffect, useState } from "react";
@@ -22,7 +22,7 @@ import { handleGetStory } from "@/store/story.store";
 
 const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
-  const params = useParams();
+  const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<UserType | null>(null);
   const [my] = useLocalStorage<{ id: string }>("user", { id: "" });
@@ -32,41 +32,15 @@ const Profile = () => {
   const [error, setError] = useState<boolean>(false);
   const [story, setStory] = useState<StoryType>({} as StoryType);
 
-  // useEffect(() => {
-  //   if (!params.username || !token) return;
-
-  //   setIsLoading(true);
-
-  //   handleGetUser(params.username)
-  //     .then((res) => {
-  //       setUser(res.data.data.user);
-  //       setError(false);
-  //       setFollowers(res.data.data.user.followers || []);
-  //       setFollowing(res.data.data.user.following || []);
-  //       handleGetStory(res.data.data.user?.stories[0], token)
-  //         .then((res) => {
-  //           setStory(res.data.data);
-  //         })
-  //         .catch((err) => {
-  //           console.log(err);
-  //         })
-  //         .finally(() => setIsLoading(false));
-  //     })
-  //     .catch((err) => {
-  //       setError(true);
-  //     })
-  //     .finally(() => setIsLoading(false));
-  // }, [params, isUpdatePosts, token]);
-
   useEffect(() => {
     let isMounted = true;
     setIsLoading(true);
 
     const fetchData = async () => {
-      if (!params.username || !token) return;
+      if (!pathname || !token) return;
 
       try {
-        const res = await handleGetUser(params.username);
+        const res = await handleGetUser(pathname.substring(1));
         if (!isMounted) return; // Prevent setting state on unmounted component
         setUser(res.data.data.user);
         setFollowers(res.data.data.user.followers || []);
@@ -81,6 +55,7 @@ const Profile = () => {
 
         setIsLoading(false);
       } catch (err) {
+        setError(true);
         setIsLoading(false);
         // Handle error
       }
@@ -91,7 +66,7 @@ const Profile = () => {
     return () => {
       isMounted = false; // Clean up to prevent state updates on unmounted component
     };
-  }, [params, isUpdatePosts]);
+  }, [pathname, isUpdatePosts]);
 
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
@@ -137,8 +112,10 @@ const Profile = () => {
                   storyId={user.stories[0]}
                   viewed={story?.views?.includes(my.id)}
                 />
-              ) : (
+              ) : my.id === user.id ? (
                 <CreateStory profile_img={user.profile_img} />
+              ) : (
+                <Avatar size="xl" src={user.profile_img} storyId="" />
               )}
             </div>
 

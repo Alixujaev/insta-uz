@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useEffect, useState } from "react";
 import {
   handleDeleteFollower,
+  handleFollow,
   handleGetFollowers,
   handleGetFollowing,
   handleUnFollow,
@@ -9,6 +10,9 @@ import {
 import Avatar from "../Avatar";
 import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
+import Loader from "../Loader";
+import { useSelector } from "react-redux";
+import { log } from "console";
 
 const UserList = ({
   count,
@@ -29,6 +33,7 @@ const UserList = ({
   following?: string[];
   setFollowing?: any;
 }) => {
+  const { user } = useSelector((state: any) => state.user);
   const [open, setOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -87,6 +92,32 @@ const UserList = ({
       });
   }
 
+  function followMy(id: string, token: string | null | undefined) {
+    if (!token) return;
+
+    handleFollow(id, token)
+      .then((res) => {
+        console.log(res);
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function unFollowMy(id: string, token: string | null | undefined) {
+    if (!token) return;
+
+    handleUnFollow(id, token)
+      .then((res) => {
+        console.log(res);
+        setOpen(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
     if (!users.length) setOpen(false);
   }, [users]);
@@ -106,9 +137,7 @@ const UserList = ({
         <div className="mx-3 my-2">
           <div className="max-h-72 overflow-y-auto">
             {isLoading ? (
-              <div className="flex justify-center items-center h-24">
-                <p className="text-sm text-[#8E8E8E]">Загрузка...</p>
-              </div>
+              <Loader />
             ) : (
               users.map((item) => (
                 <div
@@ -129,19 +158,37 @@ const UserList = ({
                       </p>
                     </div>
                   </div>
-                  {type === "followers" ? (
+                  {id === user.id ? (
+                    type === "followers" ? (
+                      <Button
+                        onClick={() => handleFollowerDelete(item._id, token)}
+                        className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
+                      >
+                        Удалить
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleUnFollowUser(item._id, token)}
+                        className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
+                      >
+                        Отписаться
+                      </Button>
+                    )
+                  ) : item._id === user.id ? null : user.following?.includes(
+                      item._id
+                    ) ? (
                     <Button
-                      onClick={() => handleFollowerDelete(item._id, token)}
-                      className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
-                    >
-                      Удалить
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => handleUnFollowUser(item._id, token)}
+                      onClick={() => unFollowMy(item._id, token)}
                       className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
                     >
                       Отписаться
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => followMy(item._id, token)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
+                    >
+                      Подписаться
                     </Button>
                   )}
                 </div>

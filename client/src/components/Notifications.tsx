@@ -6,6 +6,7 @@ import { handleGetNotification } from "@/store/notification.store";
 import { formatDate } from "@/lib/utils";
 import Loader from "./Loader";
 import { useSelector } from "react-redux";
+import { handleFollow, handleUnFollow } from "@/store/user.store";
 
 const Notifications = ({
   isShowNotifications,
@@ -21,6 +22,7 @@ const Notifications = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { pathname } = useLocation();
   const { user } = useSelector((state: any) => state.user);
+  const [following, setFollowing] = useState<string[]>([]);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -31,6 +33,8 @@ const Notifications = ({
     handleGetNotification(token)
       .then((res) => {
         setNotifications(res.data.data.reverse());
+
+        setFollowing(user?.following || []);
       })
       .catch((err) => {
         console.log(err);
@@ -42,6 +46,32 @@ const Notifications = ({
     setIsShowNotifications(false);
     setIsSmall(false);
   }, [pathname]);
+
+  function handleFollowClick(id: string, token: string | null) {
+    if (!token) return;
+
+    setFollowing([...following, id]);
+
+    handleFollow(id, token)
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+        setFollowing(following.filter((follower) => follower !== id));
+      });
+  }
+
+  function handleUnFollowClick(id: string, token: string | null) {
+    if (!token) return;
+
+    setFollowing(following.filter((follower) => follower !== id));
+
+    handleUnFollow(id, token)
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+        setFollowing([...following, id]);
+      });
+  }
 
   return (
     <div
@@ -84,12 +114,22 @@ const Notifications = ({
                   </p>
                 </div>
 
-                {user.following.includes(notification.sender._id) ? (
-                  <button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black font-semibold px-2 !py-1 !rounded-lg text-sm">
+                {following.includes(notification.sender._id) ? (
+                  <button
+                    onClick={() =>
+                      handleUnFollowClick(notification.sender._id, token)
+                    }
+                    className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black font-semibold px-2 !py-1 !rounded-lg text-sm"
+                  >
                     Отписаться
                   </button>
                 ) : (
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm">
+                  <button
+                    onClick={() =>
+                      handleFollowClick(notification.sender._id, token)
+                    }
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm"
+                  >
                     Подписаться
                   </button>
                 )}
