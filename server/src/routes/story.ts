@@ -2,12 +2,13 @@ import {Router} from "express"
 import { verifyToken } from "../middlewares/utils";
 import User from "../modules/User";
 import Story from "../modules/Story";
+import cron from 'node-cron';
 
 const router = Router()
 
 router.post("/api/create-story", verifyToken, async (req: any, res) => {
   const { description, image} = req.body;
-  if ( !description || !image) {
+  if (!image) {
     return res.status(400).send({ success: false, message: 'Заполните все поля' });
   }
 
@@ -36,7 +37,9 @@ router.put("/api/view/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   try {
     let story = await Story.findById(id);
-    if(!story.views.includes(req.body.user.id) && !story.author_id !== req.body.user.id) {
+      console.log(!story.views.includes(req.body.user.id));
+      
+    if(!story.views.includes(req.body.user.id)) {
       story = await Story.findByIdAndUpdate(id, {$push: {views: req.body.user.id}});
     }
     res.send({ success: true, message: 'Пост получен', data: story });
@@ -87,6 +90,20 @@ router.get("/api/stories", verifyToken, async (req: any, res) => {
   }
 })
 
+
+cron.schedule('0 * * * *', async () => {
+  const twentyFourHoursAgo = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+  try {
+    const oldStories = await Story.find({ createdAt: { $lte: twentyFourHoursAgo } });
+    for (const story of oldStories) {
+      await User.updateOne({ _id: story.author_id }, { $pull: { stories: story._id } });
+      await Story.findByIdAndDelete(story._id);
+    }
+    console.log('Old stories deleted');
+  } catch (error) {
+    console.error('Error deleting old stories:', error);
+  }
+});
 
 
 export default router
