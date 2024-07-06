@@ -1,5 +1,6 @@
 import ChatList from "@/components/ChatList";
 import ChatRoom from "@/components/ChatRoom";
+import DirectSearchUser from "@/components/dialogs/DirectSearchUser";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { useParams } from "react-router-dom";
 
@@ -26,9 +27,7 @@ const Direct = () => {
           <p className="mb-4 text-sm text-[#737373]">
             Отправляйте личные фото и сообщения другу или группе
           </p>
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 text-sm font-semibold py-1.5 !rounded-lg">
-            Отправить сообщение
-          </button>
+          <DirectSearchUser />
         </div>
       )}
     </div>

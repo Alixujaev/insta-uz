@@ -23,39 +23,6 @@ const Sidebar = () => {
   const { pathname } = useLocation();
   const dispatch = useDispatch();
 
-  function handleClickSearch() {
-    if (pathname.includes("direct")) {
-      setIsSmall(true);
-    } else if (!isSmall) {
-      setIsSmall(true);
-    } else if (isShowNotifications) {
-      setIsSmall(true);
-    } else {
-      setTimeout(() => {
-        setIsSmall(false);
-      }, 200);
-    }
-    setIsShowSearch(!isShowSearch);
-    setIsShowNotifications(false);
-  }
-
-  function handleClickNotify() {
-    if (pathname.includes("direct")) {
-      setIsSmall(true);
-    } else if (!isSmall) {
-      setIsSmall(true);
-    } else if (isShowSearch) {
-      setIsSmall(true);
-    } else {
-      setTimeout(() => {
-        setIsSmall(false);
-      }, 200);
-    }
-    localStorage.removeItem("notify");
-    setIsShowNotifications(!isShowNotifications);
-    setIsShowSearch(false);
-  }
-
   useEffect(() => {
     if (pathname.includes("direct")) {
       setIsSmall(true);
@@ -93,31 +60,42 @@ const Sidebar = () => {
       console.log("Connected to server");
     });
 
-    socket.on("follow", (data) => {
+    const handleNotify = (data: any) => {
       if (data.receiver_id === user.id) {
         localStorage.setItem("notify", JSON.stringify(data));
       }
       dispatch(setNotify(data));
-    });
+    };
 
-    socket.on("like", (data) => {
-      if (data.receiver_id === user.id) {
-        localStorage.setItem("notify", JSON.stringify(data));
-      }
-      dispatch(setNotify(data));
-    });
-
-    socket.on("comment", (data) => {
-      if (data.receiver_id === user.id) {
-        localStorage.setItem("notify", JSON.stringify(data));
-      }
-      dispatch(setNotify(data));
-    });
+    socket.on("follow", handleNotify);
+    socket.on("like", handleNotify);
+    socket.on("comment", handleNotify);
 
     return () => {
       socket.disconnect();
     };
-  });
+  }, [dispatch, user.id]);
+
+  const handleClickSearch = () => {
+    if (pathname.includes("direct") || !isSmall || isShowNotifications) {
+      setIsSmall(true);
+    } else {
+      setTimeout(() => setIsSmall(false), 200);
+    }
+    setIsShowSearch(!isShowSearch);
+    setIsShowNotifications(false);
+  };
+
+  const handleClickNotify = () => {
+    if (pathname.includes("direct") || !isSmall || isShowSearch) {
+      setIsSmall(true);
+    } else {
+      setTimeout(() => setIsSmall(false), 200);
+    }
+    localStorage.removeItem("notify");
+    setIsShowNotifications(!isShowNotifications);
+    setIsShowSearch(false);
+  };
 
   return (
     <div className={`h-screen fixed top-0 left-0 flex z-50`}>

@@ -44,7 +44,6 @@ export const io = new SocketIOServer(httpServer, {
 
 
 io.on('connection', (socket) => {
-  console.log('New client connected with socket ID:', socket.id);
 
   socket.on('register', (userId) => {
       console.log(`User ${userId} registered with socket ID ${socket.id}`);

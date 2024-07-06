@@ -7,6 +7,7 @@ import { formatDate } from "@/lib/utils";
 import Loader from "./Loader";
 import { useSelector } from "react-redux";
 import { handleFollow, handleUnFollow } from "@/store/user.store";
+import useFetchData from "@/hooks/useFetchData";
 
 const Notifications = ({
   isShowNotifications,
@@ -18,29 +19,20 @@ const Notifications = ({
   setIsShowNotifications: any;
   setIsSmall: any;
 }) => {
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { pathname } = useLocation();
   const { user } = useSelector((state: any) => state.user);
   const [following, setFollowing] = useState<string[]>([]);
   const token = localStorage.getItem("token");
+  const { data: notifications, isLoading } = useFetchData<NotificationType[]>(
+    "notifications",
+    handleGetNotification
+  );
 
   useEffect(() => {
-    if (!token || !isShowNotifications) return;
-
-    setIsLoading(true);
-
-    handleGetNotification(token)
-      .then((res) => {
-        setNotifications(res.data.data.reverse());
-
-        setFollowing(user?.following || []);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }, [isShowNotifications]);
+    if (notifications) {
+      setFollowing(user?.following || []);
+    }
+  }, [notifications]);
 
   useEffect(() => {
     setIsShowNotifications(false);
@@ -88,10 +80,10 @@ const Notifications = ({
       <div className="pl-10 pr-5">
         {isLoading ? (
           <Loader className="h-[60vh]" />
-        ) : !isLoading && notifications.length === 0 ? (
+        ) : !isLoading && notifications?.length === 0 ? (
           <p className="text-center text-sm">Нет уведомлений</p>
         ) : (
-          notifications.map((notification) =>
+          notifications?.map((notification) =>
             notification.type === "follow" ? (
               <div className="flex gap-2 items-center mb-3 justify-between">
                 <div className="flex gap-1 flex-1">
