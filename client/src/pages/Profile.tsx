@@ -24,8 +24,8 @@ const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
   const { pathname } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<UserType | null>(null);
   const [my] = useLocalStorage<{ id: string }>("user", { id: "" });
+  const [user, setUser] = useState<UserType | null>(null);
   const token = localStorage.getItem("token");
   const [followers, setFollowers] = useState<string[]>([]);
   const [following, setFollowing] = useState<string[]>([]);
@@ -130,9 +130,9 @@ const Profile = () => {
                     <div className="flex gap-2">
                       <EditProfile user={user} />
                     </div>
-                    <button>
+                    {/* <button>
                       <BaseIcon name="settings" />
-                    </button>
+                    </button> */}
                   </div>
                 ) : (
                   <div className="flex gap-3 items-center">
@@ -156,9 +156,9 @@ const Profile = () => {
                     <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8">
                       Отправить сообщение
                     </Button>
-                    <button>
+                    {/* <button>
                       <BaseIcon name="settings" />
-                    </button>
+                    </button> */}
                   </div>
                 )}
               </div>

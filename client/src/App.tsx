@@ -16,6 +16,7 @@ import AboutProfile from "./components/dialogs/AboutProfile";
 import Story from "./pages/Story";
 import { useDispatch } from "react-redux";
 import { createUser } from "./actions/userActions";
+import Direct from "./pages/Direct";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,7 +47,9 @@ function App() {
       {token && !pathname.includes("/stories/") ? (
         <>
           <Sidebar />
-          <div className="w-64"></div>
+          <div
+            className={`${pathname.includes("direct") ? "w-[79px]" : "w-64"}`}
+          ></div>
         </>
       ) : null}
 
@@ -58,14 +61,18 @@ function App() {
           <Route path="/accounts/verify" element={<Verify />} />
           <Route path="/:username" element={<Profile />} />
           <Route path="/p/:id" element={<Post />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="/stories/:id" element={<Story />} />
+          <Route path="/direct/inbox/" element={<Direct />} />
+          <Route path="/direct/t/:chatId" element={<Direct />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <EditPost />
         <AboutProfile />
 
-        {!pathname.includes("/stories/") ? <Links /> : null}
+        {!pathname.includes("/stories/") && !pathname.includes("/direct/") ? (
+          <Links />
+        ) : null}
       </div>
     </div>
   );

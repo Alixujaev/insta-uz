@@ -3,7 +3,7 @@ import BaseIcon from "@/components/icon/BaseIcon";
 import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
 import { useRef, useState } from "react";
-import { handleCreate, handleImageUpload } from "@/store/post.store";
+import { handleImageUpload } from "@/store/post.store";
 import { useDispatch } from "react-redux";
 import { updatePosts } from "@/actions/settingsActions";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -142,7 +142,7 @@ const CreateStory = ({ profile_img }: { profile_img: string }) => {
               ) : null}
             </div>
 
-            {description && file && !isLoading ? (
+            {file && !isLoading ? (
               <button
                 onClick={handleCreate}
                 className="bg-blue-500 w-full text-white py-2 px-2.5 rounded-lg text-sm font-medium mb-3"

@@ -1,6 +1,6 @@
 import Logo from "@/assets/icons/instagram-text-logo.png";
 import instagram from "@/assets/images/instagram.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import BaseIcon from "./icon/BaseIcon";
 import userImg from "@/assets/images/user.jpg";
 import CreatePost from "./dialogs/CreatePost";
@@ -20,10 +20,13 @@ const Sidebar = () => {
   const [isShowSearch, setIsShowSearch] = useState(false);
   const [isShowNotifications, setIsShowNotifications] = useState(false);
   const [notifyTime, setNotifyTime] = useState<number>(0);
+  const { pathname } = useLocation();
   const dispatch = useDispatch();
 
   function handleClickSearch() {
-    if (!isSmall) {
+    if (pathname.includes("direct")) {
+      setIsSmall(true);
+    } else if (!isSmall) {
       setIsSmall(true);
     } else if (isShowNotifications) {
       setIsSmall(true);
@@ -37,7 +40,9 @@ const Sidebar = () => {
   }
 
   function handleClickNotify() {
-    if (!isSmall) {
+    if (pathname.includes("direct")) {
+      setIsSmall(true);
+    } else if (!isSmall) {
       setIsSmall(true);
     } else if (isShowSearch) {
       setIsSmall(true);
@@ -50,6 +55,12 @@ const Sidebar = () => {
     setIsShowNotifications(!isShowNotifications);
     setIsShowSearch(false);
   }
+
+  useEffect(() => {
+    if (pathname.includes("direct")) {
+      setIsSmall(true);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     if (!notify) return;

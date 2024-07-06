@@ -5,26 +5,10 @@ import useFetchData from "@/hooks/useFetchData";
 import { PostType } from "@/consts";
 
 const Posts = () => {
-  const token = localStorage.getItem("token");
   const { data: posts, isLoading } = useFetchData<PostType[]>(
     "posts",
     handleGetFollowingPosts
   );
-
-  // useEffect(() => {
-  //   if (!token) return;
-
-  //   setIsLoading(true);
-
-  //   handleGetFollowingPosts(token)
-  //     .then((res) => {
-  //       setPosts(res.data.data.reverse());
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     })
-  //     .finally(() => setIsLoading(false));
-  // }, [token]);
 
   return (
     <div className="flex items-center flex-col mb-40">

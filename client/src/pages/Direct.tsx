@@ -1,0 +1,38 @@
+import ChatList from "@/components/ChatList";
+import ChatRoom from "@/components/ChatRoom";
+import BaseIcon from "@/components/icon/BaseIcon";
+import { useParams } from "react-router-dom";
+
+const Direct = () => {
+  const { chatId } = useParams();
+
+  return (
+    <div className="flex">
+      <ChatList />
+
+      {chatId ? (
+        <ChatRoom />
+      ) : (
+        <div className="flex-1 h-screen flex flex-col justify-center items-center">
+          <div className="w-24 h-24 flex justify-center items-center border-[3px] rounded-full border-black mb-3">
+            <BaseIcon
+              name="messages"
+              viewBox="0 0 24 24"
+              width={48}
+              height={48}
+            />
+          </div>
+          <h2 className="mb-1 text-xl">Ваши сообщения</h2>
+          <p className="mb-4 text-sm text-[#737373]">
+            Отправляйте личные фото и сообщения другу или группе
+          </p>
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 text-sm font-semibold py-1.5 !rounded-lg">
+            Отправить сообщение
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Direct;

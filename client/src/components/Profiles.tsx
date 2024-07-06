@@ -10,7 +10,6 @@ import useFetchData from "@/hooks/useFetchData";
 
 const Profiles = () => {
   const [user] = useLocalStorage("user", {} as UserType);
-  const token = localStorage.getItem("token");
   const { data: users, isLoading } = useFetchData<UserType[]>(
     "users",
     handleGetRecomendeds
@@ -25,8 +24,6 @@ const Profiles = () => {
             {user.username}
           </Link>
         </div>
-
-        <p className="text-xs text-blue-400 font-bold">Переключиться</p>
       </div>
 
       <div className="flex justify-between items-center px-2 mb-4">
