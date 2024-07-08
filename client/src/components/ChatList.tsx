@@ -1,6 +1,32 @@
+import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
+import { useSelector } from "react-redux";
+import { handleGetConversations } from "@/store/cenversations.store";
+import { formatDate } from "@/lib/utils";
+import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const ChatList = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [conversations, setConversations] = useState([]);
+  const { user } = useSelector((state: any) => state.user);
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) return;
+
+    setIsLoading(true);
+    handleGetConversations(token, user.id)
+      .then((res) => {
+        setConversations(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => setIsLoading(false));
+  }, [user]);
+
   return (
     <div className="w-[380px] h-screen border-r">
       <div className="pt-9 px-6 pb-3 bg-white">
@@ -11,21 +37,30 @@ const ChatList = () => {
         className="overflow-y-auto "
         style={{ height: "calc(100vh - 80px)" }}
       >
-        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 2].map((item) => (
-          <div
-            key={item}
-            className="px-4 py-2 flex gap-3 items-center cursor-pointer "
-          >
-            <Avatar size="dr" />
-            <div>
-              <h3 className="text-sm">Asadbek</h3>
-              <span className="text-xs text-[#8E8E8E]">
-                Ozi dars bermaydi.
-              </span>{" "}
-              <span className="text-xs text-[#8E8E8E]">17 ч.</span>
-            </div>
-          </div>
-        ))}
+        {isLoading ? (
+          <Loader className="h-[60vh]" />
+        ) : (
+          conversations.map(
+            (item: { _id: string; members: any[]; updatedAt: string }) => (
+              <div
+                key={item._id}
+                className="px-4 py-2 flex gap-3 items-center cursor-pointer"
+                onClick={() => navigate(`/direct/t/${item._id}`)}
+              >
+                <Avatar size="dr" src={item.members[1].profile_img} />
+                <div>
+                  <h3 className="text-sm">{item.members[1].full_name}</h3>
+                  <span className="text-xs text-[#8E8E8E]">
+                    {item.members[1].username}
+                  </span>{" "}
+                  <span className="text-xs text-[#8E8E8E]">
+                    {formatDate(new Date(item.updatedAt))}
+                  </span>
+                </div>
+              </div>
+            )
+          )
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import {Router} from "express";
 import Conversation from "../modules/Conversation";
-
+import { verifyToken } from "../middlewares/utils";
 const router = Router();
 
 
@@ -19,15 +19,17 @@ router.post("/api/conversations", async (req, res) => {
 })
 
 
-router.get("/api/conversations/:userId", async (req, res) => {
+router.get("/api/conversations/:userId", verifyToken, async (req, res) => {
   try {
     const conversations = await Conversation.find({
       members: { $in: [req.params.userId] }
-    })
+    }).select('members').select("updatedAt").populate('members', 'profile_img username full_name');
 
     res.send({ success: true, data: conversations });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении диалогов', error });
   }
 })
+
+
 export default router;

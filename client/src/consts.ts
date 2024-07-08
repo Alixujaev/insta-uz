@@ -1,6 +1,6 @@
 import icons from "./components/icon/icons";
 
-export const BASE_URL = `http://localhost:5000`;
+export const BASE_URL = `http://localhost:8000`;
 
 export enum USER_ACTIONS {
   SET_USER = 'SET_USER',
@@ -98,6 +98,16 @@ export type NotificationType = {
   post: PostType,
   comment: string,
   updatedAt: string
+}
+
+
+export type MessageType = {
+  conversationId: string,
+  createdAt: string,
+  message: string,
+  sender: UserType & {_id: string},
+  updatedAt: string,
+  _id: string
 }
 
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
