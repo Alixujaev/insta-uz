@@ -7,6 +7,8 @@ import UserRoutes from './routes/user';
 import PostRoutes from './routes/post';
 import StoryRoutes from './routes/story';
 import NotificationRoutes from "./routes/notify"
+import ConversationRoutes from "./routes/conversation";
+import MessageRoutes from "./routes/messages"
 import { createServer } from 'http'; // Import the http module
 import { Server as SocketIOServer } from 'socket.io'; // Import socket.io
 
@@ -27,6 +29,8 @@ app.use(UserRoutes);
 app.use(PostRoutes);
 app.use(StoryRoutes);
 app.use(NotificationRoutes);
+app.use(ConversationRoutes);
+app.use(MessageRoutes)
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

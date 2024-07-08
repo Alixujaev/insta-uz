@@ -21,6 +21,7 @@ const Sidebar = () => {
   const [isShowNotifications, setIsShowNotifications] = useState(false);
   const [notifyTime, setNotifyTime] = useState<number>(0);
   const { pathname } = useLocation();
+  const [activeLink, setActiveLink] = useState(pathname);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -97,6 +98,10 @@ const Sidebar = () => {
     setIsShowSearch(false);
   };
 
+  const handleLinkClick = (link: string) => {
+    setActiveLink(link);
+  };
+
   return (
     <div className={`h-screen fixed top-0 left-0 flex z-50`}>
       <div
@@ -121,8 +126,11 @@ const Sidebar = () => {
 
           <div className="flex flex-col mx-3">
             <Link
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md`}
+              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md ${
+                activeLink === "/" ? "font-bold" : ""
+              }`}
               to="/"
+              onClick={() => handleLinkClick("/")}
             >
               <BaseIcon name="home" />
               {!isSmall ? (
@@ -143,8 +151,11 @@ const Sidebar = () => {
             </div>
 
             <Link
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md`}
+              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md ${
+                activeLink === "/explore" ? "font-bold" : ""
+              }`}
               to="/explore"
+              onClick={() => handleLinkClick("/explore")}
             >
               <BaseIcon name="explore" />
               {!isSmall ? (
@@ -153,8 +164,11 @@ const Sidebar = () => {
             </Link>
 
             <Link
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md`}
+              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md ${
+                activeLink === "/reels" ? "font-bold" : ""
+              }`}
               to="/reels"
+              onClick={() => handleLinkClick("/reels")}
             >
               <BaseIcon name="reels" />
               {!isSmall ? (
@@ -165,6 +179,7 @@ const Sidebar = () => {
             <Link
               className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md`}
               to="/direct/inbox"
+              onClick={() => handleLinkClick("/direct/inbox")}
             >
               <BaseIcon name="messages" />
               {!isSmall ? (
@@ -230,8 +245,11 @@ const Sidebar = () => {
             <CreatePost isSmall={isSmall} />
 
             <Link
-              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md`}
+              className={`py-3 p-3.5 mb-2.5 flex gap-4 items-center w-full hover:bg-[#f2f2f2] rounded-md ${
+                activeLink === `/${user.username}` ? "font-bold" : ""
+              }`}
               to={`/${user.username}`}
+              onClick={() => handleLinkClick(`/${user.username}`)}
             >
               {user.profile_img?.trim() ? (
                 <img
