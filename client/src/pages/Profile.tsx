@@ -1,5 +1,5 @@
 import Avatar from "@/components/Avatar";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { StoryType, UserType } from "@/consts";
 import { useEffect, useState } from "react";
@@ -31,6 +31,7 @@ const Profile = () => {
   const [following, setFollowing] = useState<string[]>([]);
   const [error, setError] = useState<boolean>(false);
   const [story, setStory] = useState<StoryType>({} as StoryType);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
@@ -153,7 +154,10 @@ const Profile = () => {
                         Подписаться
                       </Button>
                     )}
-                    <Button className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8">
+                    <Button
+                      onClick={() => navigate(`/direct/t/${user.id}`)}
+                      className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8"
+                    >
                       Отправить сообщение
                     </Button>
                     {/* <button>
@@ -164,7 +168,7 @@ const Profile = () => {
               </div>
               <div className="flex gap-10 mb-6">
                 <p>
-                  <span className="font-medium">{user.posts?.length} </span>
+                  <span className="font-medium">{user.posts?.length}</span>
                   публикаций
                 </p>
                 {user.followers?.length > 0 ? (

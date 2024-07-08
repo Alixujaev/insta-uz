@@ -48,11 +48,18 @@ const ChatList = () => {
                 className="px-4 py-2 flex gap-3 items-center cursor-pointer"
                 onClick={() => navigate(`/direct/t/${item._id}`)}
               >
-                <Avatar size="dr" src={item.members[1].profile_img} />
+                <Avatar
+                  size="dr"
+                  src={
+                    item.members.filter((u) => u._id !== user.id)[0].profile_img
+                  }
+                />
                 <div>
-                  <h3 className="text-sm">{item.members[1].full_name}</h3>
+                  <h3 className="text-sm">
+                    {item.members.filter((u) => u._id !== user.id)[0].full_name}
+                  </h3>
                   <span className="text-xs text-[#8E8E8E]">
-                    {item.members[1].username}
+                    {item.members.filter((u) => u._id !== user.id)[0].username}
                   </span>{" "}
                   <span className="text-xs text-[#8E8E8E]">
                     {formatDate(new Date(item.updatedAt))}

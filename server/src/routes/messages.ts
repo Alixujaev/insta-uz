@@ -1,6 +1,7 @@
 import {Router} from "express";
 import Messages from "../modules/Messages";
 import Conversation from "../modules/Conversation";
+import { verifyToken } from "../middlewares/utils";
 
 const router = Router();
 
@@ -24,9 +25,35 @@ router.get("/api/messages/:conversationId", async (req, res) => {
     const messages = await Messages.find({
       conversationId: req.params.conversationId
     });
-    res.send({ success: true, data: {messages, conversation} });
+
+    if(conversation.length > 0){
+      res.send({ success: true, data: {messages, conversation} });
+    }else{
+      res.status(404).send({ success: false, message: 'Диалог не найден' });
+    }
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении диалогов', error });
+  }
+})
+
+router.get("/api/messages-user/:userId", verifyToken, async(req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      members: { $all: [req.body.user.id, req.params.userId] }
+    }).select('members').select("updatedAt").populate('members', 'profile_img username full_name');
+
+    const messages = await Messages.find({
+      conversationId: conversation[0]._id
+    })    
+
+    if(conversation.length > 0){
+      res.send({ success: true, data: {messages, conversation} });
+    }else{
+      res.status(404).send({ success: false, message: 'Диалог не найден' });
+    }
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при получении диалогов', error });
+    
   }
 })
 

@@ -14,7 +14,7 @@ export const GET_USER_INFO = (username: string) => {
 }
 
 export const GET_USER_INFO_ID = (id: string) => {
-  return axios.get(BASE_URL + `/api/profile/${id}`)
+  return axios.get(BASE_URL + `/api/id/${id}`)
 }
 
 export const UPDATE_USER = (body: any, token: string) => {

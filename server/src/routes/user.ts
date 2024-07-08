@@ -86,9 +86,9 @@ router.get("/api/profile/:username", async (req, res) => {
   }
 })
 
-router.get("/api/profile/:id", async (req, res) => {
+router.get("/api/id/:id", async (req, res) => {
   try {
-    const user = await User.findOne({_id: req.params.id});    
+    const user = await User.findById(req.params.id);    
 
     res.status(200).send({ success: true, data: {
       user: {
@@ -104,8 +104,6 @@ router.get("/api/profile/:id", async (req, res) => {
         createdAt: user?.createdAt
       }
     } });
-
-      
   } catch (error) {
     console.log(error);
     

@@ -2,8 +2,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import Avatar from "./Avatar";
 import DirectHead from "./dropdowns/DirectHead";
 import BaseIcon from "./icon/BaseIcon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  handleConversationByUserId,
+  handleCreateConversation,
   handleDelete,
   handleGetOneConversation,
 } from "@/store/cenversations.store";
@@ -13,17 +15,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleSendMessage } from "@/store/messages.store";
 import AreYouSure from "./dialogs/AreYouSure";
 import { updateChatUsers } from "@/actions/settingsActions";
+import { handleGetUser, handleGetUserId } from "@/store/user.store";
+import userImg from "@/assets/images/user.jpg";
 
 const ChatRoom = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [newConversation, setNewConversation] = useState<boolean>(false);
   const [chatUser, setChatUser] = useState<UserType>({} as UserType);
   const { user } = useSelector((state: any) => state.user);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
+  const scrollRef = useRef<any>(null);
 
   useEffect(() => {
     if (!token || !chatId) return;
@@ -32,13 +38,42 @@ const ChatRoom = () => {
     handleGetOneConversation(token, chatId)
       .then((res) => {
         setMessages(res.data.data.messages);
-        setChatUser(res.data.data.conversation[0].members[1]);
+        setChatUser(
+          res.data.data.conversation[0].members.filter(
+            (u: { _id: string }) => u._id !== user.id
+          )[0]
+        );
       })
       .catch((err) => {
-        navigate("/direct/inbox");
+        if (err.response.status == 404) {
+          handleConversationByUserId(token, chatId)
+            .then((res) => {
+              setMessages(res.data.data.messages);
+              setChatUser(
+                res.data.data.conversation[0].members.filter(
+                  (u: { _id: string }) => u._id !== user.id
+                )[0]
+              );
+            })
+            .catch((err) => {
+              handleGetUserId(chatId)
+                .then((res) => {
+                  setChatUser(res.data.data.user);
+                  setNewConversation(true);
+                })
+                .catch((err) => {
+                  navigate("/direct/inbox");
+                });
+            })
+            .finally(() => setIsLoading(false));
+        }
       })
       .finally(() => setIsLoading(false));
   }, [chatId]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async (
     senderId: string,
@@ -64,6 +99,25 @@ const ChatRoom = () => {
       });
   };
 
+  const handleCreate = async (
+    token: string | null,
+    chatId: string | undefined
+  ) => {
+    if (!token || !chatId) return;
+
+    handleCreateConversation(token, chatId).then((res) => {
+      console.log(res);
+
+      handleSend(user.id, message, res.data.data._id, token)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  };
+
   const handleDeleteConversation = async (
     id: string | undefined,
     token: string | null
@@ -84,8 +138,14 @@ const ChatRoom = () => {
     <div className="flex-1 h-screen flex flex-col">
       <div className="p-4 border-b flex justify-between items-center">
         <div className="flex gap-3 items-center">
-          <Avatar size="md" src={chatUser?.profile_img} />
-          <h3 className="font-semibold">{chatUser?.full_name}</h3>
+          <img
+            src={chatUser?.profile_img ? chatUser?.profile_img : userImg}
+            alt="user photo"
+            className="w-11 h-11 rounded-full object-cover"
+          />
+          <h3 className="font-semibold whitespace-nowrap">
+            {chatUser?.full_name}
+          </h3>
         </div>
         <DirectHead />
       </div>
@@ -108,9 +168,10 @@ const ChatRoom = () => {
           </div>
         </div>
       ) : (
-        <div className="flex-1 p-3">
+        <div className="flex-1 p-3 overflow-y-auto">
           {messages.map((item: MessageType) => (
             <p
+              ref={scrollRef}
               key={item._id}
               className={`text-sm py-[7px] px-3 mb-1 w-fit rounded-3xl ${
                 item.sender === user.id
@@ -124,7 +185,6 @@ const ChatRoom = () => {
         </div>
       )}
 
-      {/* <div className="flex-1 overflow-y-auto"></div> */}
       <div className="m-4">
         <div className="border rounded-2xl p-3 py-1 flex items-center">
           <button className="pr-3">
@@ -138,7 +198,11 @@ const ChatRoom = () => {
             onChange={(e) => setMessage(e.target.value)}
           />
           <button
-            onClick={() => handleSend(user.id, message, chatId, token)}
+            onClick={() =>
+              newConversation
+                ? handleCreate(token, chatId)
+                : handleSend(user.id, message, chatId, token)
+            }
             className="font-medium text-sm text-blue-500"
           >
             Опубликовать

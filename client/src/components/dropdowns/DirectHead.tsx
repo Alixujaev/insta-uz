@@ -12,7 +12,7 @@ const DirectHead = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <button className="text-3xl ">...</button>
+        <button className="text-3xl h-fit">...</button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-20 p-2">
         <DropdownMenuItem
