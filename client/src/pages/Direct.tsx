@@ -2,10 +2,28 @@ import ChatList from "@/components/ChatList";
 import ChatRoom from "@/components/ChatRoom";
 import DirectSearchUser from "@/components/dialogs/DirectSearchUser";
 import BaseIcon from "@/components/icon/BaseIcon";
+import { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 
 const Direct = () => {
   const { chatId } = useParams();
+  const { user } = useSelector((state: any) => state.user);
+  const socket = useRef<any>();
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:8900");
+  }, []);
+
+  useEffect(() => {
+    if (!socket.current) return;
+
+    socket.current.emit("addUser", user.id);
+    socket.current.on("getUsers", (users: any) => {
+      console.log(users);
+    });
+  }, [user]);
 
   return (
     <div className="flex">
