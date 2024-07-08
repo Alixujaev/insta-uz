@@ -16,3 +16,11 @@ export const GET_ONE_CONVERSATION = (token: string, id: string) => {
     }
   })
 }
+
+export const DELETE_CONVERSATION = (token: string, id: string) => {
+  return axios.delete(BASE_URL + `/api/conversations/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+}

@@ -110,6 +110,12 @@ export type MessageType = {
   _id: string
 }
 
+export type MessageBody = {
+  sender: string,
+  conversationId: string,
+  message: string
+}
+
 export const sidebarLinks: { icon: keyof typeof icons; label: string; href: string }[] = [
   {
     icon: "home",

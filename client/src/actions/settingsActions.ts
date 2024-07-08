@@ -13,6 +13,12 @@ export const updatePosts = () => {
   }
 }
 
+export const updateChatUsers = () => {
+  return {
+    type: 'UPDATE_CHAT_USERS'
+  }
+}
+
 export const areYouSureOpenAction = () => {
   return {
     type: 'ARE_YOU_SURE_OPEN'

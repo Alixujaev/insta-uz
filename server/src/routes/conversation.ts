@@ -31,5 +31,15 @@ router.get("/api/conversations/:userId", verifyToken, async (req, res) => {
   }
 })
 
+router.delete("/api/conversations/:id", verifyToken, async (req: any, res) => {
+  const id = req.params.id;
+  try {
+    await Conversation.findByIdAndDelete({ _id: id });
+    res.send({ success: true, message: 'Диалог удален' });
+  } catch (error) {
+    res.status(500).send({ success: false, message: 'Ошибка при удалении диалога', error });
+  }
+})
+
 
 export default router;

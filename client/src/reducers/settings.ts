@@ -4,6 +4,7 @@ const initialState = {
   areYouSureOpen: false,
   editModalOpen: false,
   aboutModalOpen: false,
+  updateChatUsers: false,
   editPostId: '',
   authorName: '',
   story: {}
@@ -21,6 +22,12 @@ export const settingsReducer = (state = initialState, action: { type: string, pa
       return {
         ...state,
         isUpdatePosts: !state.isUpdatePosts
+      }
+
+    case 'UPDATE_CHAT_USERS':
+      return {
+        ...state,
+        updateChatUsers: !state.updateChatUsers
       }
 
     case 'ARE_YOU_SURE_OPEN':

@@ -3,20 +3,27 @@ import Avatar from "./Avatar";
 import DirectHead from "./dropdowns/DirectHead";
 import BaseIcon from "./icon/BaseIcon";
 import { useEffect, useState } from "react";
-import { handleGetOneConversation } from "@/store/cenversations.store";
+import {
+  handleDelete,
+  handleGetOneConversation,
+} from "@/store/cenversations.store";
 import { MessageType, UserType } from "@/consts";
 import Loader from "./Loader";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { handleSendMessage } from "@/store/messages.store";
+import AreYouSure from "./dialogs/AreYouSure";
+import { updateChatUsers } from "@/actions/settingsActions";
 
 const ChatRoom = () => {
   const { chatId } = useParams();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [chatUser, setChatUser] = useState<UserType>({} as UserType);
-  const [error, setError] = useState(false);
   const { user } = useSelector((state: any) => state.user);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!token || !chatId) return;
@@ -28,11 +35,50 @@ const ChatRoom = () => {
         setChatUser(res.data.data.conversation[0].members[1]);
       })
       .catch((err) => {
-        console.log(err);
-        setError(true);
+        navigate("/direct/inbox");
       })
       .finally(() => setIsLoading(false));
   }, [chatId]);
+
+  const handleSend = async (
+    senderId: string,
+    message: string,
+    conversationId: string | undefined,
+    token: string | null
+  ) => {
+    if (!token || !conversationId) return;
+
+    const body = {
+      sender: senderId,
+      conversationId,
+      message,
+    };
+
+    handleSendMessage(body, token)
+      .then((res) => {
+        setMessage("");
+        setMessages([...messages, res.data.data]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeleteConversation = async (
+    id: string | undefined,
+    token: string | null
+  ) => {
+    if (!token || !id) return;
+
+    handleDelete(id, token)
+      .then((res) => {
+        dispatch(updateChatUsers());
+        navigate("/direct/inbox");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className="flex-1 h-screen flex flex-col">
@@ -66,8 +112,8 @@ const ChatRoom = () => {
           {messages.map((item: MessageType) => (
             <p
               key={item._id}
-              className={`text-sm py-[7px] px-3 mb-2 w-fit rounded-3xl ${
-                item.sender._id === user._id
+              className={`text-sm py-[7px] px-3 mb-1 w-fit rounded-3xl ${
+                item.sender === user.id
                   ? "bg-[#3797f0] text-white ml-auto"
                   : "bg-[#efefef]"
               }`}
@@ -88,12 +134,21 @@ const ChatRoom = () => {
             type="text"
             className="flex-1 py-2 outline-none"
             placeholder="Написать сообщение..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
           />
-          <button className="font-medium text-sm text-blue-500">
+          <button
+            onClick={() => handleSend(user.id, message, chatId, token)}
+            className="font-medium text-sm text-blue-500"
+          >
             Опубликовать
           </button>
         </div>
       </div>
+      <AreYouSure
+        text="Вы уверены, что хотите удалить этот чат?"
+        fn={() => handleDeleteConversation(chatId, token)}
+      />
     </div>
   );
 };

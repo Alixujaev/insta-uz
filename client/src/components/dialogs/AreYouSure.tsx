@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { areYouSureOpenAction } from "@/actions/settingsActions";
 
 const AreYouSure = ({
+  text,
   type,
   fn,
 }: {
-  type: "post" | "user" | "story";
+  text?: string;
+  type?: "post" | "user" | "story";
   fn: any;
 }) => {
   const { areYouSureOpen } = useSelector((state: any) => state.settings);
@@ -15,7 +17,9 @@ const AreYouSure = ({
     <Dialog open={areYouSureOpen}>
       <DialogContent className="!rounded-xl !py-1 !px-0 !gap-0 !w-[400px]">
         <h4 className="text-center font-medium pb-2 border-b-2">
-          {type === "post"
+          {text
+            ? text
+            : type === "post"
             ? "Вы уверены, что хотите удалить этот пост?"
             : "Вы уверены, что хотите удалить этот сторис?"}
         </h4>

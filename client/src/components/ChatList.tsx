@@ -10,6 +10,7 @@ const ChatList = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [conversations, setConversations] = useState([]);
   const { user } = useSelector((state: any) => state.user);
+  const { updateChatUsers } = useSelector((state: any) => state.settings);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -25,7 +26,7 @@ const ChatList = () => {
         console.log(err);
       })
       .finally(() => setIsLoading(false));
-  }, [user]);
+  }, [user, updateChatUsers]);
 
   return (
     <div className="w-[380px] h-screen border-r">
