@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { Link, useLocation } from "react-router-dom";
-import { NotificationType } from "@/consts";
+import { BASE_URL, NotificationType } from "@/consts";
 import { handleGetNotification } from "@/store/notification.store";
 import { formatDate } from "@/lib/utils";
 import Loader from "./Loader";
 import { useSelector } from "react-redux";
 import { handleFollow, handleUnFollow } from "@/store/user.store";
 import useFetchData from "@/hooks/useFetchData";
+import { io } from "socket.io-client";
 
 const Notifications = ({
   isShowNotifications,
@@ -27,6 +28,7 @@ const Notifications = ({
     "notifications",
     handleGetNotification
   );
+  const socket = io(BASE_URL);
 
   useEffect(() => {
     if (notifications) {
@@ -39,13 +41,18 @@ const Notifications = ({
     setIsSmall(false);
   }, [pathname]);
 
-  function handleFollowClick(id: string, token: string | null) {
+  function handleFollowClick(id: string, token: string | null, myId: string) {
     if (!token) return;
 
     setFollowing([...following, id]);
 
     handleFollow(id, token)
-      .then((res) => {})
+      .then((res) => {
+        socket.emit("sendFollowNotification", {
+          sender_id: myId,
+          receiver_id: id,
+        });
+      })
       .catch((err) => {
         console.log(err);
         setFollowing(following.filter((follower) => follower !== id));
@@ -118,7 +125,7 @@ const Notifications = ({
                 ) : (
                   <button
                     onClick={() =>
-                      handleFollowClick(notification.sender._id, token)
+                      handleFollowClick(notification.sender._id, token, user.id)
                     }
                     className="bg-blue-500 hover:bg-blue-600 text-white px-2 !py-1 !rounded-lg text-sm"
                   >

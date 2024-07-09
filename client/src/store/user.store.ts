@@ -62,3 +62,46 @@ export const handleGetRecomendeds = async (token: string) => {
   return result
 }
 
+export function follow(
+  id: string,
+  token: string | null,
+  myId: string,
+  followers: string[],
+  setFollowers: any,
+  socket: any
+) {
+  if (!token) return;
+
+  setFollowers([...followers, myId]);
+
+  handleFollow(id, token)
+    .then((res) => {
+      socket.emit("sendFollowNotification", {
+        sender_id: myId,
+        receiver_id: id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      setFollowers(followers.filter((follower) => follower !== myId));
+    });
+}
+
+
+export function unfollow(
+  id: string,
+  token: string | null,
+  myId: string,
+  followers: string[],
+  setFollowers: any
+) {
+  if (!token) return;
+
+  setFollowers(followers.filter((follower) => follower !== myId));
+  handleUnFollow(id, token)
+    .then((res) => {})
+    .catch((err) => {
+      console.log(err);
+      setFollowers([...followers, myId]);
+    });
+}

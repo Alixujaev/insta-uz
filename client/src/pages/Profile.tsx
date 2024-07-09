@@ -1,15 +1,10 @@
 import Avatar from "@/components/Avatar";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import BaseIcon from "@/components/icon/BaseIcon";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BASE_URL, StoryType, UserType } from "@/consts";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
-import {
-  handleFollow,
-  handleGetUser,
-  handleUnFollow,
-} from "@/store/user.store";
+import { follow, handleGetUser, unfollow } from "@/store/user.store";
 import EditProfile from "@/components/dialogs/EditProfile";
 import { useLocalStorage } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
@@ -17,7 +12,6 @@ import UserList from "@/components/dialogs/UserList";
 import { useSelector } from "react-redux";
 import NotFound from "@/components/NotFound";
 import CreateStory from "@/components/dialogs/CreateStory";
-
 import { handleGetStory } from "@/store/story.store";
 import { io } from "socket.io-client";
 
@@ -71,36 +65,6 @@ const Profile = () => {
     };
   }, [pathname, isUpdatePosts]);
 
-  function handleFollowUser(id: string, token: string | null, myId: string) {
-    if (!token) return;
-
-    setFollowers([...followers, myId]);
-
-    handleFollow(id, token)
-      .then((res) => {
-        socket.emit("sendFollowNotification", {
-          sender_id: myId,
-          receiver_id: id,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        setFollowers(followers.filter((follower) => follower !== myId));
-      });
-  }
-
-  function handleUnFollowUser(id: string, token: string | null, myId: string) {
-    if (!token) return;
-
-    setFollowers(followers.filter((follower) => follower !== myId));
-    handleUnFollow(id, token)
-      .then((res) => {})
-      .catch((err) => {
-        console.log(err);
-        setFollowers([...followers, myId]);
-      });
-  }
-
   return (
     <div className="flex justify-center">
       {isLoading ? (
@@ -145,7 +109,13 @@ const Profile = () => {
                     {followers.includes(my.id) ? (
                       <Button
                         onClick={() =>
-                          handleUnFollowUser(user.id, token, my.id)
+                          unfollow(
+                            user.id,
+                            token,
+                            my.id,
+                            followers,
+                            setFollowers
+                          )
                         }
                         className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8"
                       >
@@ -153,7 +123,16 @@ const Profile = () => {
                       </Button>
                     ) : (
                       <Button
-                        onClick={() => handleFollowUser(user.id, token, my.id)}
+                        onClick={() =>
+                          follow(
+                            user.id,
+                            token,
+                            my.id,
+                            followers,
+                            setFollowers,
+                            socket
+                          )
+                        }
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-8"
                       >
                         Подписаться

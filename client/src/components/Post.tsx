@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { formatDate } from "@/lib/utils";
 import { useLocalStorage } from "usehooks-ts";
 import { BASE_URL, UserType } from "@/consts";
-import { comment, handleSavePost, like, unlike } from "@/store/post.store";
+import { comment, like, save, unlike } from "@/store/post.store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Post from "./dialogs/Post";
@@ -24,29 +24,6 @@ const PostComponent = ({ post }: any) => {
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const socket = io(BASE_URL);
-
-  function handleSave(id: string, token: string | null) {
-    if (!token) return;
-
-    if (saveds.includes(id)) {
-      setSaveds(saveds.filter((saved) => saved !== id));
-    } else {
-      setSaveds([...saveds, id]);
-    }
-
-    handleSavePost(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (saveds.includes(id)) {
-          setSaveds([...saveds, id]);
-        } else {
-          setSaveds(saveds.filter((saved) => saved !== id));
-        }
-      });
-  }
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
@@ -124,11 +101,11 @@ const PostComponent = ({ post }: any) => {
         </div>
 
         {saveds.includes(post._id) ? (
-          <button onClick={() => handleSave(post._id, token)}>
+          <button onClick={() => save(post._id, token, saveds, setSaveds)}>
             <BaseIcon name="saved_active" />
           </button>
         ) : (
-          <button onClick={() => handleSave(post._id, token)}>
+          <button onClick={() => save(post._id, token, saveds, setSaveds)}>
             <BaseIcon name="saved" />
           </button>
         )}

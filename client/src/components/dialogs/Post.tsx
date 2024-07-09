@@ -10,8 +10,8 @@ import {
   comment,
   handleDelete,
   handleGetComments,
-  handleSavePost,
   like,
+  save,
   unlike,
 } from "@/store/post.store";
 import { useLocalStorage } from "usehooks-ts";
@@ -73,29 +73,6 @@ const Post = ({
       })
       .catch((err) => {
         console.log(err);
-      });
-  }
-
-  function handleSave(id: string, token: string | null) {
-    if (!token) return;
-
-    if (saveds.includes(id)) {
-      setSaveds(saveds.filter((saved) => saved !== id));
-    } else {
-      setSaveds([...saveds, id]);
-    }
-
-    handleSavePost(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (saveds.includes(id)) {
-          setSaveds([...saveds, id]);
-        } else {
-          setSaveds(saveds.filter((saved) => saved !== id));
-        }
       });
   }
 
@@ -240,11 +217,15 @@ const Post = ({
                 </div>
 
                 {saveds.includes(post._id) ? (
-                  <button onClick={() => handleSave(post._id, token)}>
+                  <button
+                    onClick={() => save(post._id, token, saveds, setSaveds)}
+                  >
                     <BaseIcon name="saved_active" />
                   </button>
                 ) : (
-                  <button onClick={() => handleSave(post._id, token)}>
+                  <button
+                    onClick={() => save(post._id, token, saveds, setSaveds)}
+                  >
                     <BaseIcon name="saved" />
                   </button>
                 )}

@@ -115,7 +115,7 @@ export function unlike(
     });
 }
 
-export   function comment(
+export function comment(
   body: CommentBodyType,
   token: string | null,
   setIsLoading: any,
@@ -144,4 +144,32 @@ export   function comment(
       console.log(err);
     })
     .finally(() => setIsLoading(false));
+}
+
+export function save(
+  id: string,
+  token: string | null,
+  saveds: string[],
+  setSaveds: any
+) {
+  if (!token) return;
+
+  if (saveds.includes(id)) {
+    setSaveds(saveds.filter((saved) => saved !== id));
+  } else {
+    setSaveds([...saveds, id]);
+  }
+
+  handleSavePost(id, token)
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => {
+      console.log(err);
+      if (saveds.includes(id)) {
+        setSaveds([...saveds, id]);
+      } else {
+        setSaveds(saveds.filter((saved) => saved !== id));
+      }
+    });
 }

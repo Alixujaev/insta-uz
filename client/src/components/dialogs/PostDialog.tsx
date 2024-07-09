@@ -9,7 +9,7 @@ import {
   editModalOpenAction,
   editPostIdAction,
 } from "@/actions/settingsActions";
-import { handleSavePost } from "@/store/post.store";
+import { save } from "@/store/post.store";
 import { checkPostAuthor } from "@/lib/utils";
 import { UserType } from "@/consts";
 import { useLocalStorage } from "usehooks-ts";
@@ -31,29 +31,6 @@ const PostDialog = ({
   const [open, setOpen] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
-
-  function handleSave(id: string, token: string | null) {
-    if (!token || !saveds) return;
-
-    if (saveds.includes(id)) {
-      setSaveds(saveds.filter((saved) => saved !== id));
-    } else {
-      setSaveds([...saveds, id]);
-    }
-
-    handleSavePost(id, token)
-      .then((res) => {
-        setOpen(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        if (saveds.includes(id)) {
-          setSaveds([...saveds, id]);
-        } else {
-          setSaveds(saveds.filter((saved) => saved !== id));
-        }
-      });
-  }
 
   function handleCopyLink() {
     navigator.clipboard.writeText(`${window.location.origin}/p/${id}`);
@@ -93,7 +70,7 @@ const PostDialog = ({
         ) : null}
 
         <button
-          onClick={() => handleSave(id, token)}
+          onClick={() => save(id, token, saveds ? saveds : [], setSaveds)}
           className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
         >
           {saveds?.includes(id)

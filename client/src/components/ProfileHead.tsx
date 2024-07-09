@@ -2,17 +2,23 @@ import { handleFollow, handleUnFollow } from "@/store/user.store";
 import Avatar from "./Avatar";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { io } from "socket.io-client";
+import { BASE_URL } from "@/consts";
 
 const ProfileHead = ({ user }: { user: any }) => {
   const [followers, setFollowers] = useState<string[]>([]);
   const token = localStorage.getItem("token");
+  const socket = io(BASE_URL);
 
   function handleFollowUser(id: string, token: string | null, myId: string) {
     if (!token) return;
     setFollowers([...followers, myId]);
     handleFollow(id, token)
       .then((res) => {
-        console.log(res);
+        socket.emit("sendFollowNotification", {
+          sender_id: myId,
+          receiver_id: id,
+        });
       })
       .catch((err) => {
         console.log(err);

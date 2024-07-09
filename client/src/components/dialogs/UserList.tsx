@@ -12,7 +12,8 @@ import { Button } from "../ui/button";
 import { Link } from "react-router-dom";
 import Loader from "../Loader";
 import { useSelector } from "react-redux";
-import { log } from "console";
+import { io } from "socket.io-client";
+import { BASE_URL } from "@/consts";
 
 const UserList = ({
   count,
@@ -37,6 +38,7 @@ const UserList = ({
   const [open, setOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const socket = io(BASE_URL);
 
   useEffect(() => {
     if (open) {
@@ -92,13 +94,20 @@ const UserList = ({
       });
   }
 
-  function followMy(id: string, token: string | null | undefined) {
+  function followMy(
+    id: string,
+    token: string | null | undefined,
+    myId: string
+  ) {
     if (!token) return;
 
     handleFollow(id, token)
       .then((res) => {
-        console.log(res);
         setOpen(false);
+        socket.emit("sendFollowNotification", {
+          sender_id: myId,
+          receiver_id: id,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -185,7 +194,7 @@ const UserList = ({
                     </Button>
                   ) : (
                     <Button
-                      onClick={() => followMy(item._id, token)}
+                      onClick={() => followMy(item._id, token, user.id)}
                       className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-7 text-sm font-semibold"
                     >
                       Подписаться
