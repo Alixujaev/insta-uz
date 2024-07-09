@@ -9,8 +9,8 @@ import { BASE_URL, CommentBodyType, UserType } from "@/consts";
 import {
   handleComment,
   handleSavePost,
-  handleUnLike,
   like,
+  unlike,
 } from "@/store/post.store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -29,21 +29,6 @@ const PostComponent = ({ post }: any) => {
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const socket = io(BASE_URL);
-
-  function unlike(id: string, token: string | null) {
-    if (!token) return;
-
-    setLikes(likes.filter((like) => like !== user.id));
-
-    handleUnLike(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLikes([...likes, user.id]);
-      });
-  }
 
   function comment(body: CommentBodyType, token: string | null) {
     if (!token) return;
@@ -122,7 +107,9 @@ const PostComponent = ({ post }: any) => {
       <div className="py-3 flex justify-between items-center">
         <div className="flex gap-4 items-center">
           {likes.includes(user.id) ? (
-            <button onClick={() => unlike(post._id, token)}>
+            <button
+              onClick={() => unlike(post._id, token, setLikes, likes, user.id)}
+            >
               <BaseIcon
                 name="heart_red"
                 viewBox="0 0 24 24"

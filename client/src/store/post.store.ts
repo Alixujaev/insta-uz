@@ -72,17 +72,15 @@ export const handleGetFollowingPosts = async (token: string) => {
 export function like(
   id: string,
   token: string | null,
-  setLikes?: any,
-  likes?: string[],
-  userId?: string,
-  author_id?: string,
-  socket?: any
+  setLikes: any,
+  likes: string[],
+  userId: string,
+  author_id: string,
+  socket: any
 ) {
   if (!token) return;
 
-  if(likes && setLikes){
-    setLikes([...likes, userId]);
-  }
+  setLikes([...likes, userId]);
 
 
   handleLike(id, token)
@@ -94,8 +92,25 @@ export function like(
     })
     .catch((err) => {
       console.log(err);
-      if(likes && setLikes ){
-        setLikes(likes.filter((like) => like !== userId));
-      }
+      setLikes(likes.filter((like) => like !== userId));
+    });
+}
+
+export function unlike(
+  id: string,
+  token: string | null,
+  setLikes: any,
+  likes: string[],
+  userId: string,
+) {
+  if (!token) return;
+
+  setLikes(likes.filter((like) => like !== userId));
+
+  handleUnLike(id, token)
+    .then((res) => {})
+    .catch((err) => {
+      console.log(err);
+      setLikes([...likes, userId]);
     });
 }

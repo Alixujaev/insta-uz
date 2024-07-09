@@ -15,8 +15,8 @@ import {
   handleGetComments,
   handleGetPost,
   handleSavePost,
-  handleUnLike,
   like,
+  unlike,
 } from "@/store/post.store";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -46,21 +46,6 @@ const Post = () => {
   const [error, setError] = useState<boolean>(false);
   const dispatch = useDispatch();
   const socket = io(BASE_URL);
-
-  function unlike(id: string, token: string | null) {
-    if (!token) return;
-
-    setLikes(likes.filter((like) => like !== user.id));
-
-    handleUnLike(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLikes([...likes, user.id]);
-      });
-  }
 
   function comment(body: CommentBodyType, token: string | null) {
     if (!token) return;
@@ -213,7 +198,11 @@ const Post = () => {
                 <div className="mb-4 flex justify-between items-center">
                   <div className="flex gap-4 items-center">
                     {likes.includes(user.id) ? (
-                      <button onClick={() => unlike(post._id, token)}>
+                      <button
+                        onClick={() =>
+                          unlike(post._id, token, setLikes, likes, user.id)
+                        }
+                      >
                         <BaseIcon
                           name="heart_red"
                           viewBox="0 0 24 24"
