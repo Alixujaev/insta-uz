@@ -22,12 +22,12 @@ import { io } from "socket.io-client";
 const ChatRoom = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState<any[]>([]);
-  const [arrivalMessage, setArrivalMessage] = useState({} as MessageType);
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [newConversation, setNewConversation] = useState<boolean>(false);
   const [chatUser, setChatUser] = useState<UserType>({} as UserType);
   const { user } = useSelector((state: any) => state.user);
+  const { arrivalMessage } = useSelector((state: any) => state.chat);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
@@ -84,17 +84,16 @@ const ChatRoom = () => {
     });
   }, [user]);
 
-  // useEffect(() => {
-  //   if (
-  //     Object.keys(chatUser).length > 0 &&
-  //     Object.keys(arrivalMessage).length > 0
-  //   ) {
-  //     if (chatUser?._id == arrivalMessage.sender._id) {
-  //       setMessages((prev) => [...prev, arrivalMessage]);
-  //       setArrivalMessage({} as MessageType);
-  //     }
-  //   }
-  // }, [arrivalMessage, chatUser]);
+  useEffect(() => {
+    if (
+      Object.keys(chatUser).length > 0 &&
+      Object.keys(arrivalMessage).length > 0
+    ) {
+      if (chatUser?._id == arrivalMessage.sender_id) {
+        setMessages((prev) => [...prev, arrivalMessage]);
+      }
+    }
+  }, [arrivalMessage, chatUser]);
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });

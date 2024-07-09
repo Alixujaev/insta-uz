@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 import { setNotify } from "@/actions/userActions";
 import { BASE_URL } from "@/consts";
+import { arrivalAction } from "@/actions/chatActions";
 
 const Sidebar = () => {
   const { notify, user } = useSelector((state: any) => state.user);
@@ -72,6 +73,12 @@ const Sidebar = () => {
     socket.on("getFollowNotification", handleNotify);
     socket.on("getLikeNotification", handleNotify);
     socket.on("getCommentNotification", handleNotify);
+
+    socket.on("getMessage", (data) => {
+      console.log(data);
+
+      dispatch(arrivalAction(data));
+    });
 
     // return () => {
     //   socket.disconnect();
