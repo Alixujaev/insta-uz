@@ -1,5 +1,5 @@
 import Avatar from "@/components/Avatar";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import PostDialog from "@/components/dialogs/PostDialog";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { useRef, useState } from "react";
@@ -8,9 +8,9 @@ import { useLocalStorage } from "usehooks-ts";
 import { BASE_URL, CommentBodyType, UserType } from "@/consts";
 import {
   handleComment,
-  handleLike,
   handleSavePost,
   handleUnLike,
+  like,
 } from "@/store/post.store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
@@ -29,24 +29,6 @@ const PostComponent = ({ post }: any) => {
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const socket = io(BASE_URL);
-
-  function like(id: string, token: string | null) {
-    if (!token) return;
-
-    setLikes([...likes, user.id]);
-
-    handleLike(id, token)
-      .then((res) => {
-        socket.emit("sendLikeNotification", {
-          sender_id: user.id,
-          receiver_id: post.author_id,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        setLikes(likes.filter((like) => like !== user.id));
-      });
-  }
 
   function unlike(id: string, token: string | null) {
     if (!token) return;
@@ -150,7 +132,19 @@ const PostComponent = ({ post }: any) => {
               />
             </button>
           ) : (
-            <button onClick={() => like(post._id, token)}>
+            <button
+              onClick={() =>
+                like(
+                  post._id,
+                  token,
+                  setLikes,
+                  likes,
+                  user.id,
+                  post.author_id,
+                  socket
+                )
+              }
+            >
               <BaseIcon
                 name="heart"
                 viewBox="0 0 24 24"

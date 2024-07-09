@@ -4,7 +4,7 @@ import Comment from "@/components/Comment";
 import AreYouSure from "@/components/dialogs/AreYouSure";
 import PostDialog from "@/components/dialogs/PostDialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { CommentBodyType, CommentType, PostType } from "@/consts";
+import { BASE_URL, CommentBodyType, CommentType, PostType } from "@/consts";
 import useClickOutside from "@/hooks/useClickOutside";
 import { formatDate } from "@/lib/utils";
 import Picker from "@emoji-mart/react";
@@ -14,9 +14,9 @@ import {
   handleDelete,
   handleGetComments,
   handleGetPost,
-  handleLike,
   handleSavePost,
   handleUnLike,
+  like,
 } from "@/store/post.store";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -24,6 +24,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useLocalStorage } from "usehooks-ts";
 import { handleGetUser } from "@/store/user.store";
 import Loader from "@/components/Loader";
+import { io } from "socket.io-client";
 
 const Post = () => {
   const { id } = useParams();
@@ -44,21 +45,7 @@ const Post = () => {
   const emojiRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<boolean>(false);
   const dispatch = useDispatch();
-
-  function like(id: string, token: string | null) {
-    if (!token) return;
-
-    setLikes([...likes, user.id]);
-
-    handleLike(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLikes(likes.filter((like) => like !== user.id));
-      });
-  }
+  const socket = io(BASE_URL);
 
   function unlike(id: string, token: string | null) {
     if (!token) return;
@@ -236,7 +223,19 @@ const Post = () => {
                         />
                       </button>
                     ) : (
-                      <button onClick={() => like(post._id, token)}>
+                      <button
+                        onClick={() =>
+                          like(
+                            post._id,
+                            token,
+                            setLikes,
+                            likes,
+                            user.id,
+                            post.author._id,
+                            socket
+                          )
+                        }
+                      >
                         <BaseIcon
                           name="heart"
                           viewBox="0 0 24 24"

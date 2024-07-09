@@ -67,3 +67,35 @@ export const handleGetFollowingPosts = async (token: string) => {
   const result = await GET_FOLLOWING_POSTS(token);
   return result
 }
+
+
+export function like(
+  id: string,
+  token: string | null,
+  setLikes?: any,
+  likes?: string[],
+  userId?: string,
+  author_id?: string,
+  socket?: any
+) {
+  if (!token) return;
+
+  if(likes && setLikes){
+    setLikes([...likes, userId]);
+  }
+
+
+  handleLike(id, token)
+    .then((res) => {
+      socket.emit("sendLikeNotification", {
+        sender_id: userId,
+        receiver_id: author_id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+      if(likes && setLikes ){
+        setLikes(likes.filter((like) => like !== userId));
+      }
+    });
+}

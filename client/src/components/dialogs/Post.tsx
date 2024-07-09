@@ -1,4 +1,4 @@
-import { CommentBodyType, CommentType, PostType, UserType } from "@/consts";
+import { BASE_URL, CommentBodyType, CommentType, PostType } from "@/consts";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import BaseIcon from "../icon/BaseIcon";
 import Avatar from "../Avatar";
@@ -10,9 +10,9 @@ import {
   handleComment,
   handleDelete,
   handleGetComments,
-  handleLike,
   handleSavePost,
   handleUnLike,
+  like,
 } from "@/store/post.store";
 import { useLocalStorage } from "usehooks-ts";
 import { useEffect, useRef, useState } from "react";
@@ -22,6 +22,8 @@ import useClickOutside from "@/hooks/useClickOutside";
 import AreYouSure from "./AreYouSure";
 import { useDispatch } from "react-redux";
 import { updatePosts } from "@/actions/settingsActions";
+import { io } from "socket.io-client";
+const socket = io(BASE_URL);
 
 const Post = ({
   post,
@@ -44,21 +46,6 @@ const Post = ({
   const [comments, setComments] = useState<any[]>([]);
   const emojiRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-
-  function like(id: string, token: string | null) {
-    if (!token) return;
-
-    setLikes([...likes, user.id]);
-
-    handleLike(id, token)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLikes(likes.filter((like) => like !== user.id));
-      });
-  }
 
   function unlike(id: string, token: string | null) {
     if (!token) return;
@@ -249,7 +236,19 @@ const Post = ({
                       />
                     </button>
                   ) : (
-                    <button onClick={() => like(post._id, token)}>
+                    <button
+                      onClick={() =>
+                        like(
+                          post._id,
+                          token,
+                          setLikes,
+                          likes,
+                          user.id,
+                          post.author_id,
+                          socket
+                        )
+                      }
+                    >
                       <BaseIcon
                         name="heart"
                         viewBox="0 0 24 24"
