@@ -2,6 +2,8 @@ import icons from "./components/icon/icons";
 
 export const BASE_URL = `http://localhost:8000`;
 
+
+
 export enum USER_ACTIONS {
   SET_USER = 'SET_USER',
 }
@@ -44,7 +46,8 @@ export type UserType = {
   stories: string[],
   profile_img: string,
   about: string,
-  saved: string[]
+  saved: string[],
+  _id: string
 }
 
 export type PostType = {

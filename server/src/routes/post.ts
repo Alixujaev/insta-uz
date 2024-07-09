@@ -9,7 +9,7 @@ import User from "../modules/User";
 import Comment from "../modules/Comment";
 import { ObjectId } from "mongodb";
 import Notification from "../modules/Notification";
-import { io } from "..";
+import { getUser, io, users } from "..";
 
 const router = Router();
 dotenv.config();
@@ -99,15 +99,7 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
         post: post,
         type: 'like'
     })
-  
-        io.emit('like', {
-          event: 'like',
-          sender_id: req.body.user.id,
-          receiver_id: authorId
-      })
     }
-
-    
 
     res.send({ success: true, message: 'Лайк поставлен' });
   } catch (error) {
@@ -164,11 +156,7 @@ router.post("/api/comment", verifyToken, async (req: any, res) => {
         type: 'comment'
     })
   
-        io.emit('comment', {
-          event: 'comment',
-          sender_id: req.body.user.id,
-          receiver_id: authorId
-      })
+   
     }
 
 

@@ -192,16 +192,6 @@ router.put('/api/follow/:id', verifyToken, async (req, res) => {
           type: 'follow'
       })
 
-      // Emit the follow event to the specific user being followed
-     
-      io.emit('follow', {
-          event: 'follow',
-          sender_id: userId,
-          receiver_id: userIdToFollow
-      })
-
-      
-
       res.status(200).send({
           success: true,
           message: 'You have followed the user',

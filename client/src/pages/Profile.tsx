@@ -1,8 +1,8 @@
 import Avatar from "@/components/Avatar";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { StoryType, UserType } from "@/consts";
-import { useEffect, useState } from "react";
+import { BASE_URL, StoryType, UserType } from "@/consts";
+import { useEffect, useRef, useState } from "react";
 import Loader from "@/components/Loader";
 import Tabs from "@/components/Tabs";
 import {
@@ -19,6 +19,7 @@ import NotFound from "@/components/NotFound";
 import CreateStory from "@/components/dialogs/CreateStory";
 
 import { handleGetStory } from "@/store/story.store";
+import { io } from "socket.io-client";
 
 const Profile = () => {
   const { isUpdatePosts } = useSelector((state: any) => state.settings);
@@ -32,6 +33,7 @@ const Profile = () => {
   const [error, setError] = useState<boolean>(false);
   const [story, setStory] = useState<StoryType>({} as StoryType);
   const navigate = useNavigate();
+  const socket = io(BASE_URL);
 
   useEffect(() => {
     let isMounted = true;
@@ -76,7 +78,10 @@ const Profile = () => {
 
     handleFollow(id, token)
       .then((res) => {
-        console.log(res);
+        socket.emit("sendFollowNotification", {
+          sender_id: myId,
+          receiver_id: id,
+        });
       })
       .catch((err) => {
         console.log(err);

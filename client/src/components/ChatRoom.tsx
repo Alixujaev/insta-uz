@@ -9,18 +9,20 @@ import {
   handleDelete,
   handleGetOneConversation,
 } from "@/store/cenversations.store";
-import { MessageType, UserType } from "@/consts";
+import { BASE_URL, MessageType, UserType } from "@/consts";
 import Loader from "./Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { handleSendMessage } from "@/store/messages.store";
 import AreYouSure from "./dialogs/AreYouSure";
 import { updateChatUsers } from "@/actions/settingsActions";
-import { handleGetUser, handleGetUserId } from "@/store/user.store";
+import { handleGetUserId } from "@/store/user.store";
 import userImg from "@/assets/images/user.jpg";
+import { io } from "socket.io-client";
 
 const ChatRoom = () => {
   const { chatId } = useParams();
   const [messages, setMessages] = useState<any[]>([]);
+  const [arrivalMessage, setArrivalMessage] = useState({} as MessageType);
   const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [newConversation, setNewConversation] = useState<boolean>(false);
@@ -30,6 +32,7 @@ const ChatRoom = () => {
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const scrollRef = useRef<any>(null);
+  const socket = io(BASE_URL);
 
   useEffect(() => {
     if (!token || !chatId) return;
@@ -72,6 +75,28 @@ const ChatRoom = () => {
   }, [chatId]);
 
   useEffect(() => {
+    socket.on("getMessage", (data) => {
+      console.log(data);
+
+      if (data.sender_id === chatUser._id) {
+        setMessages((prev) => [...prev, data]);
+      }
+    });
+  }, [user]);
+
+  // useEffect(() => {
+  //   if (
+  //     Object.keys(chatUser).length > 0 &&
+  //     Object.keys(arrivalMessage).length > 0
+  //   ) {
+  //     if (chatUser?._id == arrivalMessage.sender._id) {
+  //       setMessages((prev) => [...prev, arrivalMessage]);
+  //       setArrivalMessage({} as MessageType);
+  //     }
+  //   }
+  // }, [arrivalMessage, chatUser]);
+
+  useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -93,6 +118,11 @@ const ChatRoom = () => {
       .then((res) => {
         setMessage("");
         setMessages([...messages, res.data.data]);
+        socket.emit("sendMessage", {
+          sender_id: user.id,
+          receiver_id: chatUser._id,
+          message: body.message,
+        });
       })
       .catch((err) => {
         console.log(err);

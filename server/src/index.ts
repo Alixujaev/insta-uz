@@ -36,7 +36,6 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-export const users = {};
 
 export const httpServer = createServer(app); // Create an HTTP server
 export const io = new SocketIOServer(httpServer, {
@@ -46,27 +45,74 @@ export const io = new SocketIOServer(httpServer, {
   }
 });
 
+export let users = [];
+
+const addUser = (userId: string, socketId: string) => {
+  !users.some((user) => user.userId === userId) &&
+    users.push({ userId, socketId });
+}
+
+const removeUser = (socketId: string) => {
+  users = users.filter((user) => user.socketId !== socketId);
+}
+
+export const getUser = (userId: string) => {
+  return users.find((user) => user.userId == userId);
+}
 
 io.on('connection', (socket) => {
-
   socket.on('register', (userId) => {
-      console.log(`User ${userId} registered with socket ID ${socket.id}`);
-      if (userId) {
-          users[userId] = socket.id;
-          console.log(`User ${userId} registered with socket ID ${socket.id}`);
-      } else {
-          console.log('User ID is undefined during registration');
-      }
+      addUser(userId, socket.id);
+      io.emit("getUsers", users);
   });
 
+  socket.on("sendLikeNotification", ({sender_id, receiver_id}) => {
+    const user = getUser(receiver_id);
+
+    io.to(user?.socketId).emit("getLikeNotification", {
+      event: 'like',
+      sender_id,
+      receiver_id
+    });
+  })
+
+  socket.on("sendFollowNotification", ({sender_id, receiver_id}) => {
+    const user = getUser(receiver_id);
+
+    io.to(user?.socketId).emit("getFollowNotification", {
+      event: 'follow',
+      sender_id,
+      receiver_id
+    });
+
+  })
+
+  socket.on("sendCommentNotification", ({sender_id, receiver_id}) => {
+    const user = getUser(receiver_id);
+
+    io.to(user?.socketId).emit("getCommentNotification", {
+      event: 'comment',
+      sender_id,
+      receiver_id
+    });
+
+  })
+
+  socket.on("sendMessage", ({sender_id, receiver_id, message}) => {
+    const user = getUser(receiver_id);
+    
+    io.to(user?.socketId).emit("getMessage", {
+      event: 'message',
+      sender_id,
+      receiver_id,
+      message
+    })
+  })
+
+
   socket.on('disconnect', () => {
-      for (const userId in users) {
-          if (users[userId] === socket.id) {
-              delete users[userId];
-              console.log(`User ${userId} with socket ID ${socket.id} disconnected`);
-              break;
-          }
-      }
+      removeUser(socket.id);
+      io.emit("getUsers", users);
   });
 });
 

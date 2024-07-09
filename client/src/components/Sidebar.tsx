@@ -11,8 +11,7 @@ import Notifications from "./Notifications";
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 import { setNotify } from "@/actions/userActions";
-
-const ENDPOINT = "http://localhost:5000"; // The server endpoint
+import { BASE_URL } from "@/consts";
 
 const Sidebar = () => {
   const { notify, user } = useSelector((state: any) => state.user);
@@ -55,11 +54,13 @@ const Sidebar = () => {
   }, [notifyTime]);
 
   useEffect(() => {
-    const socket = io(ENDPOINT);
+    const socket = io(BASE_URL);
 
     socket.on("connect", () => {
       console.log("Connected to server");
     });
+
+    socket.emit("register", user.id);
 
     const handleNotify = (data: any) => {
       if (data.receiver_id === user.id) {
@@ -68,14 +69,14 @@ const Sidebar = () => {
       dispatch(setNotify(data));
     };
 
-    socket.on("follow", handleNotify);
-    socket.on("like", handleNotify);
-    socket.on("comment", handleNotify);
+    socket.on("getFollowNotification", handleNotify);
+    socket.on("getLikeNotification", handleNotify);
+    socket.on("getCommentNotification", handleNotify);
 
-    return () => {
-      socket.disconnect();
-    };
-  }, [dispatch, user.id]);
+    // return () => {
+    //   socket.disconnect();
+    // };
+  }, [user]);
 
   const handleClickSearch = () => {
     if (pathname.includes("direct") || !isSmall || isShowNotifications) {

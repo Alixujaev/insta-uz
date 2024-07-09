@@ -5,7 +5,7 @@ import BaseIcon from "@/components/icon/BaseIcon";
 import { useRef, useState } from "react";
 import { formatDate } from "@/lib/utils";
 import { useLocalStorage } from "usehooks-ts";
-import { CommentBodyType, UserType } from "@/consts";
+import { BASE_URL, CommentBodyType, UserType } from "@/consts";
 import {
   handleComment,
   handleLike,
@@ -15,6 +15,7 @@ import {
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Post from "./dialogs/Post";
+import io from "socket.io-client";
 import useClickOutside from "@/hooks/useClickOutside";
 
 const PostComponent = ({ post }: any) => {
@@ -27,6 +28,7 @@ const PostComponent = ({ post }: any) => {
   const [commentText, setCommentText] = useState<string>("");
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
+  const socket = io(BASE_URL);
 
   function like(id: string, token: string | null) {
     if (!token) return;
@@ -35,7 +37,10 @@ const PostComponent = ({ post }: any) => {
 
     handleLike(id, token)
       .then((res) => {
-        console.log(res);
+        socket.emit("sendLikeNotification", {
+          sender_id: user.id,
+          receiver_id: post.author_id,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -67,6 +72,10 @@ const PostComponent = ({ post }: any) => {
         setCommentText("");
         setShowEmoji(false);
         setComments([...comments, res.data.data]);
+        socket.emit("sendCommentNotification", {
+          sender_id: user.id,
+          receiver_id: post.author_id,
+        });
       })
       .catch((err) => {
         console.log(err);
