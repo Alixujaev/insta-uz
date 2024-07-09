@@ -4,13 +4,13 @@ import Comment from "@/components/Comment";
 import AreYouSure from "@/components/dialogs/AreYouSure";
 import PostDialog from "@/components/dialogs/PostDialog";
 import BaseIcon from "@/components/icon/BaseIcon";
-import { BASE_URL, CommentBodyType, CommentType, PostType } from "@/consts";
+import { BASE_URL, CommentType, PostType } from "@/consts";
 import useClickOutside from "@/hooks/useClickOutside";
 import { formatDate } from "@/lib/utils";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import {
-  handleComment,
+  comment,
   handleDelete,
   handleGetComments,
   handleGetPost,
@@ -46,22 +46,6 @@ const Post = () => {
   const [error, setError] = useState<boolean>(false);
   const dispatch = useDispatch();
   const socket = io(BASE_URL);
-
-  function comment(body: CommentBodyType, token: string | null) {
-    if (!token) return;
-
-    setCommentLoad(true);
-    handleComment(body, token)
-      .then((res) => {
-        setCommentText("");
-        setShowEmoji(false);
-        setComments([...comments, res.data.data]);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setCommentLoad(false));
-  }
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
@@ -293,7 +277,18 @@ const Post = () => {
                   <button
                     className="font-medium text-sm text-blue-500"
                     onClick={() =>
-                      comment({ comment: commentText, postId: post._id }, token)
+                      comment(
+                        { comment: commentText, postId: post._id },
+                        token,
+                        setCommentLoad,
+                        setComments,
+                        setCommentText,
+                        setShowEmoji,
+                        user.id,
+                        post.author._id,
+                        socket,
+                        comments
+                      )
                     }
                   >
                     Опубликовать

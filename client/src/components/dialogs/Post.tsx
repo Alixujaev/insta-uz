@@ -1,4 +1,4 @@
-import { BASE_URL, CommentBodyType, CommentType, PostType } from "@/consts";
+import { BASE_URL, CommentType, PostType } from "@/consts";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import BaseIcon from "../icon/BaseIcon";
 import Avatar from "../Avatar";
@@ -7,7 +7,7 @@ import PostDialog from "./PostDialog";
 import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
 import {
-  handleComment,
+  comment,
   handleDelete,
   handleGetComments,
   handleSavePost,
@@ -46,23 +46,6 @@ const Post = ({
   const [comments, setComments] = useState<any[]>([]);
   const emojiRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
-
-  function comment(body: CommentBodyType, token: string | null) {
-    if (!token) return;
-
-    setIsLoading(true);
-    handleComment(body, token)
-      .then((res) => {
-        setCommentText("");
-        setShowEmoji(false);
-        setIsLoading(false);
-        setComments([...comments, res.data.data]);
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsLoading(false);
-      });
-  }
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
@@ -306,7 +289,18 @@ const Post = ({
                 <button
                   className="font-medium text-sm text-blue-500"
                   onClick={() =>
-                    comment({ comment: commentText, postId: post._id }, token)
+                    comment(
+                      { comment: commentText, postId: post._id },
+                      token,
+                      setIsLoading,
+                      setComments,
+                      setCommentText,
+                      setShowEmoji,
+                      user.id,
+                      post.author_id,
+                      socket,
+                      comments
+                    )
                   }
                 >
                   Опубликовать

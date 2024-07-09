@@ -5,13 +5,8 @@ import BaseIcon from "@/components/icon/BaseIcon";
 import { useRef, useState } from "react";
 import { formatDate } from "@/lib/utils";
 import { useLocalStorage } from "usehooks-ts";
-import { BASE_URL, CommentBodyType, UserType } from "@/consts";
-import {
-  handleComment,
-  handleSavePost,
-  like,
-  unlike,
-} from "@/store/post.store";
+import { BASE_URL, UserType } from "@/consts";
+import { comment, handleSavePost, like, unlike } from "@/store/post.store";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import Post from "./dialogs/Post";
@@ -29,26 +24,6 @@ const PostComponent = ({ post }: any) => {
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const socket = io(BASE_URL);
-
-  function comment(body: CommentBodyType, token: string | null) {
-    if (!token) return;
-
-    setIsLoading(true);
-    handleComment(body, token)
-      .then((res) => {
-        setCommentText("");
-        setShowEmoji(false);
-        setComments([...comments, res.data.data]);
-        socket.emit("sendCommentNotification", {
-          sender_id: user.id,
-          receiver_id: post.author_id,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setIsLoading(false));
-  }
 
   function handleSave(id: string, token: string | null) {
     if (!token) return;
@@ -213,7 +188,18 @@ const PostComponent = ({ post }: any) => {
             <button
               className="font-medium text-sm text-blue-500"
               onClick={() =>
-                comment({ comment: commentText, postId: post._id }, token)
+                comment(
+                  { comment: commentText, postId: post._id },
+                  token,
+                  setIsLoading,
+                  setComments,
+                  setCommentText,
+                  setShowEmoji,
+                  user.id,
+                  post.author_id,
+                  socket,
+                  comments
+                )
               }
             >
               Опубликовать

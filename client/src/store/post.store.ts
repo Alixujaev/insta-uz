@@ -114,3 +114,34 @@ export function unlike(
       setLikes([...likes, userId]);
     });
 }
+
+export   function comment(
+  body: CommentBodyType,
+  token: string | null,
+  setIsLoading: any,
+  setComments: any,
+  setCommentText: any,
+  setShowEmoji: any,
+  userId: string,
+  author_id: string,
+  socket: any,
+  comments: string[]
+) {
+  if (!token) return;
+
+  setIsLoading(true);
+  handleComment(body, token)
+    .then((res) => {
+      setCommentText("");
+      setShowEmoji(false);
+      setComments([...comments, res.data.data]);
+      socket.emit("sendCommentNotification", {
+        sender_id: userId,
+        receiver_id: author_id,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+    .finally(() => setIsLoading(false));
+}
