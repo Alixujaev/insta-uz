@@ -171,6 +171,18 @@ const ChatRoom = () => {
       });
   };
 
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (newConversation) {
+        handleCreate(token, chatId);
+      } else {
+        handleSend(user.id, message, chatId, token);
+      }
+      setMessage("");
+    }
+  };
+
   return (
     <div className="flex-1 h-screen flex flex-col">
       <div className="p-4 border-b flex justify-between items-center">
@@ -243,6 +255,7 @@ const ChatRoom = () => {
             placeholder="Написать сообщение..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <button
             onClick={() =>

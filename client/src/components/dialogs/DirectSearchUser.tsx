@@ -1,7 +1,41 @@
+import { useEffect, useState } from "react";
 import Avatar from "../Avatar";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { handleSearchUsers } from "@/store/user.store";
+import Loader from "../Loader";
+import { useSelector } from "react-redux";
+import { UserType } from "@/consts";
+import { useNavigate } from "react-router-dom";
 
 const DirectSearchUser = () => {
+  const [searchVal, setSearchVal] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [users, setUsers] = useState<any[]>([]);
+  const { user } = useSelector((state: any) => state.user);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    if (searchVal) {
+      setIsLoading(true);
+      timerId = setTimeout(() => {
+        handleSearchUsers(searchVal)
+          .then((res) => {
+            setUsers(
+              res.data.data.filter((item: UserType) => item._id !== user.id)
+            );
+            setIsLoading(false);
+          })
+          .catch((err) => {
+            console.log(err);
+            setIsLoading(false);
+          });
+      }, 2000);
+    }
+
+    return () => clearTimeout(timerId);
+  }, [searchVal]);
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -19,17 +53,30 @@ const DirectSearchUser = () => {
             type="text"
             className="outline-none text-sm"
             placeholder="Поиск..."
+            value={searchVal}
+            onChange={(e) => setSearchVal(e.target.value)}
           />
         </div>
         <div className="h-[286px] overflow-y-auto">
-          <p className="text-sm text-[#737373] p-5">Аккаунты не найдены.</p>
-          {/* <div className="flex py-2 px-4 gap-2 items-center hover:bg-slate-100 cursor-pointer">
-            <Avatar src="" size="md" />
-            <div>
-              <h3 className="">Asadbek</h3>
-              <p className="text-sm text-[#737373]">Alixujaev Islom</p>
-            </div>
-          </div> */}
+          {isLoading ? (
+            <Loader className="h-[286px]" />
+          ) : users?.length ? (
+            users.map((user) => (
+              <div
+                onClick={() => navigate(`/direct/t/${user._id}`)}
+                key={user._id}
+                className="flex py-2 px-4 gap-2 items-center hover:bg-slate-100 cursor-pointer"
+              >
+                <Avatar src={user.profile_img} size="md" />
+                <div>
+                  <h3 className="">{user.full_name}</h3>
+                  <p className="text-sm text-[#737373]">{user.username}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-sm text-[#737373] p-5">Аккаунты не найдены.</p>
+          )}
         </div>
       </DialogContent>
     </Dialog>
