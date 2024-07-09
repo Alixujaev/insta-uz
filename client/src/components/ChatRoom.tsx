@@ -18,6 +18,8 @@ import { updateChatUsers } from "@/actions/settingsActions";
 import { handleGetUserId } from "@/store/user.store";
 import userImg from "@/assets/images/user.jpg";
 import { io } from "socket.io-client";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 
 const ChatRoom = () => {
   const { chatId } = useParams();
@@ -28,14 +30,16 @@ const ChatRoom = () => {
   const [chatUser, setChatUser] = useState<UserType>({} as UserType);
   const { user } = useSelector((state: any) => state.user);
   const { arrivalMessage } = useSelector((state: any) => state.chat);
+  const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
   const scrollRef = useRef<any>(null);
   const socket = io(BASE_URL);
+  const emojiRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!token || !chatId) return;
+    if (!token || !chatId || !user) return;
 
     setIsLoading(true);
     handleGetOneConversation(token, chatId)
@@ -46,11 +50,14 @@ const ChatRoom = () => {
             (u: { _id: string }) => u._id !== user.id
           )[0]
         );
+
+        setIsLoading(false);
       })
       .catch((err) => {
         if (err.response.status == 404) {
           handleConversationByUserId(token, chatId)
             .then((res) => {
+              setIsLoading(false);
               setMessages(res.data.data.messages);
               setChatUser(
                 res.data.data.conversation[0].members.filter(
@@ -61,18 +68,19 @@ const ChatRoom = () => {
             .catch((err) => {
               handleGetUserId(chatId)
                 .then((res) => {
+                  setIsLoading(false);
                   setChatUser(res.data.data.user);
                   setNewConversation(true);
                 })
                 .catch((err) => {
+                  console.log("uchinchi shart");
+
                   navigate("/direct/inbox");
                 });
-            })
-            .finally(() => setIsLoading(false));
+            });
         }
-      })
-      .finally(() => setIsLoading(false));
-  }, [chatId]);
+      });
+  }, [chatId, user]);
 
   useEffect(() => {
     socket.on("getMessage", (data) => {
@@ -216,9 +224,19 @@ const ChatRoom = () => {
 
       <div className="m-4">
         <div className="border rounded-2xl p-3 py-1 flex items-center">
-          <button className="pr-3">
+          <button onClick={() => setShowEmoji(!showEmoji)} className="pr-3">
             <BaseIcon name="smilek" cn=" cursor-pointer ml-0" />
           </button>
+          {showEmoji ? (
+            <div className="absolute bottom-14" ref={emojiRef}>
+              <Picker
+                data={data}
+                onEmojiSelect={(emoji: any) =>
+                  setMessage(message + emoji.native)
+                }
+              />
+            </div>
+          ) : null}
           <input
             type="text"
             className="flex-1 py-2 outline-none"
