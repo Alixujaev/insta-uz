@@ -20,6 +20,7 @@ import userImg from "@/assets/images/user.jpg";
 import { io } from "socket.io-client";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import useClickOutside from "@/hooks/useClickOutside";
 
 const ChatRoom = () => {
   const { chatId } = useParams();
@@ -106,6 +107,8 @@ const ChatRoom = () => {
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useClickOutside(emojiRef, () => setShowEmoji(false));
 
   const handleSend = async (
     senderId: string,

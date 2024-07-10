@@ -13,6 +13,7 @@ import { save } from "@/store/post.store";
 import { checkPostAuthor } from "@/lib/utils";
 import { UserType } from "@/consts";
 import { useLocalStorage } from "usehooks-ts";
+import { useNavigate } from "react-router-dom";
 
 const PostDialog = ({
   author,
@@ -31,6 +32,7 @@ const PostDialog = ({
   const [open, setOpen] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function handleCopyLink() {
     navigator.clipboard.writeText(`${window.location.origin}/p/${id}`);
@@ -70,7 +72,9 @@ const PostDialog = ({
         ) : null}
 
         <button
-          onClick={() => save(id, token, saveds ? saveds : [], setSaveds)}
+          onClick={() =>
+            save(id, token, saveds ? saveds : [], setSaveds, navigate)
+          }
           className="text-center text-sm cursor-pointer pb-3 mb-3 border-b"
         >
           {saveds?.includes(id)

@@ -34,7 +34,7 @@ const Profile = () => {
     setIsLoading(true);
 
     const fetchData = async () => {
-      if (!pathname || !token) return;
+      if (!pathname) return;
 
       try {
         const res = await handleGetUser(pathname.substring(1));
@@ -42,7 +42,11 @@ const Profile = () => {
         setUser(res.data.data.user);
         setFollowers(res.data.data.user.followers || []);
         setFollowing(res.data.data.user.following || []);
+        if (!token) {
+          setIsLoading(false);
+        }
 
+        if (!token) return;
         // Fetch story
         const storyRes = await handleGetStory(
           res.data.data.user?.stories[0],
@@ -100,9 +104,6 @@ const Profile = () => {
                     <div className="flex gap-2">
                       <EditProfile user={user} />
                     </div>
-                    {/* <button>
-                      <BaseIcon name="settings" />
-                    </button> */}
                   </div>
                 ) : (
                   <div className="flex gap-3 items-center">
@@ -130,7 +131,8 @@ const Profile = () => {
                             my.id,
                             followers,
                             setFollowers,
-                            socket
+                            socket,
+                            navigate
                           )
                         }
                         className="bg-blue-500 hover:bg-blue-600 text-white px-4 !py-1 !rounded-lg h-8"
@@ -139,14 +141,13 @@ const Profile = () => {
                       </Button>
                     )}
                     <Button
-                      onClick={() => navigate(`/direct/t/${user.id}`)}
+                      onClick={() =>
+                        token ? navigate(`/direct/t/${user.id}`) : navigate("/")
+                      }
                       className="bg-[#EFEFEF] hover:bg-[#dbdbdb] text-black px-4 !py-1 !rounded-lg h-8"
                     >
                       Отправить сообщение
                     </Button>
-                    {/* <button>
-                      <BaseIcon name="settings" />
-                    </button> */}
                   </div>
                 )}
               </div>

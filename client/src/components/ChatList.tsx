@@ -40,7 +40,7 @@ const ChatList = () => {
       >
         {isLoading ? (
           <Loader className="h-[60vh]" />
-        ) : (
+        ) : conversations?.length ? (
           conversations.map(
             (item: { _id: string; members: any[]; updatedAt: string }) => (
               <div
@@ -68,6 +68,10 @@ const ChatList = () => {
               </div>
             )
           )
+        ) : (
+          <div className="h-[60vh] text-center flex justify-center items-center">
+            <p className="text-xl font-bold text-[#737373]">Пока нет чатов</p>
+          </div>
         )}
       </div>
     </div>

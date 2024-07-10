@@ -1,5 +1,5 @@
 import Avatar from "@/components/Avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PostDialog from "@/components/dialogs/PostDialog";
 import BaseIcon from "@/components/icon/BaseIcon";
 import { useRef, useState } from "react";
@@ -24,6 +24,7 @@ const PostComponent = ({ post }: any) => {
   const [showEmoji, setShowEmoji] = useState<boolean>(false);
   const token = localStorage.getItem("token");
   const socket = io(BASE_URL);
+  const navigate = useNavigate();
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
@@ -80,7 +81,8 @@ const PostComponent = ({ post }: any) => {
                   likes,
                   user.id,
                   post.author_id,
-                  socket
+                  socket,
+                  navigate
                 )
               }
             >
@@ -101,11 +103,15 @@ const PostComponent = ({ post }: any) => {
         </div>
 
         {saveds.includes(post._id) ? (
-          <button onClick={() => save(post._id, token, saveds, setSaveds)}>
+          <button
+            onClick={() => save(post._id, token, saveds, setSaveds, navigate)}
+          >
             <BaseIcon name="saved_active" />
           </button>
         ) : (
-          <button onClick={() => save(post._id, token, saveds, setSaveds)}>
+          <button
+            onClick={() => save(post._id, token, saveds, setSaveds, navigate)}
+          >
             <BaseIcon name="saved" />
           </button>
         )}
@@ -175,7 +181,8 @@ const PostComponent = ({ post }: any) => {
                   user.id,
                   post.author_id,
                   socket,
-                  comments
+                  comments,
+                  navigate
                 )
               }
             >

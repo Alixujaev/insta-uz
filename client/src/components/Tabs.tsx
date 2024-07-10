@@ -25,11 +25,9 @@ const Tabs = ({ user, myAcc }: { user: UserType; myAcc: boolean }) => {
   };
 
   useEffect(() => {
-    if (!token) return;
-
     setIsLoading(true);
 
-    if (myAcc) {
+    if (myAcc && token) {
       if (location.search === "") {
         getPosts(user.id);
       } else {

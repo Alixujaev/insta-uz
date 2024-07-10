@@ -68,23 +68,28 @@ export function follow(
   myId: string,
   followers: string[],
   setFollowers: any,
-  socket: any
+  socket: any,
+  navigate: any
 ) {
-  if (!token) return;
+  if (!token) {
+    navigate("/");
+  }else{
+    setFollowers([...followers, myId]);
 
-  setFollowers([...followers, myId]);
-
-  handleFollow(id, token)
-    .then((res) => {
-      socket.emit("sendFollowNotification", {
-        sender_id: myId,
-        receiver_id: id,
+    handleFollow(id, token)
+      .then((res) => {
+        socket.emit("sendFollowNotification", {
+          sender_id: myId,
+          receiver_id: id,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setFollowers(followers.filter((follower) => follower !== myId));
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      setFollowers(followers.filter((follower) => follower !== myId));
-    });
+  }
+
+ 
 }
 
 

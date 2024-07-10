@@ -182,7 +182,8 @@ const Post = () => {
                             likes,
                             user.id,
                             post.author._id,
-                            socket
+                            socket,
+                            navigate
                           )
                         }
                       >
@@ -206,13 +207,17 @@ const Post = () => {
 
                   {saveds.includes(post._id) ? (
                     <button
-                      onClick={() => save(post._id, token, saveds, setSaveds)}
+                      onClick={() =>
+                        save(post._id, token, saveds, setSaveds, navigate)
+                      }
                     >
                       <BaseIcon name="saved_active" />
                     </button>
                   ) : (
                     <button
-                      onClick={() => save(post._id, token, saveds, setSaveds)}
+                      onClick={() =>
+                        save(post._id, token, saveds, setSaveds, navigate)
+                      }
                     >
                       <BaseIcon name="saved" />
                     </button>
@@ -268,7 +273,8 @@ const Post = () => {
                         user.id,
                         post.author._id,
                         socket,
-                        comments
+                        comments,
+                        navigate
                       )
                     }
                   >

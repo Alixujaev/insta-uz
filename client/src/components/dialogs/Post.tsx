@@ -2,7 +2,7 @@ import { BASE_URL, CommentType, PostType } from "@/consts";
 import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import BaseIcon from "../icon/BaseIcon";
 import Avatar from "../Avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PostDialog from "./PostDialog";
 import Comment from "../Comment";
 import { formatDate } from "@/lib/utils";
@@ -46,6 +46,7 @@ const Post = ({
   const [comments, setComments] = useState<any[]>([]);
   const emojiRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useClickOutside(emojiRef, () => setShowEmoji(false));
 
@@ -194,7 +195,8 @@ const Post = ({
                           likes,
                           user.id,
                           post.author_id,
-                          socket
+                          socket,
+                          navigate
                         )
                       }
                     >
@@ -218,13 +220,17 @@ const Post = ({
 
                 {saveds.includes(post._id) ? (
                   <button
-                    onClick={() => save(post._id, token, saveds, setSaveds)}
+                    onClick={() =>
+                      save(post._id, token, saveds, setSaveds, navigate)
+                    }
                   >
                     <BaseIcon name="saved_active" />
                   </button>
                 ) : (
                   <button
-                    onClick={() => save(post._id, token, saveds, setSaveds)}
+                    onClick={() =>
+                      save(post._id, token, saveds, setSaveds, navigate)
+                    }
                   >
                     <BaseIcon name="saved" />
                   </button>
@@ -280,7 +286,8 @@ const Post = ({
                       user.id,
                       post.author_id,
                       socket,
-                      comments
+                      comments,
+                      navigate
                     )
                   }
                 >

@@ -69,7 +69,7 @@ const Links = () => {
         ))}
       </div>
       <p className="text-sm text-center mb-16 text-[#8e8e8e]">
-        © 2024 Alixujaev
+        © {new Date().getFullYear()} Alixujaev
       </p>
     </div>
   );

@@ -88,7 +88,11 @@ const Notifications = ({
         {isLoading ? (
           <Loader className="h-[60vh]" />
         ) : !isLoading && notifications?.length === 0 ? (
-          <p className="text-center text-sm">Нет уведомлений</p>
+          <div className="h-[60vh] text-center flex justify-center items-center">
+            <p className="text-xl font-bold text-[#737373]">
+              Пока нет уведомлений
+            </p>
+          </div>
         ) : (
           notifications?.map((notification) =>
             notification.type === "follow" ? (

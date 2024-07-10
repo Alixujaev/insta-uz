@@ -76,24 +76,29 @@ export function like(
   likes: string[],
   userId: string,
   author_id: string,
-  socket: any
+  socket: any,
+  navigate: any
 ) {
-  if (!token) return;
+  if (!token){
+    navigate("/");
+  }else{
+    setLikes([...likes, userId]);
 
-  setLikes([...likes, userId]);
 
-
-  handleLike(id, token)
-    .then((res) => {
-      socket.emit("sendLikeNotification", {
-        sender_id: userId,
-        receiver_id: author_id,
+    handleLike(id, token)
+      .then((res) => {
+        socket.emit("sendLikeNotification", {
+          sender_id: userId,
+          receiver_id: author_id,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        setLikes(likes.filter((like) => like !== userId));
       });
-    })
-    .catch((err) => {
-      console.log(err);
-      setLikes(likes.filter((like) => like !== userId));
-    });
+  }
+
+ 
 }
 
 export function unlike(
@@ -125,51 +130,61 @@ export function comment(
   userId: string,
   author_id: string,
   socket: any,
-  comments: string[]
+  comments: string[],
+  navigate: any
 ) {
-  if (!token) return;
+  if (!token){
+    navigate("/");
+  }else{
+    setIsLoading(true);
+    handleComment(body, token)
+      .then((res) => {
+        setCommentText("");
+        setShowEmoji(false);
+        setComments([...comments, res.data.data]);
+        socket.emit("sendCommentNotification", {
+          sender_id: userId,
+          receiver_id: author_id,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => setIsLoading(false));
+  }
 
-  setIsLoading(true);
-  handleComment(body, token)
-    .then((res) => {
-      setCommentText("");
-      setShowEmoji(false);
-      setComments([...comments, res.data.data]);
-      socket.emit("sendCommentNotification", {
-        sender_id: userId,
-        receiver_id: author_id,
-      });
-    })
-    .catch((err) => {
-      console.log(err);
-    })
-    .finally(() => setIsLoading(false));
+ 
 }
 
 export function save(
   id: string,
   token: string | null,
   saveds: string[],
-  setSaveds: any
+  setSaveds: any,
+  navigate: any
 ) {
-  if (!token) return;
-
-  if (saveds.includes(id)) {
-    setSaveds(saveds.filter((saved) => saved !== id));
-  } else {
-    setSaveds([...saveds, id]);
+  if (!token){
+    navigate("/");
+  }else{
+    if (saveds.includes(id)) {
+      setSaveds(saveds.filter((saved) => saved !== id));
+    } else {
+      setSaveds([...saveds, id]);
+    }
+  
+    handleSavePost(id, token)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        if (saveds.includes(id)) {
+          setSaveds([...saveds, id]);
+        } else {
+          setSaveds(saveds.filter((saved) => saved !== id));
+        }
+      });
   }
 
-  handleSavePost(id, token)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-      if (saveds.includes(id)) {
-        setSaveds([...saveds, id]);
-      } else {
-        setSaveds(saveds.filter((saved) => saved !== id));
-      }
-    });
+
 }
