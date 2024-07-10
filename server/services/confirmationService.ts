@@ -4,7 +4,7 @@ let confirmationCodes = {};
 
 
 const transporter = nodemailer.createTransport({
-  service: 'Gmail', // use your email service
+  service: 'Gmail',
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
@@ -25,17 +25,17 @@ export async function sendConfirmationCode(email) {
   const mailOptions = {
       from: 'Instagram uz',
       to: email,
-      subject: 'Your confirmation code',
-      text: `Your confirmation code is ${code}`
+      subject: 'Ваш код подтверждения',
+      text: `Ваш код подтверждения ${code}`
   };
 
   await transporter.sendMail(mailOptions);
-  console.log(`Confirmation code sent to ${email}: ${code}`);
+  console.log(`Ваш код подтверждения ${email}: ${code}`);
 }
 
 export function verifyConfirmationCode(email, code) {
   if (confirmationCodes[email] === code) {
-      delete confirmationCodes[email]; // Code verified, remove it
+      delete confirmationCodes[email];
       return true;
   } else {
       return false;
