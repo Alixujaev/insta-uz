@@ -77,7 +77,7 @@ const UserList = ({
     if (!token) return;
 
     handleUnFollow(id, token)
-      .then((res) => {
+      .then(() => {
         setUsers(users.filter((user) => user._id !== id));
         setFollowing(following?.filter((following) => following !== id));
       })
@@ -90,7 +90,7 @@ const UserList = ({
     if (!token) return;
 
     handleDeleteFollower(id, token)
-      .then((res) => {
+      .then(() => {
         setUsers(users.filter((user) => user._id !== id));
         setFollowers(followers?.filter((follower) => follower !== id));
       })
@@ -107,7 +107,7 @@ const UserList = ({
     if (!token) return;
 
     handleFollow(id, token)
-      .then((res) => {
+      .then(() => {
         setOpen(false);
         socket.emit("sendFollowNotification", {
           sender_id: myId,

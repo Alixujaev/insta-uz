@@ -6,14 +6,10 @@ import {
   aboutModalOpenAction,
   areYouSureOpenAction,
   authorNameAction,
-  editModalOpenAction,
-  editPostIdAction,
 } from "@/actions/settingsActions";
 import { checkPostAuthor } from "@/lib/utils";
 import { UserType } from "@/consts";
 import { useLocalStorage } from "usehooks-ts";
-import { handleDeleteStory } from "@/store/story.store";
-import { useNavigate } from "react-router-dom";
 
 const StoryMore = ({
   author,
@@ -26,9 +22,7 @@ const StoryMore = ({
 }) => {
   const [user] = useLocalStorage("user", {} as UserType);
   const [open, setOpen] = useState<boolean>(false);
-  const token = localStorage.getItem("token");
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   function handleCopyLink() {
     navigator.clipboard.writeText(`${window.location.origin}/story/${id}`);

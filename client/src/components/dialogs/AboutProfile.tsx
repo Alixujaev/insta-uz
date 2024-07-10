@@ -1,10 +1,5 @@
 import { aboutModalOpenAction } from "@/actions/settingsActions";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { handleGetUser } from "@/store/user.store";
@@ -27,7 +22,7 @@ const AboutProfile = () => {
         setAuthor(res.data.data.user);
         setIsLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(aboutModalOpenAction());
         setIsLoading(false);
       });

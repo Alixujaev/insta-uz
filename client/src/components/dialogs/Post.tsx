@@ -68,7 +68,7 @@ const Post = ({
     setOpen(false);
 
     handleDelete(id, token)
-      .then((res) => {
+      .then(() => {
         setOpen(false);
         dispatch(updatePosts());
       })

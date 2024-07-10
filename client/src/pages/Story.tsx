@@ -68,7 +68,7 @@ const Story = () => {
     if (!token) return;
 
     handleDeleteStory(id, token)
-      .then((res) => {
+      .then(() => {
         navigate(-1);
       })
       .catch((err) => {

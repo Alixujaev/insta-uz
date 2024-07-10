@@ -1,9 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
 import { handleEditPost, handleGetPost } from "@/store/post.store";
@@ -42,7 +37,7 @@ const EditPost = () => {
     setIsLoading(true);
 
     handleEditPost(body, token, id)
-      .then((res) => {
+      .then(() => {
         dispatch(editModalOpenAction());
         dispatch(updatePosts());
         setIsLoading(false);

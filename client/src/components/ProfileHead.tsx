@@ -14,7 +14,7 @@ const ProfileHead = ({ user }: { user: any }) => {
     if (!token) return;
     setFollowers([...followers, myId]);
     handleFollow(id, token)
-      .then((res) => {
+      .then(() => {
         socket.emit("sendFollowNotification", {
           sender_id: myId,
           receiver_id: id,
@@ -31,7 +31,7 @@ const ProfileHead = ({ user }: { user: any }) => {
 
     setFollowers(followers.filter((follower) => follower !== myId));
     handleUnFollow(id, token)
-      .then((res) => {})
+      .then(() => {})
       .catch((err) => {
         console.log(err);
         setFollowers([...followers, myId]);

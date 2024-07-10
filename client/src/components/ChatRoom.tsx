@@ -66,14 +66,14 @@ const ChatRoom = () => {
                 )[0]
               );
             })
-            .catch((err) => {
+            .catch(() => {
               handleGetUserId(chatId)
                 .then((res) => {
                   setIsLoading(false);
                   setChatUser(res.data.data.user);
                   setNewConversation(true);
                 })
-                .catch((err) => {
+                .catch(() => {
                   console.log("uchinchi shart");
 
                   navigate("/direct/inbox");
@@ -165,7 +165,7 @@ const ChatRoom = () => {
     if (!token || !id) return;
 
     handleDelete(id, token)
-      .then((res) => {
+      .then(() => {
         dispatch(updateChatUsers());
         navigate("/direct/inbox");
       })

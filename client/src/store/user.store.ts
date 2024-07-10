@@ -77,7 +77,7 @@ export function follow(
     setFollowers([...followers, myId]);
 
     handleFollow(id, token)
-      .then((res) => {
+      .then(() => {
         socket.emit("sendFollowNotification", {
           sender_id: myId,
           receiver_id: id,
@@ -104,7 +104,7 @@ export function unfollow(
 
   setFollowers(followers.filter((follower) => follower !== myId));
   handleUnFollow(id, token)
-    .then((res) => {})
+    .then(() => {})
     .catch((err) => {
       console.log(err);
       setFollowers([...followers, myId]);

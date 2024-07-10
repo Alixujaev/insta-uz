@@ -1,11 +1,10 @@
 import { handleSearchUsers } from "@/store/user.store";
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
 
 const Search = ({
   isShowSearch,
-  isSmall,
   setIsShowSearch,
   setIsSmall,
 }: {

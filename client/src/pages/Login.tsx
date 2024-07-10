@@ -5,7 +5,7 @@ import Microsoft from "@/assets/images/microsoft.png";
 import logo from "@/assets/icons/instagram-text-logo.png";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

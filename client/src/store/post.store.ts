@@ -86,7 +86,7 @@ export function like(
 
 
     handleLike(id, token)
-      .then((res) => {
+      .then(() => {
         socket.emit("sendLikeNotification", {
           sender_id: userId,
           receiver_id: author_id,
@@ -113,7 +113,7 @@ export function unlike(
   setLikes(likes.filter((like) => like !== userId));
 
   handleUnLike(id, token)
-    .then((res) => {})
+    .then(() => {})
     .catch((err) => {
       console.log(err);
       setLikes([...likes, userId]);

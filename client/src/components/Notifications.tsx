@@ -47,7 +47,7 @@ const Notifications = ({
     setFollowing([...following, id]);
 
     handleFollow(id, token)
-      .then((res) => {
+      .then(() => {
         socket.emit("sendFollowNotification", {
           sender_id: myId,
           receiver_id: id,
@@ -65,7 +65,7 @@ const Notifications = ({
     setFollowing(following.filter((follower) => follower !== id));
 
     handleUnFollow(id, token)
-      .then((res) => {})
+      .then(() => {})
       .catch((err) => {
         console.log(err);
         setFollowing([...following, id]);

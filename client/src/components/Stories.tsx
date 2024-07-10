@@ -14,7 +14,6 @@ import { StoryType } from "@/consts";
 import useFetchData from "@/hooks/useFetchData";
 
 const Stories = () => {
-  const token = localStorage.getItem("token");
   const { data: stories, isLoading } = useFetchData<StoryType[]>(
     "stories",
     handleGetStories
@@ -26,7 +25,7 @@ const Stories = () => {
         <Loader className="h-[10vh]" />
       ) : stories?.length === 0 ? (
         <h4 className="font-medium text-center">Пока нет историй</h4>
-      ) : stories?.length < 8 ? (
+      ) : stories && stories?.length < 8 ? (
         <div className="flex gap-2">
           {stories?.map((item: StoryType) => (
             <Story key={item._id} story={item} />

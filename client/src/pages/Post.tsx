@@ -58,7 +58,7 @@ const Post = () => {
         setPost(res.data.data);
         setLikes(res.data.data.likes);
         handleGetUser(res.data.data.author.username)
-          .then((res) => {
+          .then(() => {
             setIsLoading(false);
           })
           .catch((err) => {
@@ -67,7 +67,7 @@ const Post = () => {
             setError(true);
           });
       })
-      .catch((err) => {
+      .catch(() => {
         setIsLoading(false);
         setError(true);
       });
@@ -87,7 +87,7 @@ const Post = () => {
     if (!token) return;
 
     handleDelete(id, token)
-      .then((res) => {
+      .then(() => {
         dispatch(updatePosts());
         navigate("/");
       })
