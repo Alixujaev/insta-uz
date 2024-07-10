@@ -18,7 +18,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8000;
 const corsOptions = {
-  origin: 'https://instagram-neon-six.vercel.app', // Allow only this origin
+  origin: 'https://insta-uz.vercel.app', // Allow only this origin
   optionsSuccessStatus: 200
 };
 
@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 export const httpServer = createServer(app); // Create an HTTP server
 export const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: 'https://instagram-neon-six.vercel.app', // Allow only this origin
+    origin: 'https://insta-uz.vercel.app', // Allow only this origin
     methods: ['GET', 'POST']
   }
 });
