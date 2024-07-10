@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer"
 
-let confirmationCodes = {};
+let confirmationCodes: { [key: string]: string } = {};
 
 
 const transporter = nodemailer.createTransport({
@@ -18,7 +18,7 @@ function generateCode() {
   return Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 }
 
-export async function sendConfirmationCode(email) {
+export async function sendConfirmationCode(email:string) {
   const code = generateCode();
   confirmationCodes[email] = code;
 
@@ -33,7 +33,7 @@ export async function sendConfirmationCode(email) {
   console.log(`Ваш код подтверждения ${email}: ${code}`);
 }
 
-export function verifyConfirmationCode(email, code) {
+export function verifyConfirmationCode(email:string, code:string) {
   if (confirmationCodes[email] === code) {
       delete confirmationCodes[email];
       return true;

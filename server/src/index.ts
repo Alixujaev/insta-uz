@@ -45,10 +45,10 @@ export const io = new SocketIOServer(httpServer, {
   }
 });
 
-export let users = [];
+export let users: { userId: string, socketId: string }[] = [];
 
 const addUser = (userId: string, socketId: string) => {
-  !users.some((user) => user.userId === userId) &&
+  !users.some((user: { userId: string; socketId: string; }) => user.userId === userId) &&
     users.push({ userId, socketId });
 }
 
@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
 
     const user = getUser(receiver_id);
 
-    io.to(user?.socketId).emit("getLikeNotification", {
+    io.to(user?.socketId ?? "").emit("getLikeNotification", {
       event: 'like',
       sender_id,
       receiver_id
@@ -81,7 +81,7 @@ io.on('connection', (socket) => {
   socket.on("sendFollowNotification", ({sender_id, receiver_id}) => {
     const user = getUser(receiver_id);
 
-    io.to(user?.socketId).emit("getFollowNotification", {
+    io.to(user?.socketId ?? "").emit("getFollowNotification", {
       event: 'follow',
       sender_id,
       receiver_id
@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
     
     const user = getUser(receiver_id);
 
-    io.to(user?.socketId).emit("getCommentNotification", {
+    io.to(user?.socketId ?? "").emit("getCommentNotification", {
       event: 'comment',
       sender_id,
       receiver_id
@@ -105,7 +105,7 @@ io.on('connection', (socket) => {
   socket.on("sendMessage", ({sender_id, receiver_id, message}) => {
     const user = getUser(receiver_id);
     
-    io.to(user?.socketId).emit("getMessage", {
+    io.to(user?.socketId ?? "").emit("getMessage", {
       event: 'message',
       sender_id,
       receiver_id,
@@ -123,7 +123,11 @@ io.on('connection', (socket) => {
 const connectToDB = async () => {
   try {
     mongoose.set('strictQuery', true);
-    await mongoose.connect(process.env.MONGODB_URI);
+    const mongodbUri = process.env.MONGODB_URI;
+    if (!mongodbUri) {
+      throw new Error('MONGODB_URI not found in environment variables');
+    }
+    await mongoose.connect(mongodbUri);
     console.log('Connected to MongoDB!');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);

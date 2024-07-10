@@ -2,10 +2,10 @@ import { Router } from "express";
 import User from "../modules/User";
 import bcrypt from "bcrypt"
 import { generateNewToken } from "../utils/token";
-import { sendConfirmationCode, verifyConfirmationCode } from "../../services/confirmationService";
+import { sendConfirmationCode, verifyConfirmationCode } from "../services/confirmationService";
 
 const router = Router()
-const tempUserStorage = {}
+const tempUserStorage: { [key: string]: { email: string, password: string, username: string } } = {};
 
 
 
@@ -55,7 +55,7 @@ router.post('/api/verify-code', async (req, res) => {
             
             
             if (existUser) {
-              const token = generateNewToken(existUser._id)
+              const token = generateNewToken(existUser._id.toString())
               res.status(200).send({
                 success: true,
                 message: "Ваш адрес электронной почты успешно подтвержден",
@@ -77,7 +77,7 @@ router.post('/api/verify-code', async (req, res) => {
 
 
             const newUser = await User.create({...userData, followers: [], following: []})
-            const token = generateNewToken(newUser._id)
+            const token = generateNewToken(newUser._id.toString())
 
             delete tempUserStorage[email]
 
@@ -113,12 +113,16 @@ router.post("/api/login", async (req, res) => {
     if (!user) {
       return res.status(400).send({ success: false, message: 'Пользователь не найден' });
     }
+    if (!user.password) {
+      return res.status(400).send({ success: false, message: 'Пароль не найден' });
+    }
+    
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).send({ success: false, message: 'Неверный пароль' });
     }
 
-    const token = generateNewToken(user._id)
+    const token = generateNewToken(user._id.toString())
     res.status(200).send({
       success: true,
       message: 'Аутентификация прошла успешно',

@@ -14,17 +14,17 @@ router.get("/api/about-me", verifyToken, async (req, res) => {
     const user = await User.findById(req.body.user.id);
     
     res.status(200).send({ success: true, data: {
-      id: user._id,
-      email: user.email,
-      username: user.username,
-      full_name: user.full_name,
-      followers: user.followers,
-      following: user.following,
-      about: user.about,
-      posts: user.posts,
-      stories: user.stories,
-      profile_img: user.profile_img,
-      saved: user.saved
+      id: user?._id,
+      email: user?.email,
+      username: user?.username,
+      full_name: user?.full_name,
+      followers: user?.followers,
+      following: user?.following,
+      about: user?.about,
+      posts: user?.posts,
+      stories: user?.stories,
+      profile_img: user?.profile_img,
+      saved: user?.saved
     } });
       
   } catch (error) {
@@ -119,15 +119,15 @@ router.put("/api/update-user", verifyToken, async (req, res) => {
     });
     
     res.status(200).send({ success: true, data: {
-      id: user._id,
-      email: user.email,
-      username: user.username,
-      full_name: user.full_name,
-      followers: user.followers,
-      following: user.following,
-      about: user.about,
-      posts: user.posts,
-      stories: user.stories
+      id: user?._id,
+      email: user?.email,
+      username: user?.username,
+      full_name: user?.full_name,
+      followers: user?.followers,
+      following: user?.following,
+      about: user?.about,
+      posts: user?.posts,
+      stories: user?.stories
     } });
       
   } catch (error) {
@@ -197,7 +197,7 @@ router.put('/api/follow/:id', verifyToken, async (req, res) => {
           message: 'You have followed the user',
           data: { userBeingFollowed, updatedUser },
       });
-  } catch (error) {
+  } catch (error:any) {
       res.status(500).send({
           success: false,
           message: 'Error while following',
@@ -232,11 +232,11 @@ router.put("/api/unfollow/:id", verifyToken, async (req: any, res) => {
       message: 'Вы отписались от пользователя',
       data: { userBeingUnfollowed, updatedUser }
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send({
       success: false,
       message: 'Ошибка при отписке',
-      error: error.message
+      error: error?.message
     });
   }
 });

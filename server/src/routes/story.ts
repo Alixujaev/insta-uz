@@ -37,9 +37,9 @@ router.put("/api/view/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   try {
     let story = await Story.findById(id);
-      console.log(!story.views.includes(req.body.user.id));
+      console.log(!story?.views.includes(req.body.user.id));
 
-    if(story.views.includes(req.body.user.id)) return 
+    if(story?.views.includes(req.body.user.id)) return 
       
     story = await Story.findByIdAndUpdate(id, {$push: {views: req.body.user.id}});
     res.send({ success: true, message: 'Пост получен', data: story });
@@ -65,7 +65,7 @@ router.get("/api/viewers/:id", verifyToken, async (req: any, res) => {
 
   const story = await Story.findById(id);
 
-  if(story.author_id !== req.body.user.id) {
+  if(story?.author_id !== req.body.user.id) {
     return res.status(400).send({ success: false, message: 'Вы не можете просмотреть подписчиков' });
   }
 
@@ -83,7 +83,7 @@ router.get("/api/stories", verifyToken, async (req: any, res) => {
   try {
     const user = await User.findById(myId);
     const myStory = await Story.find({author_id: myId});
-    const stories = await Story.find({author_id: {$in: user.following}});
+    const stories = await Story.find({author_id: {$in: user?.following}});
     res.send({ success: true, message: 'Посты получены', data: [...stories, ...myStory] });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении постов', error });

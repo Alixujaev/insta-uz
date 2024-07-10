@@ -30,7 +30,7 @@ const upload = multer({ storage: storage })
 router.post("/api/upload", upload.single("file"), verifyToken, async (req: any, res) => {    
   const file = req.file;
 
-  cloudinary.uploader.upload(file.path, function (error, result) {
+  cloudinary.uploader.upload(file.path, function (error:any, result:any) {
     if (error) {
       console.log(error);
       return res.status(500).send({
@@ -82,7 +82,7 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   const post = await Post.findById(req.params.id);
 
-  if(post.likes.includes(req.body.user.id)) {
+  if(post?.likes.includes(req.body.user.id)) {
     return res.status(400).send({ success: false, message: 'Вы уже поставили лайк' });
   }
   
@@ -90,7 +90,7 @@ router.put("/api/like/:id", verifyToken, async (req: any, res) => {
   try {
     
     const post = await Post.findByIdAndUpdate({ _id: id }, { $push: { likes: req.body.user.id } });
-    const authorId = post.author_id
+    const authorId = post?.author_id
 
     if(authorId !== req.body.user.id) {
       await Notification.create({
@@ -112,7 +112,7 @@ router.put("/api/unlike/:id", verifyToken, async (req: any, res) => {
   const id = req.params.id;
   const post = await Post.findById(req.params.id);
 
-  if(!post.likes.includes(req.body.user.id)) {
+  if(!post?.likes.includes(req.body.user.id)) {
     return res.status(400).send({ success: false, message: 'Вы не поставили лайк' });
   }
   
@@ -136,15 +136,15 @@ router.post("/api/comment", verifyToken, async (req: any, res) => {
     const author = await User.findById(req.body.user.id);
     const newComment = await Comment.create({
       author: {
-        id: author._id,
-        username: author.username,
-        profile_img: author.profile_img
+        id: author?._id,
+        username: author?.username,
+        profile_img: author?.profile_img
       },
       post_id: postId,
       comment
     })
     const post = await Post.findByIdAndUpdate({ _id: postId }, { $push: { comments: req.body.user.id } });  
-    const authorId = post.author_id
+    const authorId = post?.author_id
 
 
     if(authorId !== req.body.user.id) {
@@ -229,7 +229,7 @@ router.put("/api/save/:id", verifyToken, async (req: any, res) => {
     const user = await User.findById(myId);
     let updatedUser;
 
-    if(user.saved.includes(id)) {
+    if(user?.saved.includes(id)) {
       updatedUser = await User.findByIdAndUpdate(
         myId,
         { $pull: { saved: id } },
@@ -267,7 +267,7 @@ router.get("/api/following-posts", verifyToken, async (req: any, res) => {
   try {
     const user = await User.findById(myId);
     const myPost = await Post.find({author_id: myId});
-    const subbed = await Post.find({author_id: {$in: user.following}});
+    const subbed = await Post.find({author_id: {$in: user?.following}});
 
     
     res.send({ success: true, message: 'Посты получены', data: [...subbed, ...myPost] });

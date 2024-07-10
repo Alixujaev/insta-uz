@@ -1,6 +1,13 @@
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-export const verifyToken = (req, res, next) => {
+interface RequestWithHeader {
+  header: (name: string) => string | undefined;
+  body: { user: any };
+}
+
+
+export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.header("Authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -9,6 +16,9 @@ export const verifyToken = (req, res, next) => {
 
   const token = authHeader.split(" ")[1]; 
 
+  if (!process.env.JWT_SECRET) {
+    return res.status(500).json({ message: "JWT secret is not defined." });
+  }
 
   try {
   const decode = jwt.verify(token, process.env.JWT_SECRET);
