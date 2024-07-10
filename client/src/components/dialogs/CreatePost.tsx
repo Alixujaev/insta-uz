@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import BaseIcon from "@/components/icon/BaseIcon";
 import post from "@/assets/images/post-create.jpg";
 import { Label } from "../ui/label";
@@ -84,9 +89,9 @@ const CreatePost = ({
         )}
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-[482px]">
-        <h4 className="text-center font-medium pb-2 border-b-2">
+        <DialogTitle className="text-center font-medium pb-2 border-b-2">
           Создание публикации
-        </h4>
+        </DialogTitle>
 
         {!file ? (
           <div className="flex flex-col items-center my-40">

@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { areYouSureOpenAction } from "@/actions/settingsActions";
 
@@ -16,13 +16,13 @@ const AreYouSure = ({
   return (
     <Dialog open={areYouSureOpen}>
       <DialogContent className="!rounded-xl !py-1 !px-0 !gap-0 !w-[400px]">
-        <h4 className="text-center font-medium pb-2 border-b-2">
+        <DialogTitle className="text-center font-medium pb-2 border-b-2">
           {text
             ? text
             : type === "post"
             ? "Вы уверены, что хотите удалить этот пост?"
             : "Вы уверены, что хотите удалить этот сторис?"}
-        </h4>
+        </DialogTitle>
 
         <div className="flex justify-between">
           <button

@@ -38,10 +38,10 @@ router.put("/api/view/:id", verifyToken, async (req: any, res) => {
   try {
     let story = await Story.findById(id);
       console.log(!story.views.includes(req.body.user.id));
+
+    if(story.views.includes(req.body.user.id)) return 
       
-    if(!story.views.includes(req.body.user.id)) {
-      story = await Story.findByIdAndUpdate(id, {$push: {views: req.body.user.id}});
-    }
+    story = await Story.findByIdAndUpdate(id, {$push: {views: req.body.user.id}});
     res.send({ success: true, message: 'Пост получен', data: story });
   } catch (error) {
     res.status(500).send({ success: false, message: 'Ошибка при получении поста', error });

@@ -67,6 +67,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on("sendLikeNotification", ({sender_id, receiver_id}) => {
+    if(sender_id === receiver_id) return;
+
     const user = getUser(receiver_id);
 
     io.to(user?.socketId).emit("getLikeNotification", {
@@ -88,6 +90,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on("sendCommentNotification", ({sender_id, receiver_id}) => {
+    if(sender_id === receiver_id) return;
+    
     const user = getUser(receiver_id);
 
     io.to(user?.socketId).emit("getCommentNotification", {

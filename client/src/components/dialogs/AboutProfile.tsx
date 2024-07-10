@@ -1,5 +1,10 @@
 import { aboutModalOpenAction } from "@/actions/settingsActions";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { handleGetUser } from "@/store/user.store";
@@ -34,7 +39,9 @@ const AboutProfile = () => {
       onOpenChange={() => dispatch(aboutModalOpenAction())}
     >
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-96 max-h-[400px]">
-        <h4 className="text-center font-medium pb-2 border-b-2">Об аккаунте</h4>
+        <DialogTitle className="text-center font-medium pb-2 border-b-2">
+          Об аккаунте
+        </DialogTitle>
         {!isLoading && author ? (
           <div className="m-3">
             <div className="flex justify-center mb-3">

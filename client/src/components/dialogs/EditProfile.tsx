@@ -1,5 +1,10 @@
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import userImage from "@/assets/images/user.jpg";
 import upload from "@/assets/images/upload.png";
 import { useEffect, useState } from "react";
@@ -145,9 +150,9 @@ const EditProfile = ({ user }: { user: UserType }) => {
         </Button>
       </DialogTrigger>
       <DialogContent className=" w-full !pt-2 !pb-0 !rounded-2xl !px-0 !gap-0">
-        <h4 className="text-center font-medium pb-2 border-b-2 h-fit w-full">
+        <DialogTitle className="text-center font-medium pb-2 border-b-2 h-fit w-full">
           Редактировать профиль
-        </h4>
+        </DialogTitle>
 
         <div className="m-3">
           <div className=" mb-3">

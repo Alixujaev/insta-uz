@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import Avatar from "../Avatar";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { handleSearchUsers } from "@/store/user.store";
 import Loader from "../Loader";
 import { useSelector } from "react-redux";
@@ -44,9 +49,9 @@ const DirectSearchUser = () => {
         </button>
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-[516px]">
-        <h4 className="text-center font-bold pb-2 border-b border-[#dbdbdb]">
+        <DialogTitle className="text-center font-bold pb-2 border-b border-[#dbdbdb]">
           Новое сообщение
-        </h4>
+        </DialogTitle>
         <div className="border-b border-[#dbdbdb] flex ">
           <p className="px-4 py-2 font-semibold">Кому:</p>
           <input

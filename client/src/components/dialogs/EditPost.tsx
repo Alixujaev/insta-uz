@@ -1,4 +1,9 @@
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
 import { handleEditPost, handleGetPost } from "@/store/post.store";
@@ -54,9 +59,9 @@ const EditPost = () => {
       onOpenChange={() => dispatch(editModalOpenAction())}
     >
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-[482px]">
-        <h4 className="text-center font-medium pb-2 border-b-2">
+        <DialogTitle className="text-center font-medium pb-2 border-b-2">
           Редактировать
-        </h4>
+        </DialogTitle>
 
         <div className="px-3 mt-3">
           <div className="h-60 relative rounded-md mb-3">

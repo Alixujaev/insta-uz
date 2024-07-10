@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { UserType } from "@/consts";
 import Avatar from "../Avatar";
 import { Link } from "react-router-dom";
@@ -55,9 +60,9 @@ const Viewers = ({
         <p className="text-sm">{count} просмотры</p>
       </DialogTrigger>
       <DialogContent className="!rounded-2xl !py-2 !px-0 !gap-0 !w-96 max-h-[400px]">
-        <h4 className="text-center font-medium pb-2 border-b-2">
+        <DialogTitle className="text-center font-medium pb-2 border-b-2">
           Просмотры ({count})
-        </h4>
+        </DialogTitle>
         <div className="mx-3 my-2">
           <div className="max-h-72 overflow-y-auto">
             {isLoading ? (
